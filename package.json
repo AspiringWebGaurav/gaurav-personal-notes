@@ -1,0 +1,40 @@
+{
+  "name": "gaurav-personal-notes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A blazing-fast personal notes and money tracking application with real-time sync and offline support",
+  "author": "Gaurav",
+  "keywords": ["notes", "money-tracker", "productivity", "firebase", "nextjs", "personal"],
+  "scripts": {
+    "dev": "next dev --turbo",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "deploy": "vercel --prod",
+    "firebase:deploy": "firebase deploy --only firestore:rules"
+  },
+  "dependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/lodash": "^4.17.20",
+    "firebase": "^12.1.0",
+    "framer-motion": "^12.23.12",
+    "lodash": "^4.17.21",
+    "next": "15.4.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
