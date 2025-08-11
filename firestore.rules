@@ -1,0 +1,73 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can only access their own data
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // User's notes collection
+      match /notes/{noteId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        
+        // Validate note data structure
+        allow create: if request.auth != null 
+          && request.auth.uid == userId
+          && validateNoteData(request.resource.data);
+          
+        allow update: if request.auth != null 
+          && request.auth.uid == userId
+          && validateNoteData(request.resource.data);
+      }
+      
+      // User's money trackers collection
+      match /money/{trackerId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        
+        // Validate money tracker data structure
+        allow create: if request.auth != null 
+          && request.auth.uid == userId
+          && validateMoneyTrackerData(request.resource.data);
+          
+        allow update: if request.auth != null 
+          && request.auth.uid == userId
+          && validateMoneyTrackerData(request.resource.data);
+      }
+    }
+    
+    // Helper functions for data validation
+    function validateNoteData(data) {
+      return data.keys().hasAll(['title', 'content', 'type', 'createdAt', 'updatedAt'])
+        && data.title is string
+        && data.content is string
+        && data.type in ['note', 'list', 'todo']
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp
+        && (data.tags == null || data.tags is list)
+        && (data.templateId == null || data.templateId is string)
+        && (data.isArchived == null || data.isArchived is bool)
+        && (data.isPinned == null || data.isPinned is bool);
+    }
+    
+    function validateMoneyTrackerData(data) {
+      return data.keys().hasAll(['title', 'startingAmount', 'currentBalance', 'expenses', 'createdAt', 'updatedAt'])
+        && data.title is string
+        && data.startingAmount is number
+        && data.currentBalance is number
+        && data.expenses is list
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp
+        && validateExpenses(data.expenses);
+    }
+    
+    function validateExpenses(expenses) {
+      return expenses.size() <= 1000 // Limit to 1000 expenses per tracker
+        && expenses.hasAll(['id', 'title', 'amount', 'category', 'date']);
+    }
+    
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
