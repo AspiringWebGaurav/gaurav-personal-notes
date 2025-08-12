@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/hooks/useAuth";
@@ -13,7 +13,11 @@ export const metadata: Metadata = {
   description: "Personal notes and money tracker app with real-time sync",
   keywords: ["notes", "money tracker", "personal", "productivity"],
   authors: [{ name: "Gaurav" }],
-  viewport: "width=device-width, initial-scale=1",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
