@@ -1,17 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useAutosave } from '@/hooks/useAutosave';
 import { motion, AnimatePresence } from 'framer-motion';
-import { doc, onSnapshot, Timestamp } from 'firebase/firestore';
+import { doc, onSnapshot, Timestamp, DocumentSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { MoneyTracker, Expense, Currency } from '@/types';
 import { CurrencySelector, CurrencySetupModal } from '@/components/CurrencySelector';
 import { formatCurrency, getCurrencySymbol, DEFAULT_CURRENCY } from '@/lib/currency';
 
-export default function MoneyTrackerPage() {
+// Loading component for Suspense fallback
+function MoneyTrackerLoading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
+
+// Main component wrapped in Suspense
+function MoneyTrackerContent() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -51,7 +61,7 @@ export default function MoneyTrackerPage() {
     if (!user || loading) return;
 
     const trackerRef = doc(db, 'users', user.uid, 'money', trackerId);
-    const unsubscribe = onSnapshot(trackerRef, (docSnap) => {
+    const unsubscribe = onSnapshot(trackerRef, (docSnap: DocumentSnapshot) => {
       if (docSnap.exists()) {
         const trackerData = { id: docSnap.id, ...docSnap.data() } as MoneyTracker;
         setTracker(trackerData);
@@ -61,7 +71,7 @@ export default function MoneyTrackerPage() {
         if (localData) {
           try {
             const parsedData = JSON.parse(localData);
-            setTracker(prev => ({ ...prev, ...parsedData }));
+            setTracker((prev: Partial<MoneyTracker>) => ({ ...prev, ...parsedData }));
           } catch (error) {
             console.error('Error parsing local data:', error);
           }
@@ -78,29 +88,29 @@ export default function MoneyTrackerPage() {
 
   // Calculate current balance
   useEffect(() => {
-    const totalExpenses = (tracker.expenses || []).reduce((sum, expense) => sum + expense.amount, 0);
+    const totalExpenses = (tracker.expenses || []).reduce((sum: number, expense: Expense) => sum + expense.amount, 0);
     const newBalance = (tracker.startingAmount || 0) - totalExpenses;
     
     if (newBalance !== tracker.currentBalance) {
-      setTracker(prev => ({ ...prev, currentBalance: newBalance }));
+      setTracker((prev: Partial<MoneyTracker>) => ({ ...prev, currentBalance: newBalance }));
     }
   }, [tracker.expenses, tracker.startingAmount, tracker.currentBalance]);
 
   const handleStartingAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const amount = parseFloat(e.target.value) || 0;
-    setTracker(prev => ({ ...prev, startingAmount: amount }));
+    setTracker((prev: Partial<MoneyTracker>) => ({ ...prev, startingAmount: amount }));
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTracker(prev => ({ ...prev, title: e.target.value }));
+    setTracker((prev: Partial<MoneyTracker>) => ({ ...prev, title: e.target.value }));
   };
 
   const handleCurrencyChange = (currency: Currency['code']) => {
-    setTracker(prev => ({ ...prev, currency }));
+    setTracker((prev: Partial<MoneyTracker>) => ({ ...prev, currency }));
   };
 
   const handleCurrencySetup = (currency: Currency['code']) => {
-    setTracker(prev => ({ ...prev, currency }));
+    setTracker((prev: Partial<MoneyTracker>) => ({ ...prev, currency }));
     setShowCurrencySetup(false);
   };
 
@@ -116,7 +126,7 @@ export default function MoneyTrackerPage() {
       description: newExpense.description
     };
 
-    setTracker(prev => ({
+    setTracker((prev: Partial<MoneyTracker>) => ({
       ...prev,
       expenses: [...(prev.expenses || []), expense]
     }));
@@ -132,9 +142,9 @@ export default function MoneyTrackerPage() {
   };
 
   const removeExpense = (expenseId: string) => {
-    setTracker(prev => ({
+    setTracker((prev: Partial<MoneyTracker>) => ({
       ...prev,
-      expenses: (prev.expenses || []).filter(expense => expense.id !== expenseId)
+      expenses: (prev.expenses || []).filter((expense: Expense) => expense.id !== expenseId)
     }));
   };
 
@@ -143,15 +153,7 @@ export default function MoneyTrackerPage() {
   };
 
   if (loading || isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full"
-        />
-      </div>
-    );
+    return <MoneyTrackerLoading />;
   }
 
   if (!user) {
@@ -160,8 +162,8 @@ export default function MoneyTrackerPage() {
   }
 
   const categories = ['Food', 'Transportation', 'Entertainment', 'Shopping', 'Bills', 'Healthcare', 'Other'];
-  const totalExpenses = (tracker.expenses || []).reduce((sum, expense) => sum + expense.amount, 0);
-  const remainingPercentage = tracker.startingAmount ? (tracker.currentBalance! / tracker.startingAmount) * 100 : 0;
+  const totalExpenses = (tracker.expenses || []).reduce((sum: number, expense: Expense) => sum + expense.amount, 0);
+  const remainingPercentage = tracker.startingAmount ? ((tracker.currentBalance || 0) / tracker.startingAmount) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -340,7 +342,7 @@ export default function MoneyTrackerPage() {
                   <input
                     type="text"
                     value={newExpense.title}
-                    onChange={(e) => setNewExpense(prev => ({ ...prev, title: e.target.value }))}
+                    onChange={(e) => setNewExpense((prev) => ({ ...prev, title: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="e.g., Lunch at restaurant"
                   />
@@ -357,7 +359,7 @@ export default function MoneyTrackerPage() {
                     <input
                       type="number"
                       value={newExpense.amount}
-                      onChange={(e) => setNewExpense(prev => ({ ...prev, amount: e.target.value }))}
+                      onChange={(e) => setNewExpense((prev) => ({ ...prev, amount: e.target.value }))}
                       className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       placeholder="0.00"
                       step="0.01"
@@ -371,7 +373,7 @@ export default function MoneyTrackerPage() {
                   </label>
                   <select
                     value={newExpense.category}
-                    onChange={(e) => setNewExpense(prev => ({ ...prev, category: e.target.value }))}
+                    onChange={(e) => setNewExpense((prev) => ({ ...prev, category: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     title="Select expense category"
                   >
@@ -388,7 +390,7 @@ export default function MoneyTrackerPage() {
                   <input
                     type="text"
                     value={newExpense.description}
-                    onChange={(e) => setNewExpense(prev => ({ ...prev, description: e.target.value }))}
+                    onChange={(e) => setNewExpense((prev) => ({ ...prev, description: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     placeholder="Optional description"
                   />
@@ -435,7 +437,7 @@ export default function MoneyTrackerPage() {
           ) : (
             <div className="divide-y divide-gray-200">
               <AnimatePresence>
-                {(tracker.expenses || []).map((expense) => (
+                {(tracker.expenses || []).map((expense: Expense) => (
                   <motion.div
                     key={expense.id}
                     initial={{ opacity: 0, x: -20 }}
@@ -487,5 +489,14 @@ export default function MoneyTrackerPage() {
         onCurrencySelect={handleCurrencySetup}
       />
     </div>
+  );
+}
+
+// Main export with Suspense wrapper
+export default function MoneyTrackerPage() {
+  return (
+    <Suspense fallback={<MoneyTrackerLoading />}>
+      <MoneyTrackerContent />
+    </Suspense>
   );
 }
