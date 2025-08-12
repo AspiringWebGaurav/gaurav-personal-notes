@@ -4,6 +4,7 @@ import { debounce } from 'lodash';
 import { doc, setDoc, Timestamp } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
 import { AutosaveData, OfflineQueueItem } from '@/types';
+import { useSyncStatus } from '@/components/SyncStatusProvider';
 
 const LOCAL_KEY = (uid: string, id: string) => `autosave:${uid}:${id}`;
 const QUEUE_KEY = (uid: string) => `writeQueue:${uid}`;
@@ -131,6 +132,7 @@ export function useAutosave({
   const uid = auth.currentUser?.uid;
   const isOnlineRef = useRef(navigator.onLine);
   const lastSaveRef = useRef<string>('');
+  const { startSyncing, finishSyncing, setOnlineStatus } = useSyncStatus();
 
   // Create debounced save function
   const debouncedSave = useRef(
@@ -143,6 +145,9 @@ export function useAutosave({
       
       lastSaveRef.current = dataString;
 
+      // Start syncing indicator
+      startSyncing(id);
+
       try {
         if (isOnlineRef.current) {
           // Try to save to Firestore
@@ -154,6 +159,8 @@ export function useAutosave({
           
           // Clear local backup after successful save
           localStorage.removeItem(LOCAL_KEY(uid, id));
+          
+          // Successfully synced to Firestore
           
         } else {
           throw new Error('Offline - saving locally');
@@ -172,6 +179,11 @@ export function useAutosave({
           operation: 'update',
           timestamp: Date.now()
         });
+        
+        // Data saved offline
+      } finally {
+        // Finish syncing indicator
+        finishSyncing(id);
       }
     }, debounceMs)
   ).current;
@@ -179,20 +191,25 @@ export function useAutosave({
   // Handle online/offline events
   const handleOnline = useCallback(async () => {
     isOnlineRef.current = true;
+    setOnlineStatus(true);
     if (uid) {
       await flushOfflineQueue(uid);
     }
-  }, [uid]);
+  }, [uid, setOnlineStatus]);
 
   const handleOffline = useCallback(() => {
     isOnlineRef.current = false;
-  }, []);
+    setOnlineStatus(false);
+  }, [setOnlineStatus]);
 
   // Immediate save function for critical moments
   const saveImmediately = useCallback(async (payload?: any) => {
     if (!uid || !enabled) return;
     
     const dataToSave = payload || data;
+    
+    // Start syncing indicator
+    startSyncing(id);
     
     try {
       // Always save to localStorage first for immediate persistence
@@ -219,8 +236,11 @@ export function useAutosave({
       }
     } catch (error) {
       console.error('Error in immediate save:', error);
+    } finally {
+      // Finish syncing indicator
+      finishSyncing(id);
     }
-  }, [uid, id, collection, data, enabled]);
+  }, [uid, id, collection, data, enabled, startSyncing, finishSyncing]);
 
   // Effect for debounced autosave
   useEffect(() => {
@@ -228,6 +248,8 @@ export function useAutosave({
     
     // Save to localStorage immediately for instant persistence
     setLocalData(uid, id, data);
+    
+    // Data will be auto-saved
     
     // Trigger debounced save
     debouncedSave(data);

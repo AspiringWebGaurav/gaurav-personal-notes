@@ -7,19 +7,19 @@ export const TEMPLATES: Template[] = [
     id: 'daily-tasks',
     title: 'Daily Tasks',
     description: 'Organize your daily to-do items',
-    content: `# Daily Tasks - ${new Date().toLocaleDateString()}
+    content: `Daily Tasks - ${new Date().toLocaleDateString()}
 
-## Priority Tasks
-- [ ] 
-- [ ] 
-- [ ] 
+Priority Tasks
+- [ ]
+- [ ]
+- [ ]
 
-## Regular Tasks
-- [ ] 
-- [ ] 
-- [ ] 
+Regular Tasks
+- [ ]
+- [ ]
+- [ ]
 
-## Notes
+Notes
 `,
     type: 'todo',
     category: 'Productivity',
@@ -30,35 +30,35 @@ export const TEMPLATES: Template[] = [
     id: 'weekly-planner',
     title: 'Weekly Planner',
     description: '7-day structured planning',
-    content: `# Weekly Planner
+    content: `Weekly Planner
 
-## Week of ${new Date().toLocaleDateString()}
+Week of ${new Date().toLocaleDateString()}
 
-### Monday
-- [ ] 
-- [ ] 
+Monday
+- [ ]
+- [ ]
 
-### Tuesday
-- [ ] 
-- [ ] 
+Tuesday
+- [ ]
+- [ ]
 
-### Wednesday
-- [ ] 
-- [ ] 
+Wednesday
+- [ ]
+- [ ]
 
-### Thursday
-- [ ] 
-- [ ] 
+Thursday
+- [ ]
+- [ ]
 
-### Friday
-- [ ] 
-- [ ] 
+Friday
+- [ ]
+- [ ]
 
-### Weekend Goals
-- [ ] 
-- [ ] 
+Weekend Goals
+- [ ]
+- [ ]
 
-## Weekly Reflection
+Weekly Reflection
 - What went well:
 - What to improve:
 - Next week's focus:
@@ -72,35 +72,35 @@ export const TEMPLATES: Template[] = [
     id: 'meeting-notes',
     title: 'Meeting Notes',
     description: 'Structured meeting documentation',
-    content: `# Meeting Notes
+    content: `Meeting Notes
 
-**Date:** ${new Date().toLocaleDateString()}
-**Time:** 
-**Attendees:** 
-**Meeting Type:** 
+Date: ${new Date().toLocaleDateString()}
+Time:
+Attendees:
+Meeting Type:
 
-## Agenda
-1. 
-2. 
-3. 
+Agenda
+1.
+2.
+3.
 
-## Discussion Points
-- 
-- 
-- 
+Discussion Points
+-
+-
+-
 
-## Decisions Made
-- 
-- 
+Decisions Made
+-
+-
 
-## Action Items
-- [ ] [Person] - 
-- [ ] [Person] - 
-- [ ] [Person] - 
+Action Items
+- [ ] [Person] -
+- [ ] [Person] -
+- [ ] [Person] -
 
-## Next Meeting
-**Date:** 
-**Topics:** 
+Next Meeting
+Date:
+Topics:
 `,
     type: 'note',
     category: 'Productivity',
@@ -111,37 +111,37 @@ export const TEMPLATES: Template[] = [
     id: 'project-planning',
     title: 'Project Planning',
     description: 'Plan projects with goals and milestones',
-    content: `# Project Planning
+    content: `Project Planning
 
-## Project Overview
-**Project Name:** 
-**Start Date:** 
-**Target Completion:** 
-**Priority:** High/Medium/Low
+Project Overview
+Project Name:
+Start Date:
+Target Completion:
+Priority: High/Medium/Low
 
-## Objectives
-- 
-- 
-- 
+Objectives
+-
+-
+-
 
-## Milestones
-- [ ] **Phase 1:** 
-- [ ] **Phase 2:** 
-- [ ] **Phase 3:** 
-- [ ] **Final Review:** 
+Milestones
+- [ ] Phase 1:
+- [ ] Phase 2:
+- [ ] Phase 3:
+- [ ] Final Review:
 
-## Resources Needed
-- 
-- 
-- 
+Resources Needed
+-
+-
+-
 
-## Potential Challenges
-- 
-- 
+Potential Challenges
+-
+-
 
-## Success Metrics
-- 
-- 
+Success Metrics
+-
+-
 `,
     type: 'note',
     category: 'Productivity',
@@ -152,37 +152,37 @@ export const TEMPLATES: Template[] = [
     id: 'goal-setting',
     title: 'Goal Setting',
     description: 'SMART goals framework',
-    content: `# Goal Setting
+    content: `Goal Setting
 
-## Goal: 
+Goal:
 
-### SMART Criteria
-- **Specific:** 
-- **Measurable:** 
-- **Achievable:** 
-- **Relevant:** 
-- **Time-bound:** 
+SMART Criteria
+- Specific:
+- Measurable:
+- Achievable:
+- Relevant:
+- Time-bound:
 
-## Action Steps
-1. [ ] 
-2. [ ] 
-3. [ ] 
-4. [ ] 
-5. [ ] 
+Action Steps
+1. [ ]
+2. [ ]
+3. [ ]
+4. [ ]
+5. [ ]
 
-## Resources Needed
-- 
-- 
+Resources Needed
+-
+-
 
-## Potential Obstacles
-- 
-- 
+Potential Obstacles
+-
+-
 
-## Success Indicators
-- 
-- 
+Success Indicators
+-
+-
 
-## Review Date: 
+Review Date:
 `,
     type: 'note',
     category: 'Productivity',
@@ -195,35 +195,35 @@ export const TEMPLATES: Template[] = [
     id: 'grocery-list',
     title: 'Grocery List',
     description: 'Categorized shopping list',
-    content: `# Grocery List
+    content: `Grocery List
 
-## Fruits & Vegetables
-- [ ] 
-- [ ] 
-- [ ] 
+Fruits & Vegetables
+- [ ]
+- [ ]
+- [ ]
 
-## Dairy & Eggs
-- [ ] 
-- [ ] 
+Dairy & Eggs
+- [ ]
+- [ ]
 
-## Meat & Seafood
-- [ ] 
-- [ ] 
+Meat & Seafood
+- [ ]
+- [ ]
 
-## Pantry Items
-- [ ] 
-- [ ] 
-- [ ] 
+Pantry Items
+- [ ]
+- [ ]
+- [ ]
 
-## Frozen Foods
-- [ ] 
-- [ ] 
+Frozen Foods
+- [ ]
+- [ ]
 
-## Household Items
-- [ ] 
-- [ ] 
+Household Items
+- [ ]
+- [ ]
 
-## Total Budget: $
+Total Budget: $
 `,
     type: 'list',
     category: 'Personal',
@@ -234,48 +234,48 @@ export const TEMPLATES: Template[] = [
     id: 'meal-planning',
     title: 'Meal Planning',
     description: 'Weekly meal prep organizer',
-    content: `# Weekly Meal Plan
+    content: `Weekly Meal Plan
 
-## Week of ${new Date().toLocaleDateString()}
+Week of ${new Date().toLocaleDateString()}
 
-### Monday
-- **Breakfast:** 
-- **Lunch:** 
-- **Dinner:** 
-- **Snacks:** 
+Monday
+- Breakfast:
+- Lunch:
+- Dinner:
+- Snacks:
 
-### Tuesday
-- **Breakfast:** 
-- **Lunch:** 
-- **Dinner:** 
-- **Snacks:** 
+Tuesday
+- Breakfast:
+- Lunch:
+- Dinner:
+- Snacks:
 
-### Wednesday
-- **Breakfast:** 
-- **Lunch:** 
-- **Dinner:** 
-- **Snacks:** 
+Wednesday
+- Breakfast:
+- Lunch:
+- Dinner:
+- Snacks:
 
-### Thursday
-- **Breakfast:** 
-- **Lunch:** 
-- **Dinner:** 
-- **Snacks:** 
+Thursday
+- Breakfast:
+- Lunch:
+- Dinner:
+- Snacks:
 
-### Friday
-- **Breakfast:** 
-- **Lunch:** 
-- **Dinner:** 
-- **Snacks:** 
+Friday
+- Breakfast:
+- Lunch:
+- Dinner:
+- Snacks:
 
-### Weekend
-- **Saturday:** 
-- **Sunday:** 
+Weekend
+- Saturday:
+- Sunday:
 
-## Prep Tasks
-- [ ] 
-- [ ] 
-- [ ] 
+Prep Tasks
+- [ ]
+- [ ]
+- [ ]
 `,
     type: 'note',
     category: 'Personal',
@@ -286,47 +286,47 @@ export const TEMPLATES: Template[] = [
     id: 'travel-itinerary',
     title: 'Travel Itinerary',
     description: 'Trip planning with dates and locations',
-    content: `# Travel Itinerary
+    content: `Travel Itinerary
 
-## Trip Details
-**Destination:** 
-**Dates:** 
-**Travelers:** 
-**Budget:** 
+Trip Details
+Destination:
+Dates:
+Travelers:
+Budget:
 
-## Transportation
-- **Flights:** 
-- **Local Transport:** 
-- **Car Rental:** 
+Transportation
+- Flights:
+- Local Transport:
+- Car Rental:
 
-## Accommodation
-- **Hotel/Airbnb:** 
-- **Address:** 
-- **Check-in:** 
-- **Check-out:** 
+Accommodation
+- Hotel/Airbnb:
+- Address:
+- Check-in:
+- Check-out:
 
-## Daily Itinerary
+Daily Itinerary
 
-### Day 1
-- **Morning:** 
-- **Afternoon:** 
-- **Evening:** 
+Day 1
+- Morning:
+- Afternoon:
+- Evening:
 
-### Day 2
-- **Morning:** 
-- **Afternoon:** 
-- **Evening:** 
+Day 2
+- Morning:
+- Afternoon:
+- Evening:
 
-## Important Information
-- **Emergency Contacts:** 
-- **Insurance:** 
-- **Documents:** 
-- **Weather:** 
+Important Information
+- Emergency Contacts:
+- Insurance:
+- Documents:
+- Weather:
 
-## Packing Checklist
-- [ ] 
-- [ ] 
-- [ ] 
+Packing Checklist
+- [ ]
+- [ ]
+- [ ]
 `,
     type: 'note',
     category: 'Personal',
@@ -337,14 +337,14 @@ export const TEMPLATES: Template[] = [
     id: 'packing-checklist',
     title: 'Packing Checklist',
     description: 'Travel packing organizer',
-    content: `# Packing Checklist
+    content: `Packing Checklist
 
-## Trip: 
-**Duration:** 
-**Weather:** 
-**Activities:** 
+Trip:
+Duration:
+Weather:
+Activities:
 
-## Clothing
+Clothing
 - [ ] Underwear (${''} days)
 - [ ] Socks (${''} pairs)
 - [ ] T-shirts/Tops
@@ -354,7 +354,7 @@ export const TEMPLATES: Template[] = [
 - [ ] Shoes
 - [ ] Accessories
 
-## Toiletries
+Toiletries
 - [ ] Toothbrush & Toothpaste
 - [ ] Shampoo & Conditioner
 - [ ] Body wash/Soap
@@ -363,24 +363,24 @@ export const TEMPLATES: Template[] = [
 - [ ] Medications
 - [ ] Sunscreen
 
-## Electronics
+Electronics
 - [ ] Phone & Charger
 - [ ] Camera & Charger
 - [ ] Laptop/Tablet
 - [ ] Power bank
 - [ ] Adapters
 
-## Documents
+Documents
 - [ ] Passport/ID
 - [ ] Tickets
 - [ ] Hotel confirmations
 - [ ] Insurance papers
 - [ ] Emergency contacts
 
-## Miscellaneous
-- [ ] 
-- [ ] 
-- [ ] 
+Miscellaneous
+- [ ]
+- [ ]
+- [ ]
 `,
     type: 'list',
     category: 'Personal',
@@ -391,41 +391,41 @@ export const TEMPLATES: Template[] = [
     id: 'gift-ideas',
     title: 'Gift Ideas',
     description: 'Holiday and birthday gift tracker',
-    content: `# Gift Ideas
+    content: `Gift Ideas
 
-## Upcoming Occasions
-- **${new Date().getFullYear()} Birthdays:**
-- **Holidays:**
-- **Anniversaries:**
+Upcoming Occasions
+- ${new Date().getFullYear()} Birthdays:
+- Holidays:
+- Anniversaries:
 
-## Gift Ideas by Person
+Gift Ideas by Person
 
-### [Person Name]
-**Occasion:** 
-**Budget:** 
-**Ideas:**
-- 
-- 
-- 
-**Notes:** 
+[Person Name]
+Occasion:
+Budget:
+Ideas:
+-
+-
+-
+Notes:
 
-### [Person Name]
-**Occasion:** 
-**Budget:** 
-**Ideas:**
-- 
-- 
-- 
-**Notes:** 
+[Person Name]
+Occasion:
+Budget:
+Ideas:
+-
+-
+-
+Notes:
 
-## Shopping List
+Shopping List
 - [ ] [Person] - [Gift] - $
 - [ ] [Person] - [Gift] - $
 - [ ] [Person] - [Gift] - $
 
-## Total Budget: $
-**Spent:** $
-**Remaining:** $
+Total Budget: $
+Spent: $
+Remaining: $
 `,
     type: 'note',
     category: 'Personal',
@@ -438,48 +438,48 @@ export const TEMPLATES: Template[] = [
     id: 'workout-log',
     title: 'Workout Log',
     description: 'Exercise tracking and progress',
-    content: `# Workout Log
+    content: `Workout Log
 
-## Date: ${new Date().toLocaleDateString()}
-**Workout Type:** 
-**Duration:** 
-**Location:** 
+Date: ${new Date().toLocaleDateString()}
+Workout Type:
+Duration:
+Location:
 
-## Warm-up (5-10 min)
-- 
-- 
+Warm-up (5-10 min)
+-
+-
 
-## Main Workout
+Main Workout
 
-### Exercise 1: 
-- Set 1: 
-- Set 2: 
-- Set 3: 
+Exercise 1:
+- Set 1:
+- Set 2:
+- Set 3:
 
-### Exercise 2: 
-- Set 1: 
-- Set 2: 
-- Set 3: 
+Exercise 2:
+- Set 1:
+- Set 2:
+- Set 3:
 
-### Exercise 3: 
-- Set 1: 
-- Set 2: 
-- Set 3: 
+Exercise 3:
+- Set 1:
+- Set 2:
+- Set 3:
 
-## Cool-down (5-10 min)
-- 
-- 
+Cool-down (5-10 min)
+-
+-
 
-## Notes
-- **Energy Level:** /10
-- **Difficulty:** /10
-- **How I felt:** 
-- **Next time:** 
+Notes
+- Energy Level: /10
+- Difficulty: /10
+- How I felt:
+- Next time:
 
-## Progress Tracking
-- **Weight:** 
-- **Body Fat %:** 
-- **Measurements:** 
+Progress Tracking
+- Weight:
+- Body Fat %:
+- Measurements:
 `,
     type: 'note',
     category: 'Health',
@@ -490,42 +490,42 @@ export const TEMPLATES: Template[] = [
     id: 'habit-tracker',
     title: 'Habit Tracker',
     description: 'Daily habit monitoring',
-    content: `# Habit Tracker - ${new Date().toLocaleDateString()}
+    content: `Habit Tracker - ${new Date().toLocaleDateString()}
 
-## Daily Habits
+Daily Habits
 
-### Health & Wellness
+Health & Wellness
 - [ ] Drink 8 glasses of water
 - [ ] Exercise (30+ min)
 - [ ] Take vitamins
 - [ ] Get 7+ hours sleep
 - [ ] Meditate (10+ min)
 
-### Productivity
+Productivity
 - [ ] Review daily goals
 - [ ] Complete priority tasks
 - [ ] Limit social media (< 1hr)
 - [ ] Read (30+ min)
 - [ ] Plan tomorrow
 
-### Personal
+Personal
 - [ ] Connect with family/friends
 - [ ] Practice gratitude
 - [ ] Learn something new
 - [ ] Tidy living space
 - [ ] Prepare healthy meals
 
-## Weekly Goals
-- [ ] 
-- [ ] 
-- [ ] 
+Weekly Goals
+- [ ]
+- [ ]
+- [ ]
 
-## Reflection
-**What went well today:** 
+Reflection
+What went well today:
 
-**What to improve:** 
+What to improve:
 
-**Tomorrow's focus:** 
+Tomorrow's focus:
 `,
     type: 'todo',
     category: 'Health',
@@ -536,25 +536,25 @@ export const TEMPLATES: Template[] = [
     id: 'mood-journal',
     title: 'Mood Journal',
     description: 'Daily mood and reflection tracking',
-    content: `# Mood Journal - ${new Date().toLocaleDateString()}
+    content: `Mood Journal - ${new Date().toLocaleDateString()}
 
-## Today's Mood
-**Overall mood:** 😊 😐 😔 (circle one)
-**Energy level:** ⚡⚡⚡⚡⚡ (1-5)
-**Stress level:** 📈📈📈📈📈 (1-5)
+Today's Mood
+Overall mood: 😊 😐 😔 (circle one)
+Energy level: ⚡⚡⚡⚡⚡ (1-5)
+Stress level: 📈📈📈📈📈 (1-5)
 
-## What happened today?
-### Positive moments:
-- 
-- 
-- 
+What happened today?
+Positive moments:
+-
+-
+-
 
-### Challenges:
-- 
-- 
-- 
+Challenges:
+-
+-
+-
 
-## Emotions I felt:
+Emotions I felt:
 - [ ] Happy
 - [ ] Grateful
 - [ ] Excited
@@ -566,25 +566,25 @@ export const TEMPLATES: Template[] = [
 - [ ] Overwhelmed
 - [ ] Content
 
-## What triggered strong emotions?
-**Positive triggers:** 
+What triggered strong emotions?
+Positive triggers:
 
-**Negative triggers:** 
+Negative triggers:
 
-## Self-care activities:
-- [ ] 
-- [ ] 
-- [ ] 
+Self-care activities:
+- [ ]
+- [ ]
+- [ ]
 
-## Tomorrow I want to:
-- 
-- 
-- 
+Tomorrow I want to:
+-
+-
+-
 
-## Gratitude (3 things):
-1. 
-2. 
-3. 
+Gratitude (3 things):
+1.
+2.
+3.
 `,
     type: 'note',
     category: 'Health',
@@ -595,12 +595,12 @@ export const TEMPLATES: Template[] = [
     id: 'water-intake',
     title: 'Water Intake Tracker',
     description: 'Daily hydration monitoring',
-    content: `# Water Intake Tracker
+    content: `Water Intake Tracker
 
-## Date: ${new Date().toLocaleDateString()}
-**Goal:** 8 glasses (64 oz / 2L)
+Date: ${new Date().toLocaleDateString()}
+Goal: 8 glasses (64 oz / 2L)
 
-## Tracking
+Tracking
 - [ ] Glass 1 (8 oz) - Time: ____
 - [ ] Glass 2 (8 oz) - Time: ____
 - [ ] Glass 3 (8 oz) - Time: ____
@@ -610,20 +610,20 @@ export const TEMPLATES: Template[] = [
 - [ ] Glass 7 (8 oz) - Time: ____
 - [ ] Glass 8 (8 oz) - Time: ____
 
-## Additional Fluids
+Additional Fluids
 - [ ] Coffee: ____ cups
 - [ ] Tea: ____ cups
 - [ ] Other: ____
 
-## Total Intake: _____ oz
-**Goal achieved:** Yes / No
+Total Intake: _____ oz
+Goal achieved: Yes / No
 
-## Notes
-- **Urine color:** Light/Dark (hydration indicator)
-- **Energy level:** High/Medium/Low
-- **How I feel:** 
+Notes
+- Urine color: Light/Dark (hydration indicator)
+- Energy level: High/Medium/Low
+- How I feel:
 
-## Reminders for tomorrow:
+Reminders for tomorrow:
 - Set water bottle reminders
 - Keep water visible
 - Drink before meals
@@ -637,48 +637,48 @@ export const TEMPLATES: Template[] = [
     id: 'sleep-log',
     title: 'Sleep Log',
     description: 'Sleep quality and pattern tracking',
-    content: `# Sleep Log - ${new Date().toLocaleDateString()}
+    content: `Sleep Log - ${new Date().toLocaleDateString()}
 
-## Sleep Schedule
-**Bedtime:** 
-**Wake time:** 
-**Total sleep:** _____ hours _____ minutes
+Sleep Schedule
+Bedtime:
+Wake time:
+Total sleep: _____ hours _____ minutes
 
-## Sleep Quality
-**Overall quality:** ⭐⭐⭐⭐⭐ (1-5 stars)
-**Time to fall asleep:** _____ minutes
-**Number of wake-ups:** _____
-**Morning alertness:** ⚡⚡⚡⚡⚡ (1-5)
+Sleep Quality
+Overall quality: ⭐⭐⭐⭐⭐ (1-5 stars)
+Time to fall asleep: _____ minutes
+Number of wake-ups: _____
+Morning alertness: ⚡⚡⚡⚡⚡ (1-5)
 
-## Pre-sleep Activities (2 hours before bed)
+Pre-sleep Activities (2 hours before bed)
 - [ ] No screens
 - [ ] No caffeine
 - [ ] No large meals
 - [ ] Relaxing activity
 - [ ] Room preparation (cool, dark, quiet)
 
-## Sleep Environment
-- **Room temperature:** ___°F
-- **Noise level:** Quiet/Moderate/Loud
-- **Light level:** Dark/Dim/Bright
-- **Comfort:** Comfortable/Okay/Uncomfortable
+Sleep Environment
+- Room temperature: ___°F
+- Noise level: Quiet/Moderate/Loud
+- Light level: Dark/Dim/Bright
+- Comfort: Comfortable/Okay/Uncomfortable
 
-## Factors Affecting Sleep
-### Positive factors:
-- 
-- 
+Factors Affecting Sleep
+Positive factors:
+-
+-
 
-### Negative factors:
-- 
-- 
+Negative factors:
+-
+-
 
-## Dreams/Notes
-- 
+Dreams/Notes
+-
 
-## Tomorrow's Sleep Goal
-**Target bedtime:** 
-**Target wake time:** 
-**Improvements to make:** 
+Tomorrow's Sleep Goal
+Target bedtime:
+Target wake time:
+Improvements to make:
 `,
     type: 'note',
     category: 'Health',
@@ -691,59 +691,59 @@ export const TEMPLATES: Template[] = [
     id: 'book-notes',
     title: 'Book Notes',
     description: 'Reading notes and key takeaways',
-    content: `# Book Notes
+    content: `Book Notes
 
-## Book Information
-**Title:** 
-**Author:** 
-**Genre:** 
-**Pages:** 
-**Started:** 
-**Finished:** 
+Book Information
+Title:
+Author:
+Genre:
+Pages:
+Started:
+Finished:
 
-## Rating: ⭐⭐⭐⭐⭐ (1-5 stars)
+Rating: ⭐⭐⭐⭐⭐ (1-5 stars)
 
-## Key Takeaways
-1. 
-2. 
-3. 
-4. 
-5. 
+Key Takeaways
+1.
+2.
+3.
+4.
+5.
 
-## Favorite Quotes
-> "Quote 1"
+Favorite Quotes
+"Quote 1"
 - Page: ___
 
-> "Quote 2"
+"Quote 2"
 - Page: ___
 
-> "Quote 3"
+"Quote 3"
 - Page: ___
 
-## Chapter Notes
+Chapter Notes
 
-### Chapter 1: 
-**Main points:**
-- 
-- 
+Chapter 1:
+Main points:
+-
+-
 
-### Chapter 2: 
-**Main points:**
-- 
-- 
+Chapter 2:
+Main points:
+-
+-
 
-## Action Items
-- [ ] 
-- [ ] 
-- [ ] 
+Action Items
+- [ ]
+- [ ]
+- [ ]
 
-## Would I recommend this book?
-**Yes/No** - Why?
+Would I recommend this book?
+Yes/No - Why?
 
-## Related books to read:
-- 
-- 
-- 
+Related books to read:
+-
+-
+-
 `,
     type: 'note',
     category: 'Learning',
@@ -754,62 +754,58 @@ export const TEMPLATES: Template[] = [
     id: 'course-notes',
     title: 'Course Notes',
     description: 'Learning material organization',
-    content: `# Course Notes
+    content: `Course Notes
 
-## Course Information
-**Course:** 
-**Instructor:** 
-**Platform:** 
-**Duration:** 
-**Started:** 
+Course Information
+Course:
+Instructor:
+Platform:
+Duration:
+Started:
 
-## Learning Objectives
-- 
-- 
-- 
+Learning Objectives
+-
+-
+-
 
-## Module/Lesson Notes
+Module/Lesson Notes
 
-### Module 1: 
-**Key concepts:**
-- 
-- 
-- 
+Module 1:
+Key concepts:
+-
+-
+-
 
-**Important formulas/code:**
-\`\`\`
+Important formulas/code:
 // Code or formulas here
-\`\`\`
 
-**Questions:**
-- 
-- 
+Questions:
+-
+-
 
-### Module 2: 
-**Key concepts:**
-- 
-- 
-- 
+Module 2:
+Key concepts:
+-
+-
+-
 
-**Important formulas/code:**
-\`\`\`
+Important formulas/code:
 // Code or formulas here
-\`\`\`
 
-## Assignments/Projects
-- [ ] Assignment 1: 
-- [ ] Assignment 2: 
-- [ ] Final Project: 
+Assignments/Projects
+- [ ] Assignment 1:
+- [ ] Assignment 2:
+- [ ] Final Project:
 
-## Resources
-- 
-- 
-- 
+Resources
+-
+-
+-
 
-## Progress Tracking
-**Completion:** ____%
-**Next milestone:** 
-**Target completion:** 
+Progress Tracking
+Completion: ____%
+Next milestone:
+Target completion:
 `,
     type: 'note',
     category: 'Learning',
@@ -820,59 +816,59 @@ export const TEMPLATES: Template[] = [
     id: 'language-learning',
     title: 'Language Learning',
     description: 'Vocabulary and phrases practice',
-    content: `# Language Learning - [Language]
+    content: `Language Learning - [Language]
 
-## Today's Date: ${new Date().toLocaleDateString()}
-**Lesson/Topic:** 
-**Study time:** _____ minutes
+Today's Date: ${new Date().toLocaleDateString()}
+Lesson/Topic:
+Study time: _____ minutes
 
-## New Vocabulary
+New Vocabulary
 
-| Word/Phrase | Translation | Example Sentence |
-|-------------|-------------|------------------|
-|             |             |                  |
-|             |             |                  |
-|             |             |                  |
-|             |             |                  |
-|             |             |                  |
+Word/Phrase | Translation | Example Sentence
+------------|-------------|------------------
+            |             |
+            |             |
+            |             |
+            |             |
+            |             |
 
-## Grammar Focus
-**Today's grammar rule:** 
+Grammar Focus
+Today's grammar rule:
 
-**Examples:**
-- 
-- 
-- 
+Examples:
+-
+-
+-
 
-## Practice Exercises
+Practice Exercises
 - [ ] Vocabulary flashcards (15 min)
 - [ ] Grammar exercises
 - [ ] Listening practice
 - [ ] Speaking practice
 - [ ] Writing practice
 
-## Conversation Practice
-**New phrases learned:**
-- 
-- 
-- 
+Conversation Practice
+New phrases learned:
+-
+-
+-
 
-**Practice conversations:**
-- 
-- 
+Practice conversations:
+-
+-
 
-## Review
-**Words to review tomorrow:**
-- 
-- 
-- 
+Review
+Words to review tomorrow:
+-
+-
+-
 
-**Difficulty level today:** Easy/Medium/Hard
-**Confidence level:** ⭐⭐⭐⭐⭐ (1-5)
+Difficulty level today: Easy/Medium/Hard
+Confidence level: ⭐⭐⭐⭐⭐ (1-5)
 
-## Goals for next session:
-- 
-- 
+Goals for next session:
+-
+-
 `,
     type: 'note',
     category: 'Learning',
@@ -883,68 +879,68 @@ export const TEMPLATES: Template[] = [
     id: 'skill-development',
     title: 'Skill Development',
     description: 'Track progress learning new skills',
-    content: `# Skill Development Tracker
+    content: `Skill Development Tracker
 
-## Skill: 
-**Start date:** 
-**Target proficiency date:** 
-**Current level:** Beginner/Intermediate/Advanced
+Skill:
+Start date:
+Target proficiency date:
+Current level: Beginner/Intermediate/Advanced
 
-## Learning Plan
-**Goal:** 
+Learning Plan
+Goal:
 
-**Resources:**
-- 
-- 
-- 
+Resources:
+-
+-
+-
 
-**Practice schedule:** 
-- **Daily:** _____ minutes
-- **Weekly goals:** 
-- **Monthly milestones:** 
+Practice schedule:
+- Daily: _____ minutes
+- Weekly goals:
+- Monthly milestones:
 
-## Progress Log
+Progress Log
 
-### Week 1
-**Focus:** 
-**Time spent:** _____ hours
-**Achievements:**
-- 
-- 
-**Challenges:**
-- 
-- 
+Week 1
+Focus:
+Time spent: _____ hours
+Achievements:
+-
+-
+Challenges:
+-
+-
 
-### Week 2
-**Focus:** 
-**Time spent:** _____ hours
-**Achievements:**
-- 
-- 
-**Challenges:**
-- 
-- 
+Week 2
+Focus:
+Time spent: _____ hours
+Achievements:
+-
+-
+Challenges:
+-
+-
 
-## Skills Assessment
-**What I can do now:**
-- 
-- 
-- 
+Skills Assessment
+What I can do now:
+-
+-
+-
 
-**What I need to work on:**
-- 
-- 
-- 
+What I need to work on:
+-
+-
+-
 
-## Next Steps
-- [ ] 
-- [ ] 
-- [ ] 
+Next Steps
+- [ ]
+- [ ]
+- [ ]
 
-## Reflection
-**Most effective learning method:** 
-**Biggest breakthrough:** 
-**Areas for improvement:** 
+Reflection
+Most effective learning method:
+Biggest breakthrough:
+Areas for improvement:
 `,
     type: 'note',
     category: 'Learning',
@@ -957,49 +953,49 @@ export const TEMPLATES: Template[] = [
     id: 'monthly-budget',
     title: 'Monthly Budget',
     description: 'Income and expense planning',
-    content: `# Monthly Budget - ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+    content: `Monthly Budget - ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
 
-## Income
-- **Salary:** $
-- **Side income:** $
-- **Other:** $
-- **Total Income:** $
+Income
+- Salary: $
+- Side income: $
+- Other: $
+- Total Income: $
 
-## Fixed Expenses
-- **Rent/Mortgage:** $
-- **Insurance:** $
-- **Phone:** $
-- **Internet:** $
-- **Subscriptions:** $
-- **Loan payments:** $
-- **Total Fixed:** $
+Fixed Expenses
+- Rent/Mortgage: $
+- Insurance: $
+- Phone: $
+- Internet: $
+- Subscriptions: $
+- Loan payments: $
+- Total Fixed: $
 
-## Variable Expenses
-- **Groceries:** $ (Budget: $)
-- **Transportation:** $ (Budget: $)
-- **Utilities:** $ (Budget: $)
-- **Entertainment:** $ (Budget: $)
-- **Dining out:** $ (Budget: $)
-- **Shopping:** $ (Budget: $)
-- **Total Variable:** $
+Variable Expenses
+- Groceries: $ (Budget: $)
+- Transportation: $ (Budget: $)
+- Utilities: $ (Budget: $)
+- Entertainment: $ (Budget: $)
+- Dining out: $ (Budget: $)
+- Shopping: $ (Budget: $)
+- Total Variable: $
 
-## Savings & Investments
-- **Emergency fund:** $
-- **Retirement:** $
-- **Investments:** $
-- **Other savings:** $
-- **Total Savings:** $
+Savings & Investments
+- Emergency fund: $
+- Retirement: $
+- Investments: $
+- Other savings: $
+- Total Savings: $
 
-## Summary
-- **Total Income:** $
-- **Total Expenses:** $
-- **Total Savings:** $
-- **Remaining:** $
+Summary
+- Total Income: $
+- Total Expenses: $
+- Total Savings: $
+- Remaining: $
 
-## Financial Goals
-- [ ] 
-- [ ] 
-- [ ] 
+Financial Goals
+- [ ]
+- [ ]
+- [ ]
 `,
     type: 'money',
     category: 'Financial',
@@ -1010,49 +1006,49 @@ export const TEMPLATES: Template[] = [
     id: 'expense-tracker',
     title: 'Daily Expense Tracker',
     description: 'Track daily spending',
-    content: `# Daily Expense Tracker - ${new Date().toLocaleDateString()}
+    content: `Daily Expense Tracker - ${new Date().toLocaleDateString()}
 
-## Today's Expenses
+Today's Expenses
 
-| Time | Category | Description | Amount |
-|------|----------|-------------|--------|
-|      |          |             | $      |
-|      |          |             | $      |
-|      |          |             | $      |
-|      |          |             | $      |
-|      |          |             | $      |
+Time | Category | Description | Amount
+-----|----------|-------------|--------
+     |          |             | $
+     |          |             | $
+     |          |             | $
+     |          |             | $
+     |          |             | $
 
-## Category Totals
-- **Food & Dining:** $
-- **Transportation:** $
-- **Shopping:** $
-- **Entertainment:** $
-- **Bills & Utilities:** $
-- **Healthcare:** $
-- **Other:** $
+Category Totals
+- Food & Dining: $
+- Transportation: $
+- Shopping: $
+- Entertainment: $
+- Bills & Utilities: $
+- Healthcare: $
+- Other: $
 
-## Daily Total: $
+Daily Total: $
 
-## Payment Methods
-- **Cash:** $
-- **Credit Card:** $
-- **Debit Card:** $
-- **Digital Payment:** $
+Payment Methods
+- Cash: $
+- Credit Card: $
+- Debit Card: $
+- Digital Payment: $
 
-## Budget Check
-- **Daily budget:** $
-- **Spent today:** $
-- **Remaining:** $
-- **Status:** Under/Over budget
+Budget Check
+- Daily budget: $
+- Spent today: $
+- Remaining: $
+- Status: Under/Over budget
 
-## Notes
-- **Largest expense:** 
-- **Unnecessary purchases:** 
-- **Money-saving opportunities:** 
+Notes
+- Largest expense:
+- Unnecessary purchases:
+- Money-saving opportunities:
 
-## Tomorrow's Spending Plan
-- **Planned expenses:** $
-- **Budget limit:** $
+Tomorrow's Spending Plan
+- Planned expenses: $
+- Budget limit: $
 `,
     type: 'money',
     category: 'Financial',
@@ -1063,64 +1059,64 @@ export const TEMPLATES: Template[] = [
     id: 'savings-goals',
     title: 'Savings Goals',
     description: 'Track financial savings objectives',
-    content: `# Savings Goals Tracker
+    content: `Savings Goals Tracker
 
-## Goal 1: 
-**Target amount:** $
-**Current saved:** $
-**Remaining:** $
-**Target date:** 
-**Monthly contribution:** $
-**Progress:** ____%
+Goal 1:
+Target amount: $
+Current saved: $
+Remaining: $
+Target date:
+Monthly contribution: $
+Progress: ____%
 
-### Progress Bar
+Progress Bar
 [████████████████████████████████████████] 100%
 
-## Goal 2: 
-**Target amount:** $
-**Current saved:** $
-**Remaining:** $
-**Target date:** 
-**Monthly contribution:** $
-**Progress:** ____%
+Goal 2:
+Target amount: $
+Current saved: $
+Remaining: $
+Target date:
+Monthly contribution: $
+Progress: ____%
 
-### Progress Bar
+Progress Bar
 [████████████████████████████████████████] 100%
 
-## Goal 3: 
-**Target amount:** $
-**Current saved:** $
-**Remaining:** $
-**Target date:** 
-**Monthly contribution:** $
-**Progress:** ____%
+Goal 3:
+Target amount: $
+Current saved: $
+Remaining: $
+Target date:
+Monthly contribution: $
+Progress: ____%
 
-### Progress Bar
+Progress Bar
 [████████████████████████████████████████] 100%
 
-## Savings Strategy
-**Primary savings account:** 
-**High-yield savings:** 
-**Investment accounts:** 
-**Automatic transfers:** $___/month
+Savings Strategy
+Primary savings account:
+High-yield savings:
+Investment accounts:
+Automatic transfers: $___/month
 
-## Monthly Review
-**Total saved this month:** $
-**Best performing goal:** 
-**Challenges:** 
-**Adjustments needed:** 
+Monthly Review
+Total saved this month: $
+Best performing goal:
+Challenges:
+Adjustments needed:
 
-## Motivation
-**Why these goals matter:**
-- 
-- 
-- 
+Motivation
+Why these goals matter:
+-
+-
+-
 
-**Rewards for milestones:**
-- 25%: 
-- 50%: 
-- 75%: 
-- 100%: 
+Rewards for milestones:
+- 25%:
+- 50%:
+- 75%:
+- 100%:
 `,
     type: 'money',
     category: 'Financial',
@@ -1133,35 +1129,35 @@ export const TEMPLATES: Template[] = [
     id: 'quick-notes',
     title: 'Quick Notes',
     description: 'Rapid idea capture',
-    content: `# Quick Notes - ${new Date().toLocaleDateString()}
+    content: `Quick Notes - ${new Date().toLocaleDateString()}
 
-## Ideas
-- 
-- 
-- 
+Ideas
+-
+-
+-
 
-## To Remember
-- 
-- 
-- 
+To Remember
+-
+-
+-
 
-## Follow Up
-- [ ] 
-- [ ] 
-- [ ] 
+Follow Up
+- [ ]
+- [ ]
+- [ ]
 
-## Random Thoughts
-- 
-- 
-- 
+Random Thoughts
+-
+-
+-
 
-## Links to Check
-- 
-- 
-- 
+Links to Check
+-
+-
+-
 
 ---
-*Created: ${new Date().toLocaleString()}*
+Created: ${new Date().toLocaleString()}
 `,
     type: 'note',
     category: 'Quick Capture',
@@ -1172,44 +1168,44 @@ export const TEMPLATES: Template[] = [
     id: 'link-collection',
     title: 'Link Collection',
     description: 'Organize useful URLs and bookmarks',
-    content: `# Link Collection
+    content: `Link Collection
 
-## Work/Professional
-- [Title](URL) - Description
-- [Title](URL) - Description
-- [Title](URL) - Description
-
-## Learning Resources
+Work/Professional
 - [Title](URL) - Description
 - [Title](URL) - Description
 - [Title](URL) - Description
 
-## Tools & Apps
+Learning Resources
 - [Title](URL) - Description
 - [Title](URL) - Description
 - [Title](URL) - Description
 
-## Entertainment
+Tools & Apps
 - [Title](URL) - Description
 - [Title](URL) - Description
 - [Title](URL) - Description
 
-## Shopping
+Entertainment
 - [Title](URL) - Description
 - [Title](URL) - Description
 - [Title](URL) - Description
 
-## To Read Later
+Shopping
+- [Title](URL) - Description
+- [Title](URL) - Description
+- [Title](URL) - Description
+
+To Read Later
 - [ ] [Title](URL) - Priority: High/Medium/Low
 - [ ] [Title](URL) - Priority: High/Medium/Low
 - [ ] [Title](URL) - Priority: High/Medium/Low
 
-## Archive (Completed/No longer needed)
-- ~~[Title](URL)~~ - Completed
-- ~~[Title](URL)~~ - No longer relevant
+Archive (Completed/No longer needed)
+- [Title](URL) - Completed
+- [Title](URL) - No longer relevant
 
 ---
-*Last updated: ${new Date().toLocaleString()}*
+Last updated: ${new Date().toLocaleString()}
 `,
     type: 'list',
     category: 'Quick Capture',

@@ -4,6 +4,8 @@ import { useState, useEffect, useRef, use } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useSyncStatus } from '@/components/SyncStatusProvider';
+import SyncStatus from '@/components/SyncStatus';
 import { motion } from 'framer-motion';
 import { doc, onSnapshot, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -18,11 +20,15 @@ export default function NoteEditor({ params }: NoteEditorProps) {
   // Unwrap the params Promise using React.use()
   const { id } = use(params);
   
+  // All hooks must be called unconditionally at the top level
   const { user, loading } = useAuth();
+  const { syncStatus } = useSyncStatus();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const templateId = searchParams.get('template');
+  const titleRef = useRef<HTMLInputElement>(null);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
   
+  // State hooks
   const [note, setNote] = useState<Partial<Note>>({
     id: id,
     title: '',
@@ -37,16 +43,24 @@ export default function NoteEditor({ params }: NoteEditorProps) {
   
   const [isLoading, setIsLoading] = useState(true);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const titleRef = useRef<HTMLInputElement>(null);
-  const contentRef = useRef<HTMLTextAreaElement>(null);
-
-  // Auto-save functionality
+  
+  // Derived values
+  const templateId = searchParams.get('template');
+  
+  // Auto-save functionality - always call this hook
   const { saveImmediately, isOnline, hasUnsyncedChanges } = useAutosave({
     id: id,
     collection: 'notes',
     data: note,
-    enabled: !!user
+    enabled: !!user && !loading // Enable only when user is authenticated and not loading
   });
+
+  // Effect for authentication redirect - must be called unconditionally
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
 
   // Load note from Firestore or apply template
   useEffect(() => {
@@ -94,6 +108,8 @@ export default function NoteEditor({ params }: NoteEditorProps) {
 
   // Update last saved timestamp
   useEffect(() => {
+    if (!user) return;
+    
     const interval = setInterval(() => {
       if (isOnline && !hasUnsyncedChanges()) {
         setLastSaved(new Date());
@@ -101,7 +117,7 @@ export default function NoteEditor({ params }: NoteEditorProps) {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isOnline, hasUnsyncedChanges]);
+  }, [user, isOnline, hasUnsyncedChanges]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
@@ -138,6 +154,7 @@ export default function NoteEditor({ params }: NoteEditorProps) {
     router.push('/dashboard');
   };
 
+  // Early returns after all hooks have been called
   if (loading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -151,99 +168,72 @@ export default function NoteEditor({ params }: NoteEditorProps) {
   }
 
   if (!user) {
-    router.push('/login');
     return null;
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={goBack}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                title="Go back to dashboard"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <div className="flex items-center space-x-2">
-                <span className="text-xl">📝</span>
-                <span className="text-lg font-medium text-gray-900">
-                  {note.title || 'Untitled Note'}
-                </span>
-              </div>
+      {/* Editor */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Note Actions Bar */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={goBack}
+              className="p-2 hover:bg-white hover:shadow-sm rounded-lg transition-all"
+              title="Go back to dashboard"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <div className="flex items-center space-x-2">
+              <span className="text-xl">📝</span>
+              <span className="text-lg font-medium text-gray-900">
+                {note.title || 'Untitled Note'}
+              </span>
             </div>
+          </div>
 
-            <div className="flex items-center space-x-4">
-              {/* Status indicators */}
-              <div className="flex items-center space-x-2 text-sm text-gray-500">
-                {!isOnline && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full"
-                  >
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full mr-1"></div>
-                    Offline
-                  </motion.div>
-                )}
-                
-                {hasUnsyncedChanges() && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded-full"
-                  >
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-1 animate-pulse"></div>
-                    Saving...
-                  </motion.div>
-                )}
+          {/* Sync Status and Action buttons */}
+          <div className="flex items-center space-x-3">
+            {/* Enhanced Sync Status - positioned left of pinned icon */}
+            <SyncStatus
+              isOnline={syncStatus.isOnline}
+              isSyncing={syncStatus.isSyncing}
+              lastSyncTime={syncStatus.lastSyncTime}
+              hasUnsyncedChanges={syncStatus.hasUnsyncedChanges}
+              className="mr-1"
+            />
 
-                {lastSaved && isOnline && !hasUnsyncedChanges() && (
-                  <span className="text-green-600">
-                    Saved {lastSaved.toLocaleTimeString()}
-                  </span>
-                )}
-              </div>
-
-              {/* Action buttons */}
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={togglePin}
-                  className={`p-2 rounded-lg transition-colors ${
-                    note.isPinned 
-                      ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200' 
-                      : 'hover:bg-gray-100 text-gray-600'
-                  }`}
-                  title={note.isPinned ? 'Unpin note' : 'Pin note'}
-                >
-                  📌
-                </button>
-                
-                <button
-                  onClick={toggleArchive}
-                  className={`p-2 rounded-lg transition-colors ${
-                    note.isArchived 
-                      ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' 
-                      : 'hover:bg-gray-100 text-gray-600'
-                  }`}
-                  title={note.isArchived ? 'Unarchive note' : 'Archive note'}
-                >
-                  📦
-                </button>
-              </div>
+            {/* Action buttons */}
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={togglePin}
+                className={`p-2 rounded-lg transition-colors ${
+                  note.isPinned
+                    ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
+                    : 'hover:bg-gray-100 text-gray-600'
+                }`}
+                title={note.isPinned ? 'Unpin note' : 'Pin note'}
+              >
+                📌
+              </button>
+              
+              <button
+                onClick={toggleArchive}
+                className={`p-2 rounded-lg transition-colors ${
+                  note.isArchived
+                    ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'hover:bg-gray-100 text-gray-600'
+                }`}
+                title={note.isArchived ? 'Unarchive note' : 'Archive note'}
+              >
+                📦
+              </button>
             </div>
           </div>
         </div>
-      </header>
-
-      {/* Editor */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

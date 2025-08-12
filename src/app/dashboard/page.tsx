@@ -11,7 +11,7 @@ import { Note, MoneyTracker } from '@/types';
 import { formatCurrency, DEFAULT_CURRENCY } from '@/lib/currency';
 
 export default function DashboardPage() {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const [recentNotes, setRecentNotes] = useState<Note[]>([]);
   const [moneyTrackers, setMoneyTrackers] = useState<MoneyTracker[]>([]);
@@ -74,14 +74,6 @@ export default function DashboardPage() {
     };
   }, []);
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      router.push('/login');
-    } catch (error) {
-      console.error('Sign out error:', error);
-    }
-  };
 
   const createNewNote = () => {
     const noteId = `note_${Date.now()}`;
@@ -111,54 +103,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <span className="text-2xl">📝</span>
-              </div>
-              <div className="ml-4">
-                <h1 className="text-xl font-semibold text-gray-900">
-                  Personal Notes
-                </h1>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              {isOffline && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="flex items-center px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"
-                >
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
-                  Offline
-                </motion.div>
-              )}
-
-              <div className="flex items-center space-x-3">
-                <img
-                  className="h-8 w-8 rounded-full"
-                  src={user.photoURL || '/default-avatar.png'}
-                  alt={user.displayName || 'User'}
-                />
-                <span className="text-sm font-medium text-gray-700">
-                  {user.displayName}
-                </span>
-                <button
-                  onClick={handleSignOut}
-                  className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
-                >
-                  Sign out
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <motion.div

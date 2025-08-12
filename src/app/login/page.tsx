@@ -1,19 +1,43 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
 
 export default function LoginPage() {
-  const { user, loading, signIn, error } = useAuth();
+  const { user, loading, signIn, error, isNewUser, userFirstName, hasVisitedBefore, userDisplayName } = useAuth();
   const router = useRouter();
+  const [welcomeMessage, setWelcomeMessage] = useState('Welcome');
 
   useEffect(() => {
     if (user && !loading) {
       router.push('/dashboard');
     }
   }, [user, loading, router]);
+
+  // Update welcome message based on user state
+  useEffect(() => {
+    if (user && userDisplayName) {
+      // User is authenticated - use server-side detection
+      if (isNewUser) {
+        setWelcomeMessage('Welcome');
+      } else if (hasVisitedBefore) {
+        setWelcomeMessage(`Welcome back, ${userFirstName || userDisplayName.split(' ')[0]}`);
+      } else {
+        setWelcomeMessage('Welcome');
+      }
+    } else {
+      // User not authenticated - check localStorage for client-side indication
+      const hasVisited = localStorage.getItem('hasVisited');
+      if (hasVisited) {
+        setWelcomeMessage('Welcome Back');
+      } else {
+        setWelcomeMessage('Welcome');
+        localStorage.setItem('hasVisited', 'true');
+      }
+    }
+  }, [user, userDisplayName, userFirstName, isNewUser, hasVisitedBefore]);
 
   const handleSignIn = async () => {
     try {
@@ -25,11 +49,11 @@ export default function LoginPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"
+          className="w-12 h-12 border-4 border-white border-t-transparent rounded-full"
         />
       </div>
     );
@@ -40,50 +64,101 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
+    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 px-4 relative overflow-hidden">
+      {/* Optimized animated background elements */}
+      <div className="absolute inset-0">
+        <motion.div
+          animate={{
+            scale: [1, 1.1, 1],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute top-1/4 left-1/4 w-48 h-48 bg-gradient-to-r from-blue-400/15 to-purple-400/15 rounded-full blur-xl"
+        />
+        <motion.div
+          animate={{
+            scale: [1.1, 1, 1.1],
+            rotate: [360, 180, 0],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute bottom-1/4 right-1/4 w-56 h-56 bg-gradient-to-r from-pink-400/15 to-indigo-400/15 rounded-full blur-xl"
+        />
+      </div>
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="max-w-md w-full space-y-8"
+        className="max-w-md w-full space-y-6 relative z-10"
       >
+        {/* Header Section - Condensed */}
         <div className="text-center">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="mx-auto h-20 w-20 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-8"
+            className="mx-auto h-16 w-16 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-4 border border-white/20"
           >
-            <span className="text-3xl">📝</span>
+            <span className="text-2xl">📝</span>
           </motion.div>
           
           <motion.h1
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-4xl font-bold text-gray-900 mb-2"
+            className="text-3xl md:text-4xl font-bold text-white mb-2"
           >
-            Welcome Back
+            {welcomeMessage}
           </motion.h1>
           
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="text-lg text-gray-600 mb-8"
+            className="text-lg text-white/80 mb-4"
           >
             Your personal notes & money tracker
           </motion.p>
+
+          {/* Compact feature highlights */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="flex justify-center gap-6 mb-6"
+          >
+            <div className="text-center">
+              <div className="text-lg mb-1">⚡</div>
+              <p className="text-xs text-white/70">Real-time</p>
+            </div>
+            <div className="text-center">
+              <div className="text-lg mb-1">🔒</div>
+              <p className="text-xs text-white/70">Secure</p>
+            </div>
+            <div className="text-center">
+              <div className="text-lg mb-1">📱</div>
+              <p className="text-xs text-white/70">Offline</p>
+            </div>
+          </motion.div>
         </div>
 
+        {/* Login Section - Compact */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="bg-white rounded-2xl shadow-xl p-8 space-y-6"
+          transition={{ delay: 0.6 }}
+          className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl p-6 space-y-4 border border-white/20"
         >
           <div className="space-y-4">
-            <h2 className="text-2xl font-semibold text-gray-800 text-center">
+            <h2 className="text-xl font-semibold text-white text-center">
               Sign in to continue
             </h2>
             
@@ -91,7 +166,7 @@ export default function LoginPage() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"
+                className="bg-red-500/20 border border-red-400/30 text-red-100 px-3 py-2 rounded-lg text-sm backdrop-blur-sm"
               >
                 {error}
               </motion.div>
@@ -102,7 +177,7 @@ export default function LoginPage() {
               whileTap={{ scale: 0.98 }}
               onClick={handleSignIn}
               disabled={loading}
-              className="w-full flex items-center justify-center px-6 py-4 border border-gray-300 rounded-xl shadow-sm bg-white text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center px-6 py-3 bg-white text-gray-700 font-medium rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                 <path
@@ -127,20 +202,40 @@ export default function LoginPage() {
           </div>
 
           <div className="text-center">
-            <p className="text-sm text-gray-500">
+            <p className="text-xs text-white/70">
               Secure authentication powered by Google
             </p>
           </div>
         </motion.div>
 
+        {/* Compact additional features */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="text-center text-sm text-gray-500"
+          transition={{ delay: 0.7 }}
+          className="grid grid-cols-2 gap-3 text-center"
+        >
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
+            <div className="text-lg mb-1">📝</div>
+            <h3 className="text-white font-medium text-sm mb-1">Smart Notes</h3>
+            <p className="text-white/60 text-xs">25+ templates</p>
+          </div>
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
+            <div className="text-lg mb-1">💰</div>
+            <h3 className="text-white font-medium text-sm mb-1">Money Tracker</h3>
+            <p className="text-white/60 text-xs">Track expenses</p>
+          </div>
+        </motion.div>
+
+        {/* Compact terms */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="text-center text-xs text-white/60"
         >
           <p>
-            By signing in, you agree to our terms of service and privacy policy.
+            By signing in, you agree to our terms and privacy policy.
           </p>
         </motion.div>
       </motion.div>
