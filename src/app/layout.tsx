@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/hooks/useAuth";
+import { SyncStatusProvider } from "@/components/SyncStatusProvider";
+import GlobalNavbar from "@/components/GlobalNavbar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,7 +31,10 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className="font-sans antialiased bg-gray-50 text-gray-900 min-h-screen">
         <AuthProvider>
-          {children}
+          <SyncStatusProvider>
+            <GlobalNavbar />
+            {children}
+          </SyncStatusProvider>
         </AuthProvider>
       </body>
     </html>

@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useContext, createContext, ReactNode } from 'react';
-import { User, onAuthStateChanged, signInWithGoogle, signOutUser, createUserDocument, auth } from '@/lib/firebase';
+import { User, onAuthStateChanged, signInWithGoogle, signOutUser, createUserDocument, auth, isUserNew, getUserFirstName, hasUserVisitedBefore, getUserDisplayName } from '@/lib/firebase';
 
 interface AuthContextType {
   user: User | null;
@@ -10,6 +10,10 @@ interface AuthContextType {
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
   error: string | null;
+  isNewUser: boolean;
+  userFirstName: string;
+  hasVisitedBefore: boolean;
+  userDisplayName: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,16 +26,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isNewUser, setIsNewUser] = useState(false);
+  const [userFirstName, setUserFirstName] = useState('');
+  const [hasVisitedBefore, setHasVisitedBefore] = useState(false);
+  const [userDisplayName, setUserDisplayName] = useState('');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
       try {
         if (firebaseUser) {
           // Create or update user document in Firestore
-          await createUserDocument(firebaseUser);
+          const result = await createUserDocument(firebaseUser);
+          const visitedBefore = await hasUserVisitedBefore(firebaseUser);
+          
           setUser(firebaseUser);
+          setIsNewUser(result?.isNewUser || false);
+          setUserFirstName(getUserFirstName(firebaseUser));
+          setHasVisitedBefore(visitedBefore);
+          setUserDisplayName(getUserDisplayName(firebaseUser));
         } else {
           setUser(null);
+          setIsNewUser(false);
+          setUserFirstName('');
+          setHasVisitedBefore(false);
+          setUserDisplayName('');
         }
       } catch (err) {
         console.error('Error handling auth state change:', err);
@@ -75,7 +93,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     loading,
     signIn,
     signOut,
-    error
+    error,
+    isNewUser,
+    userFirstName,
+    hasVisitedBefore,
+    userDisplayName
   };
 
   return (
