@@ -20,7 +20,7 @@ function MoneyTrackerLoading() {
   );
 }
 
-// Main component wrapped in Suspense
+// Main component wrapped in Suspense ok
 function MoneyTrackerContent() {
   const { user, loading } = useAuth();
   const router = useRouter();
