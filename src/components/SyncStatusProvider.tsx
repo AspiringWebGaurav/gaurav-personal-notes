@@ -79,6 +79,7 @@ export function SyncStatusProvider({ children }: SyncStatusProviderProps) {
     });
   }, []);
 
+
   const setOnlineStatus = useCallback((isOnline: boolean) => {
     setSyncStatus(prev => ({
       ...prev,

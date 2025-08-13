@@ -55,13 +55,15 @@ export default function GlobalNavbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo and Brand */}
           <div className="flex items-center">
-            <motion.div
+            <motion.button
               whileHover={{ scale: 1.05 }}
-              className="flex-shrink-0 flex items-center"
+              whileTap={{ scale: 0.95 }}
+              onClick={() => router.push('/dashboard')}
+              className="flex-shrink-0 flex items-center cursor-pointer"
             >
               <span className="text-2xl mr-3">📝</span>
-              <span className="text-xl font-bold text-white">Personal Notes</span>
-            </motion.div>
+              <span className="text-xl font-bold text-white">Gaurav's Personal Notes(GPN)</span>
+            </motion.button>
           </div>
 
           {/* Desktop Navigation */}

@@ -72,6 +72,13 @@ const flushOfflineQueue = async (uid: string): Promise<void> => {
   
   for (const item of queue) {
     try {
+      // Validate that we have all required fields for a valid document reference
+      if (!item.collection || !item.id) {
+        console.warn('Skipping invalid queue item:', item);
+        successfulItems.push(item); // Remove invalid items from queue
+        continue;
+      }
+      
       const docRef = doc(db, 'users', uid, item.collection, item.id);
       
       if (item.operation === 'delete') {
@@ -137,7 +144,7 @@ export function useAutosave({
   // Create debounced save function
   const debouncedSave = useRef(
     debounce(async (payload: any) => {
-      if (!uid || !enabled) return;
+      if (!uid || !enabled || !id || !collection) return;
 
       // Skip if data hasn't changed
       const dataString = JSON.stringify(payload);
@@ -204,7 +211,7 @@ export function useAutosave({
 
   // Immediate save function for critical moments
   const saveImmediately = useCallback(async (payload?: any) => {
-    if (!uid || !enabled) return;
+    if (!uid || !enabled || !id || !collection) return;
     
     const dataToSave = payload || data;
     
@@ -244,16 +251,14 @@ export function useAutosave({
 
   // Effect for debounced autosave
   useEffect(() => {
-    if (!uid || !enabled || !data) return;
+    if (!uid || !enabled || !data || !id || !collection) return;
     
     // Save to localStorage immediately for instant persistence
     setLocalData(uid, id, data);
     
-    // Data will be auto-saved
-    
     // Trigger debounced save
     debouncedSave(data);
-  }, [uid, id, collection, data, enabled, debouncedSave]);
+  }, [uid, id, collection, data, enabled, debounceMs, debouncedSave]);
 
   // Effect for online/offline listeners
   useEffect(() => {

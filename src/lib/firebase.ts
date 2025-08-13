@@ -1,10 +1,12 @@
 // src/lib/firebase.ts
 import { initializeApp } from "firebase/app";
 import { 
-  getAuth, 
-  GoogleAuthProvider, 
-  signInWithPopup, 
-  setPersistence, 
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  setPersistence,
   browserLocalPersistence,
   signOut,
   onAuthStateChanged,
@@ -51,13 +53,61 @@ if (typeof window !== 'undefined') {
   });
 }
 
-// Auth functions
-export async function signInWithGoogle() {
+// Enhanced auth functions with fallback support
+export async function signInWithGooglePopup() {
   try {
     const result = await signInWithPopup(auth, provider);
     return result;
+  } catch (error: any) {
+    console.error('Error signing in with Google popup:', error);
+    throw error;
+  }
+}
+
+export async function signInWithGoogleRedirect() {
+  try {
+    await signInWithRedirect(auth, provider);
+    // Note: This will redirect the page, so no return value
   } catch (error) {
-    console.error('Error signing in with Google:', error);
+    console.error('Error with redirect sign-in:', error);
+    throw error;
+  }
+}
+
+export async function handleRedirectResult() {
+  try {
+    const result = await getRedirectResult(auth);
+    return result;
+  } catch (error) {
+    console.error('Error handling redirect result:', error);
+    throw error;
+  }
+}
+
+// Main sign-in function with intelligent fallback
+export async function signInWithGoogle() {
+  try {
+    // First, try popup authentication
+    const result = await signInWithPopup(auth, provider);
+    return { result, method: 'popup' };
+  } catch (error: any) {
+    console.error('Popup authentication failed:', error);
+    
+    // Check if it's a COOP-related error or popup blocked
+    const isCoopError = error.message?.includes('Cross-Origin-Opener-Policy') ||
+                       error.message?.includes('window.closed') ||
+                       error.code === 'auth/popup-blocked' ||
+                       error.code === 'auth/popup-closed-by-user' ||
+                       error.code === 'auth/cancelled-popup-request';
+    
+    if (isCoopError) {
+      console.log('COOP/popup issue detected, falling back to redirect authentication...');
+      // Fallback to redirect authentication
+      await signInWithRedirect(auth, provider);
+      return { result: null, method: 'redirect' }; // Will redirect, so this won't be reached
+    }
+    
+    // If it's not a COOP error, re-throw the original error
     throw error;
   }
 }
