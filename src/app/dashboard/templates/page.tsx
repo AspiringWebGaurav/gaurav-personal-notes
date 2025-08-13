@@ -11,6 +11,7 @@ export default function TemplatesPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedTemplateType, setSelectedTemplateType] = useState<'notes' | 'money'>('notes');
 
   if (loading) {
     return (
@@ -29,15 +30,30 @@ export default function TemplatesPage() {
     return null;
   }
 
+  // Filter templates by type first, then by search/category
+  const templatesByType = selectedTemplateType === 'notes'
+    ? TEMPLATES.filter(template => template.type !== 'money')
+    : TEMPLATES.filter(template => template.type === 'money');
+
   const filteredTemplates = searchQuery
-    ? searchTemplates(searchQuery)
+    ? templatesByType.filter(template =>
+        template.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        template.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        template.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
     : selectedCategory === 'All'
-    ? TEMPLATES
-    : getTemplatesByCategory(selectedCategory);
+    ? templatesByType
+    : templatesByType.filter(template => template.category === selectedCategory);
 
   const useTemplate = (templateId: string) => {
-    const noteId = `note_${Date.now()}`;
-    router.push(`/dashboard/notes/${noteId}?template=${templateId}`);
+    const template = TEMPLATES.find(t => t.id === templateId);
+    if (template?.type === 'money') {
+      const trackerId = `money_${Date.now()}`;
+      router.push(`/dashboard/money/${trackerId}?template=${templateId}`);
+    } else {
+      const noteId = `note_${Date.now()}`;
+      router.push(`/dashboard/notes/${noteId}?template=${templateId}`);
+    }
   };
 
   const goBack = () => {
@@ -80,9 +96,48 @@ export default function TemplatesPage() {
             Choose a Template
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Get started quickly with our collection of 25+ professionally designed templates 
-            for notes, lists, planning, and productivity.
+            Get started quickly with our collection of 30+ professionally designed templates
+            for notes, money tracking, planning, and productivity.
           </p>
+        </motion.div>
+
+        {/* Template Type Tabs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="mb-8"
+        >
+          <div className="flex justify-center">
+            <div className="bg-gray-100 p-1 rounded-lg">
+              <button
+                onClick={() => {
+                  setSelectedTemplateType('notes');
+                  setSelectedCategory('All');
+                }}
+                className={`px-6 py-3 rounded-md text-sm font-medium transition-all ${
+                  selectedTemplateType === 'notes'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                📝 Notes Templates
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedTemplateType('money');
+                  setSelectedCategory('All');
+                }}
+                className={`px-6 py-3 rounded-md text-sm font-medium transition-all ${
+                  selectedTemplateType === 'money'
+                    ? 'bg-white text-green-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                💰 Money Tracker Templates
+              </button>
+            </div>
+          </div>
         </motion.div>
 
         {/* Search and Filter */}
@@ -114,13 +169,20 @@ export default function TemplatesPage() {
 
             {/* Category Filter */}
             <div className="flex flex-wrap gap-2">
-              {['All', ...TEMPLATE_CATEGORIES].map((category) => (
+              {['All', ...TEMPLATE_CATEGORIES.filter(cat => {
+                // Show relevant categories based on selected template type
+                if (selectedTemplateType === 'notes') {
+                  return !['Budget Planning', 'Business', 'Savings', 'Project Management', 'Education'].includes(cat);
+                } else {
+                  return ['Budget Planning', 'Business', 'Savings', 'Project Management', 'Education'].includes(cat);
+                }
+              })].map((category) => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     selectedCategory === category
-                      ? 'bg-purple-600 text-white'
+                      ? (selectedTemplateType === 'notes' ? 'bg-blue-600 text-white' : 'bg-green-600 text-white')
                       : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                   }`}
                 >
@@ -156,7 +218,11 @@ export default function TemplatesPage() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => useTemplate(template.id)}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer overflow-hidden"
+                  className={`bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all cursor-pointer overflow-hidden ${
+                    template.type === 'money'
+                      ? 'hover:border-green-300'
+                      : 'hover:border-blue-300'
+                  }`}
                 >
                   <div className="p-6">
                     {/* Template Icon and Category */}
@@ -193,8 +259,12 @@ export default function TemplatesPage() {
                     </div>
 
                     {/* Use Template Button */}
-                    <button className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium">
-                      Use Template
+                    <button className={`w-full py-2 px-4 rounded-lg transition-colors text-sm font-medium text-white ${
+                      template.type === 'money'
+                        ? 'bg-green-600 hover:bg-green-700'
+                        : 'bg-blue-600 hover:bg-blue-700'
+                    }`}>
+                      {template.type === 'money' ? 'Create Money Tracker' : 'Use Template'}
                     </button>
                   </div>
 
@@ -219,17 +289,31 @@ export default function TemplatesPage() {
         >
           <div className="inline-flex items-center space-x-8 bg-white rounded-xl shadow-sm px-8 py-4">
             <div>
-              <div className="text-2xl font-bold text-purple-600">{TEMPLATES.length}</div>
-              <div className="text-sm text-gray-600">Total Templates</div>
+              <div className={`text-2xl font-bold ${selectedTemplateType === 'notes' ? 'text-blue-600' : 'text-green-600'}`}>
+                {templatesByType.length}
+              </div>
+              <div className="text-sm text-gray-600">
+                {selectedTemplateType === 'notes' ? 'Notes Templates' : 'Money Templates'}
+              </div>
             </div>
             <div className="w-px h-8 bg-gray-200"></div>
             <div>
-              <div className="text-2xl font-bold text-purple-600">{TEMPLATE_CATEGORIES.length}</div>
+              <div className={`text-2xl font-bold ${selectedTemplateType === 'notes' ? 'text-blue-600' : 'text-green-600'}`}>
+                {TEMPLATE_CATEGORIES.filter(cat => {
+                  if (selectedTemplateType === 'notes') {
+                    return !['Budget Planning', 'Business', 'Savings', 'Project Management', 'Education'].includes(cat);
+                  } else {
+                    return ['Budget Planning', 'Business', 'Savings', 'Project Management', 'Education'].includes(cat);
+                  }
+                }).length}
+              </div>
               <div className="text-sm text-gray-600">Categories</div>
             </div>
             <div className="w-px h-8 bg-gray-200"></div>
             <div>
-              <div className="text-2xl font-bold text-purple-600">{filteredTemplates.length}</div>
+              <div className={`text-2xl font-bold ${selectedTemplateType === 'notes' ? 'text-blue-600' : 'text-green-600'}`}>
+                {filteredTemplates.length}
+              </div>
               <div className="text-sm text-gray-600">Showing</div>
             </div>
           </div>
@@ -240,20 +324,36 @@ export default function TemplatesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mt-12 text-center bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl p-8 text-white"
+          className={`mt-12 text-center rounded-xl p-8 text-white ${
+            selectedTemplateType === 'notes'
+              ? 'bg-gradient-to-r from-blue-500 to-indigo-600'
+              : 'bg-gradient-to-r from-green-500 to-emerald-600'
+          }`}
         >
           <h3 className="text-2xl font-bold mb-2">Can't find what you need?</h3>
-          <p className="text-purple-100 mb-6">
-            Start with a blank note and create your own custom template.
+          <p className={`mb-6 ${selectedTemplateType === 'notes' ? 'text-blue-100' : 'text-green-100'}`}>
+            {selectedTemplateType === 'notes'
+              ? 'Start with a blank note and create your own custom template.'
+              : 'Start with a blank money tracker and customize it for your needs.'
+            }
           </p>
           <button
             onClick={() => {
-              const noteId = `note_${Date.now()}`;
-              router.push(`/dashboard/notes/${noteId}`);
+              if (selectedTemplateType === 'notes') {
+                const noteId = `note_${Date.now()}`;
+                router.push(`/dashboard/notes/${noteId}`);
+              } else {
+                const trackerId = `money_${Date.now()}`;
+                router.push(`/dashboard/money/${trackerId}`);
+              }
             }}
-            className="bg-white text-purple-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+            className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+              selectedTemplateType === 'notes'
+                ? 'bg-white text-blue-600 hover:bg-gray-100'
+                : 'bg-white text-green-600 hover:bg-gray-100'
+            }`}
           >
-            Create Blank Note
+            {selectedTemplateType === 'notes' ? 'Create Blank Note' : 'Create Blank Tracker'}
           </button>
         </motion.div>
       </main>

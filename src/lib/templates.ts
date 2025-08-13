@@ -1211,6 +1211,176 @@ Last updated: ${new Date().toLocaleString()}
     category: 'Quick Capture',
     icon: '🔗',
     tags: ['links', 'bookmarks', 'resources']
+  },
+
+  // Money Tracker Templates
+  {
+    id: 'travel-budget-tracker',
+    title: 'Travel Budget',
+    description: 'Plan and track your travel expenses',
+    content: `Travel Budget Planner
+
+Perfect for planning your next trip with travel-specific expense categories.
+
+Starting Amount: Set your total travel budget
+Categories: Flights, Accommodation, Food, Transportation, Activities, Shopping, Emergency
+
+Keep track of all your travel expenses in one place.`,
+    type: 'money',
+    category: 'Budget Planning',
+    icon: '✈️',
+    tags: ['travel', 'vacation', 'trip', 'planning'],
+    moneyConfig: {
+      startingAmount: 2000,
+      currency: 'USD',
+      presetCategories: ['Flights', 'Accommodation', 'Food', 'Transportation', 'Activities', 'Shopping', 'Emergency'],
+      budgetType: 'travel',
+      description: 'Travel budget with trip-specific expense categories'
+    }
+  },
+  {
+    id: 'event-budget',
+    title: 'Event Budget',
+    description: 'Plan weddings, parties, or special events',
+    content: `Event Budget Planner
+
+Organize your special event finances with comprehensive planning categories.
+
+Starting Amount: Set your total event budget
+Categories: Venue, Catering, Decorations, Entertainment, Photography, Invitations, Miscellaneous
+
+Perfect for weddings, birthdays, corporate events, and celebrations.`,
+    type: 'money',
+    category: 'Budget Planning',
+    icon: '🎉',
+    tags: ['event', 'wedding', 'party', 'celebration'],
+    moneyConfig: {
+      startingAmount: 5000,
+      currency: 'USD',
+      presetCategories: ['Venue', 'Catering', 'Decorations', 'Entertainment', 'Photography', 'Invitations', 'Miscellaneous'],
+      budgetType: 'event',
+      description: 'Event planning budget for weddings, parties, and celebrations'
+    }
+  },
+  {
+    id: 'business-expenses',
+    title: 'Business Expenses',
+    description: 'Track professional and business costs',
+    content: `Business Expense Tracker
+
+Monitor your business expenses with professional categories.
+
+Starting Amount: Set your monthly business budget
+Categories: Office Supplies, Software, Marketing, Travel, Meals, Equipment, Professional Services
+
+Keep your business finances organized for tax purposes and budgeting.`,
+    type: 'money',
+    category: 'Business',
+    icon: '💼',
+    tags: ['business', 'professional', 'tax', 'expenses'],
+    moneyConfig: {
+      startingAmount: 2500,
+      currency: 'USD',
+      presetCategories: ['Office Supplies', 'Software', 'Marketing', 'Travel', 'Meals', 'Equipment', 'Professional Services'],
+      budgetType: 'business',
+      description: 'Business expense tracking with professional categories'
+    }
+  },
+  {
+    id: 'emergency-fund',
+    title: 'Emergency Fund',
+    description: 'Build and track your emergency savings',
+    content: `Emergency Fund Tracker
+
+Build your financial safety net with dedicated emergency fund tracking.
+
+Starting Amount: Set your emergency fund goal
+Categories: Medical Emergency, Car Repair, Home Repair, Job Loss, Unexpected Bills, Other Emergency
+
+Track contributions to and withdrawals from your emergency fund.`,
+    type: 'money',
+    category: 'Savings',
+    icon: '🚨',
+    tags: ['emergency', 'savings', 'fund', 'safety'],
+    moneyConfig: {
+      startingAmount: 10000,
+      currency: 'USD',
+      presetCategories: ['Medical Emergency', 'Car Repair', 'Home Repair', 'Job Loss', 'Unexpected Bills', 'Other Emergency'],
+      budgetType: 'emergency',
+      description: 'Emergency fund with safety-focused expense categories'
+    }
+  },
+  {
+    id: 'project-budget',
+    title: 'Project Budget',
+    description: 'Manage specific project costs and expenses',
+    content: `Project Budget Manager
+
+Track costs for specific projects with customizable categories.
+
+Starting Amount: Set your project budget limit
+Categories: Materials, Labor, Equipment, Software, Consulting, Testing, Miscellaneous
+
+Perfect for home improvement, software development, or any project-based work.`,
+    type: 'money',
+    category: 'Project Management',
+    icon: '🔧',
+    tags: ['project', 'management', 'costs', 'planning'],
+    moneyConfig: {
+      startingAmount: 1500,
+      currency: 'USD',
+      presetCategories: ['Materials', 'Labor', 'Equipment', 'Software', 'Consulting', 'Testing', 'Miscellaneous'],
+      budgetType: 'project',
+      description: 'Project-specific budget tracking with flexible categories'
+    }
+  },
+  {
+    id: 'weekly-budget',
+    title: 'Weekly Budget',
+    description: 'Short-term weekly expense tracking',
+    content: `Weekly Budget Tracker
+
+Manage your weekly spending with focused categories.
+
+Starting Amount: Set your weekly spending limit
+Categories: Groceries, Dining Out, Transportation, Entertainment, Personal Care, Other
+
+Perfect for tight budget control and weekly financial discipline.`,
+    type: 'money',
+    category: 'Budget Planning',
+    icon: '📅',
+    tags: ['weekly', 'short-term', 'budget', 'control'],
+    moneyConfig: {
+      startingAmount: 500,
+      currency: 'USD',
+      presetCategories: ['Groceries', 'Dining Out', 'Transportation', 'Entertainment', 'Personal Care', 'Other'],
+      budgetType: 'weekly',
+      description: 'Weekly budget for short-term expense control'
+    }
+  },
+  {
+    id: 'student-budget',
+    title: 'Student Budget',
+    description: 'College and university expense management',
+    content: `Student Budget Planner
+
+Manage your student finances with education-focused categories.
+
+Starting Amount: Set your semester or monthly student budget
+Categories: Textbooks, Food, Transportation, Entertainment, Supplies, Laundry, Emergency
+
+Designed specifically for students to track educational and living expenses.`,
+    type: 'money',
+    category: 'Education',
+    icon: '🎓',
+    tags: ['student', 'college', 'education', 'university'],
+    moneyConfig: {
+      startingAmount: 1200,
+      currency: 'USD',
+      presetCategories: ['Textbooks', 'Food', 'Transportation', 'Entertainment', 'Supplies', 'Laundry', 'Emergency'],
+      budgetType: 'student',
+      description: 'Student budget with education-focused expense categories'
+    }
   }
 ];
 
@@ -1242,5 +1412,10 @@ export const TEMPLATE_CATEGORIES = [
   'Health',
   'Learning',
   'Financial',
-  'Quick Capture'
+  'Quick Capture',
+  'Budget Planning',
+  'Business',
+  'Savings',
+  'Project Management',
+  'Education'
 ];

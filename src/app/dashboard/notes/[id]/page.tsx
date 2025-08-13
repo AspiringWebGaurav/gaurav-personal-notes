@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useAutosave } from '@/hooks/useAutosave';
 import { useSyncStatus } from '@/components/SyncStatusProvider';
-import SyncStatus from '@/components/SyncStatus';
+import StaticSyncStatus from '@/components/StaticSyncStatus';
 import { motion } from 'framer-motion';
 import { doc, onSnapshot, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -42,7 +42,6 @@ export default function NoteEditor({ params }: NoteEditorProps) {
   });
   
   const [isLoading, setIsLoading] = useState(true);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
   
   // Derived values
   const templateId = searchParams.get('template');
@@ -106,18 +105,8 @@ export default function NoteEditor({ params }: NoteEditorProps) {
     return () => unsubscribe();
   }, [user, loading, id, templateId]);
 
-  // Update last saved timestamp
-  useEffect(() => {
-    if (!user) return;
-    
-    const interval = setInterval(() => {
-      if (isOnline && !hasUnsyncedChanges()) {
-        setLastSaved(new Date());
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [user, isOnline, hasUnsyncedChanges]);
+  // Remove the problematic interval that was causing "jumping like breathing" behavior
+  // The sync status will now only update when actual sync events occur
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
@@ -197,14 +186,8 @@ export default function NoteEditor({ params }: NoteEditorProps) {
 
           {/* Sync Status and Action buttons */}
           <div className="flex items-center space-x-3">
-            {/* Enhanced Sync Status - positioned left of pinned icon */}
-            <SyncStatus
-              isOnline={syncStatus.isOnline}
-              isSyncing={syncStatus.isSyncing}
-              lastSyncTime={syncStatus.lastSyncTime}
-              hasUnsyncedChanges={syncStatus.hasUnsyncedChanges}
-              className="mr-1"
-            />
+            {/* Static Sync Status - positioned left of pinned icon */}
+            <StaticSyncStatus className="mr-2" />
 
             {/* Action buttons */}
             <div className="flex items-center space-x-2">

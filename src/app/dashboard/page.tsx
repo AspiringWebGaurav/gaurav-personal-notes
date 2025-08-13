@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useSyncStatus } from '@/components/SyncStatusProvider';
-import SyncStatus from '@/components/SyncStatus';
+import StaticSyncStatus from '@/components/StaticSyncStatus';
 import { motion } from 'framer-motion';
-import { TEMPLATES, TEMPLATE_CATEGORIES } from '@/lib/templates';
+import { TEMPLATES, TEMPLATE_CATEGORIES, getTemplatesByType } from '@/lib/templates';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Note, MoneyTracker } from '@/types';
@@ -109,12 +109,7 @@ export default function DashboardPage() {
               </p>
             </div>
             <div className="flex items-center">
-              <SyncStatus
-                isOnline={syncStatus.isOnline}
-                isSyncing={syncStatus.isSyncing}
-                lastSyncTime={syncStatus.lastSyncTime}
-                hasUnsyncedChanges={syncStatus.hasUnsyncedChanges}
-              />
+              <StaticSyncStatus />
             </div>
           </div>
         </motion.div>
@@ -156,7 +151,7 @@ export default function DashboardPage() {
           >
             <div className="text-3xl mb-3">📋</div>
             <h3 className="text-lg font-semibold mb-2">Templates</h3>
-            <p className="text-purple-100 text-sm">Choose from 25+ templates</p>
+            <p className="text-purple-100 text-sm">Choose from {TEMPLATES.length}+ templates</p>
           </motion.button>
         </motion.div>
 
@@ -284,7 +279,7 @@ export default function DashboardPage() {
               onClick={() => router.push('/dashboard/templates')}
               className="text-sm text-purple-600 hover:text-purple-700"
             >
-              View all 25+ templates
+              View all {TEMPLATES.length} templates
             </button>
           </div>
 
@@ -295,10 +290,19 @@ export default function DashboardPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  const noteId = `note_${Date.now()}`;
-                  router.push(`/dashboard/notes/${noteId}?template=${template.id}`);
+                  if (template.type === 'money') {
+                    const trackerId = `money_${Date.now()}`;
+                    router.push(`/dashboard/money/${trackerId}?template=${template.id}`);
+                  } else {
+                    const noteId = `note_${Date.now()}`;
+                    router.push(`/dashboard/notes/${noteId}?template=${template.id}`);
+                  }
                 }}
-                className="p-4 border border-gray-200 rounded-lg hover:border-purple-300 transition-colors text-left"
+                className={`p-4 border border-gray-200 rounded-lg transition-colors text-left ${
+                  template.type === 'money'
+                    ? 'hover:border-green-300'
+                    : 'hover:border-purple-300'
+                }`}
               >
                 <div className="text-2xl mb-2">{template.icon}</div>
                 <h4 className="font-medium text-gray-900 text-sm mb-1">
@@ -307,6 +311,13 @@ export default function DashboardPage() {
                 <p className="text-xs text-gray-600">
                   {template.category}
                 </p>
+                {template.type === 'money' && (
+                  <div className="mt-1">
+                    <span className="inline-block px-1.5 py-0.5 bg-green-100 text-green-600 text-xs rounded">
+                      Money
+                    </span>
+                  </div>
+                )}
               </motion.button>
             ))}
           </div>

@@ -59,6 +59,13 @@ export interface Template {
   category: string;
   icon: string;
   tags: string[];
+  moneyConfig?: {
+    startingAmount: number;
+    currency: 'USD' | 'EUR' | 'GBP' | 'INR';
+    presetCategories: string[];
+    budgetType: string;
+    description?: string;
+  };
 }
 
 export interface AutosaveData {
