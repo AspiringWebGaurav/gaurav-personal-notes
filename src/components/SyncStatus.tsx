@@ -1,8 +1,15 @@
 'use client';
 
 import { memo, useEffect, useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 
+/**
+ * @deprecated Use StackedSyncStatus instead for better UX separation of concerns.
+ * This component combines online/offline status with sync status in a single badge,
+ * which can be confusing for users. The new StackedSyncStatus provides:
+ * - Clear separation between network connectivity and data synchronization
+ * - Better visual hierarchy with stacked layout
+ * - More intuitive user experience
+ */
 export interface SyncStatusProps {
   isOnline: boolean;
   isSyncing: boolean;
@@ -54,24 +61,14 @@ const SyncStatus = memo(function SyncStatus({
     }
   }, [isOnline, isSyncing, lastSyncTime, hasUnsyncedChanges]);
 
-  // Real-time clock updates for synced state
+  // Static time display - only updates when lastSyncTime changes
   useEffect(() => {
     if (syncState === 'synced' && lastSyncTime) {
-      const updateTime = () => {
-        const timeString = lastSyncTime.toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        setDisplayTime(timeString);
-      };
-
-      // Update immediately
-      updateTime();
-
-      // Update every second for real-time display
-      const interval = setInterval(updateTime, 1000);
-
-      return () => clearInterval(interval);
+      const timeString = lastSyncTime.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      setDisplayTime(timeString);
     }
   }, [syncState, lastSyncTime]);
 
@@ -118,62 +115,32 @@ const SyncStatus = memo(function SyncStatus({
   const config = getStatusConfig(syncState);
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={syncState}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ 
-          duration: 0.15,
-          ease: "easeOut"
-        }}
-        className={`
-          flex items-center px-3 py-1.5 rounded-full text-sm font-medium
-          border transition-all duration-150 ease-out
-          ${config.color} ${className}
-        `}
-      >
-        {/* Status indicator dot */}
-        <div className="flex items-center mr-2">
-          {syncState === 'syncing' ? (
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{
-                duration: 1,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-              className={`w-2 h-2 rounded-full ${config.dotColor}`}
-            />
-          ) : (
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{
-                duration: 0.2,
-                type: "spring",
-                stiffness: 300
-              }}
-              className={`w-2 h-2 rounded-full ${config.dotColor}`}
-            />
-          )}
-        </div>
+    <div
+      className={`
+        flex items-center px-3 py-1.5 rounded-full text-sm font-medium
+        border transition-colors duration-150 ease-out
+        ${config.color} ${className}
+      `}
+    >
+      {/* Status indicator dot */}
+      <div className="flex items-center mr-2">
+        {syncState === 'syncing' ? (
+          <div
+            className={`w-2 h-2 rounded-full ${config.dotColor} animate-spin`}
+            style={{
+              animation: 'spin 1s linear infinite'
+            }}
+          />
+        ) : (
+          <div className={`w-2 h-2 rounded-full ${config.dotColor}`} />
+        )}
+      </div>
 
-        {/* Status text */}
-        <motion.span
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ 
-            duration: 0.2,
-            delay: 0.05
-          }}
-          className="whitespace-nowrap"
-        >
-          {config.text}
-        </motion.span>
-      </motion.div>
-    </AnimatePresence>
+      {/* Status text */}
+      <span className="whitespace-nowrap">
+        {config.text}
+      </span>
+    </div>
   );
 });
 

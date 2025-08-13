@@ -5,13 +5,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useAutosave } from '@/hooks/useAutosave';
 import { useSyncStatus } from '@/components/SyncStatusProvider';
-import SyncStatus from '@/components/SyncStatus';
+import StaticSyncStatus from '@/components/StaticSyncStatus';
 import { motion, AnimatePresence } from 'framer-motion';
 import { doc, onSnapshot, Timestamp, DocumentSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { MoneyTracker, Expense, Currency } from '@/types';
 import { CurrencySelector, CurrencySetupModal } from '@/components/CurrencySelector';
 import { formatCurrency, getCurrencySymbol, DEFAULT_CURRENCY } from '@/lib/currency';
+import { getTemplateById } from '@/lib/templates';
 
 // Loading component for Suspense fallback
 function MoneyTrackerLoading() {
@@ -48,6 +49,9 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
     description: ''
   });
 
+  // Derived values
+  const templateId = searchParams.get('template');
+
   // Auto-save functionality - only enable when we have valid trackerId AND data is loaded
   const { saveImmediately, isOnline, hasUnsyncedChanges } = useAutosave({
     id: trackerId,
@@ -56,7 +60,7 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
     enabled: !!trackerId && isDataLoaded // Only enable when trackerId is available AND data is loaded
   });
 
-  // Load tracker from Firestore
+  // Load tracker from Firestore or initialize with template
   useEffect(() => {
     if (!user || loading || !trackerId) return;
 
@@ -76,41 +80,52 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
             setIsDataLoaded(true);
           } catch (error) {
             console.error('Error parsing local data:', error);
-            // Initialize with default values for new tracker
-            const defaultTracker = {
-              id: trackerId,
-              title: 'My Budget',
-              startingAmount: 0,
-              currency: DEFAULT_CURRENCY,
-              expenses: [],
-              createdAt: Timestamp.now(),
-              updatedAt: Timestamp.now()
-            };
-            setTracker(defaultTracker);
-            setIsDataLoaded(true);
-            setShowCurrencySetup(true);
+            initializeTracker();
           }
         } else {
-          // Initialize with default values for new tracker
-          const defaultTracker = {
-            id: trackerId,
-            title: 'My Budget',
-            startingAmount: 0,
-            currency: DEFAULT_CURRENCY,
-            expenses: [],
-            createdAt: Timestamp.now(),
-            updatedAt: Timestamp.now()
-          };
-          setTracker(defaultTracker);
-          setIsDataLoaded(true);
-          setShowCurrencySetup(true);
+          initializeTracker();
         }
       }
       setIsLoading(false);
     });
 
+    const initializeTracker = () => {
+      let defaultTracker: Partial<MoneyTracker> = {
+        id: trackerId,
+        title: 'My Budget',
+        startingAmount: 0,
+        currency: DEFAULT_CURRENCY,
+        expenses: [],
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
+      };
+
+      // If template is specified, apply template configuration
+      if (templateId) {
+        const template = getTemplateById(templateId);
+        if (template && template.type === 'money' && template.moneyConfig) {
+          defaultTracker = {
+            ...defaultTracker,
+            title: template.title,
+            startingAmount: template.moneyConfig.startingAmount,
+            currency: template.moneyConfig.currency,
+            // Don't show currency setup if template has currency
+          };
+          // Don't show currency setup modal if template provides currency
+          setShowCurrencySetup(false);
+        } else {
+          setShowCurrencySetup(true);
+        }
+      } else {
+        setShowCurrencySetup(true);
+      }
+
+      setTracker(defaultTracker);
+      setIsDataLoaded(true);
+    };
+
     return () => unsubscribe();
-  }, [user, loading, trackerId]);
+  }, [user, loading, trackerId, templateId]);
 
   // Calculate current balance using useMemo to prevent infinite loops
   const currentBalance = useMemo(() => {
@@ -230,7 +245,18 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
     return null;
   }
 
-  const categories = ['Food', 'Transportation', 'Entertainment', 'Shopping', 'Bills', 'Healthcare', 'Other'];
+  // Get categories from template or use defaults
+  const getCategories = () => {
+    if (templateId) {
+      const template = getTemplateById(templateId);
+      if (template && template.type === 'money' && template.moneyConfig) {
+        return template.moneyConfig.presetCategories;
+      }
+    }
+    return ['Food', 'Transportation', 'Entertainment', 'Shopping', 'Bills', 'Healthcare', 'Other'];
+  };
+  
+  const categories = getCategories();
   const totalExpenses = (tracker.expenses || []).reduce((sum: number, expense: Expense) => sum + expense.amount, 0);
   const remainingPercentage = tracker.startingAmount ? (currentBalance / tracker.startingAmount) * 100 : 0;
 
@@ -263,13 +289,8 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
             </div>
 
             <div className="flex items-center space-x-4">
-              {/* Sync Status */}
-              <SyncStatus
-                isOnline={syncStatus.isOnline}
-                isSyncing={syncStatus.isSyncing}
-                lastSyncTime={syncStatus.lastSyncTime}
-                hasUnsyncedChanges={syncStatus.hasUnsyncedChanges}
-              />
+              {/* Static Sync Status */}
+              <StaticSyncStatus />
             </div>
           </div>
         </div>
