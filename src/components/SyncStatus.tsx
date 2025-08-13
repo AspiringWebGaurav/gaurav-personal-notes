@@ -11,7 +11,7 @@ export interface SyncStatusProps {
   className?: string;
 }
 
-type SyncState = 'disconnected' | 'offline' | 'syncing' | 'synced';
+type SyncState = 'disconnected' | 'offline' | 'online' | 'syncing' | 'synced';
 
 const SyncStatus = memo(function SyncStatus({
   isOnline,
@@ -25,7 +25,7 @@ const SyncStatus = memo(function SyncStatus({
   const lastStateRef = useRef<SyncState>('disconnected');
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Determine sync state with 1ms response time
+  // Determine sync state with priority order (removed typing logic)
   useEffect(() => {
     let newState: SyncState;
 
@@ -38,7 +38,8 @@ const SyncStatus = memo(function SyncStatus({
     } else if (lastSyncTime) {
       newState = 'synced';
     } else {
-      newState = 'offline';
+      // When online but no sync has happened yet
+      newState = 'online';
     }
 
     // Clear any pending timeout
@@ -53,21 +54,23 @@ const SyncStatus = memo(function SyncStatus({
     }
   }, [isOnline, isSyncing, lastSyncTime, hasUnsyncedChanges]);
 
-  // Update display time for synced state
+  // Real-time clock updates for synced state
   useEffect(() => {
     if (syncState === 'synced' && lastSyncTime) {
       const updateTime = () => {
-        setDisplayTime(lastSyncTime.toLocaleTimeString([], {
+        const timeString = lastSyncTime.toLocaleTimeString([], {
           hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        }));
+          minute: '2-digit'
+        });
+        setDisplayTime(timeString);
       };
 
+      // Update immediately
       updateTime();
-      
-      // Update every second to keep time current
+
+      // Update every second for real-time display
       const interval = setInterval(updateTime, 1000);
+
       return () => clearInterval(interval);
     }
   }, [syncState, lastSyncTime]);
@@ -88,18 +91,25 @@ const SyncStatus = memo(function SyncStatus({
           text: 'Offline',
           icon: '🟠'
         };
+      case 'online':
+        return {
+          color: 'bg-blue-100 text-blue-800 border-blue-200',
+          dotColor: 'bg-blue-500',
+          text: 'Online',
+          icon: '🔵'
+        };
       case 'syncing':
         return {
           color: 'bg-blue-100 text-blue-800 border-blue-200',
           dotColor: 'bg-blue-500',
-          text: 'Live syncing...',
+          text: 'Syncing...',
           icon: '🔵'
         };
       case 'synced':
         return {
           color: 'bg-green-100 text-green-800 border-green-200',
           dotColor: 'bg-green-500',
-          text: `Synced at ${displayTime}`,
+          text: `Last synced at ${displayTime}`,
           icon: '🟢'
         };
     }
@@ -129,10 +139,10 @@ const SyncStatus = memo(function SyncStatus({
           {syncState === 'syncing' ? (
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ 
-                duration: 1, 
-                repeat: Infinity, 
-                ease: "linear" 
+              transition={{
+                duration: 1,
+                repeat: Infinity,
+                ease: "linear"
               }}
               className={`w-2 h-2 rounded-full ${config.dotColor}`}
             />
@@ -140,7 +150,7 @@ const SyncStatus = memo(function SyncStatus({
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ 
+              transition={{
                 duration: 0.2,
                 type: "spring",
                 stiffness: 300

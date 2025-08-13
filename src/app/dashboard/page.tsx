@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import { useSyncStatus } from '@/components/SyncStatusProvider';
+import SyncStatus from '@/components/SyncStatus';
 import { motion } from 'framer-motion';
 import { TEMPLATES, TEMPLATE_CATEGORIES } from '@/lib/templates';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
@@ -12,10 +14,10 @@ import { formatCurrency, DEFAULT_CURRENCY } from '@/lib/currency';
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
+  const { syncStatus } = useSyncStatus();
   const router = useRouter();
   const [recentNotes, setRecentNotes] = useState<Note[]>([]);
   const [moneyTrackers, setMoneyTrackers] = useState<MoneyTracker[]>([]);
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -61,19 +63,6 @@ export default function DashboardPage() {
     }
   }, [user, loading, router]);
 
-  useEffect(() => {
-    const handleOnline = () => setIsOffline(false);
-    const handleOffline = () => setIsOffline(true);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
 
   const createNewNote = () => {
     const noteId = `note_${Date.now()}`;
@@ -82,7 +71,7 @@ export default function DashboardPage() {
 
   const createMoneyTracker = () => {
     const trackerId = `money_${Date.now()}`;
-    router.push(`/dashboard/money?id=${trackerId}`);
+    router.push(`/dashboard/money/${trackerId}`);
   };
 
   if (loading) {
@@ -104,18 +93,30 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
+        {/* Welcome Section with Sync Status */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, {user.displayName?.split(' ')[0]}!
-          </h2>
-          <p className="text-gray-600">
-            What would you like to work on today?
-          </p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                Welcome back, {user.displayName?.split(' ')[0]}!
+              </h2>
+              <p className="text-gray-600">
+                What would you like to work on today?
+              </p>
+            </div>
+            <div className="flex items-center">
+              <SyncStatus
+                isOnline={syncStatus.isOnline}
+                isSyncing={syncStatus.isSyncing}
+                lastSyncTime={syncStatus.lastSyncTime}
+                hasUnsyncedChanges={syncStatus.hasUnsyncedChanges}
+              />
+            </div>
+          </div>
         </motion.div>
 
         {/* Quick Actions */}
@@ -230,33 +231,41 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {moneyTrackers.map((tracker) => (
-                  <motion.div
-                    key={tracker.id}
-                    whileHover={{ scale: 1.01 }}
-                    onClick={() => router.push(`/dashboard/money?id=${tracker.id}`)}
-                    className="p-3 border border-gray-200 rounded-lg hover:border-green-300 cursor-pointer transition-colors"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-medium text-gray-900">
-                          {tracker.title}
-                        </h4>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {tracker.expenses?.length || 0} expenses
-                        </p>
+                {moneyTrackers.map((tracker) => {
+                  // Calculate current balance from expenses
+                  const totalExpenses = (tracker.expenses || []).reduce((sum, expense) => sum + expense.amount, 0);
+                  const remainingBalance = (tracker.startingAmount || 0) - totalExpenses;
+                  
+                  return (
+                    <motion.div
+                      key={tracker.id}
+                      whileHover={{ scale: 1.01 }}
+                      onClick={() => router.push(`/dashboard/money/${tracker.id}`)}
+                      className="p-3 border border-gray-200 rounded-lg hover:border-green-300 cursor-pointer transition-colors"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-medium text-gray-900">
+                            {tracker.title || 'Untitled Budget'}
+                          </h4>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {tracker.expenses?.length || 0} expenses
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className={`text-lg font-semibold ${
+                            remainingBalance >= 0 ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            {formatCurrency(remainingBalance, tracker.currency || DEFAULT_CURRENCY)}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            of {formatCurrency(tracker.startingAmount || 0, tracker.currency || DEFAULT_CURRENCY)}
+                          </p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-semibold text-green-600">
-                          {formatCurrency(tracker.currentBalance || 0, tracker.currency || DEFAULT_CURRENCY)}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          of {formatCurrency(tracker.startingAmount || 0, tracker.currency || DEFAULT_CURRENCY)}
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  );
+                })}
               </div>
             )}
           </motion.div>

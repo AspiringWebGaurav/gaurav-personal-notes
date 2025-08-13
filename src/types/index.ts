@@ -35,7 +35,6 @@ export interface MoneyTracker {
   id: string;
   title: string;
   startingAmount: number;
-  currentBalance: number;
   currency: 'USD' | 'EUR' | 'GBP' | 'INR';
   expenses: Expense[];
   createdAt: Timestamp;
