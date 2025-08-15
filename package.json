@@ -4,7 +4,14 @@
   "private": true,
   "description": "A blazing-fast personal notes and money tracking application with real-time sync and offline support",
   "author": "Gaurav",
-  "keywords": ["notes", "money-tracker", "productivity", "firebase", "nextjs", "personal"],
+  "keywords": [
+    "notes",
+    "money-tracker",
+    "productivity",
+    "firebase",
+    "nextjs",
+    "personal"
+  ],
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
@@ -22,6 +29,7 @@
     "firebase": "^12.1.0",
     "framer-motion": "^12.23.12",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.539.0",
     "next": "15.4.6",
     "react": "19.1.0",
     "react-dom": "19.1.0"
