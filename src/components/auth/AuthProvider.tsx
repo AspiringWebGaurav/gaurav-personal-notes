@@ -1,10 +1,27 @@
 // src/components/auth/AuthProvider.tsx
-'use client';
+"use client";
 
-import { useState, useEffect, useContext, createContext, ReactNode } from 'react';
-import { User, onAuthStateChanged, signInWithGoogle, signOutUser, createUserDocument, auth, isUserNew, getUserFirstName, hasUserVisitedBefore, getUserDisplayName, handleRedirectResult } from '@/lib/firebase';
-import { onSnapshot, doc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import {
+  useState,
+  useEffect,
+  useContext,
+  createContext,
+  ReactNode,
+} from "react";
+import {
+  User,
+  onAuthStateChanged,
+  signInWithGoogle,
+  signOutUser,
+  createUserDocument,
+  auth,
+  hasUserVisitedBefore,
+  getUserFirstName,
+  getUserDisplayName,
+  handleRedirectResult,
+} from "@/lib/firebase";
+import { onSnapshot, doc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface AuthContextType {
   user: User | null;
@@ -16,7 +33,8 @@ interface AuthContextType {
   userFirstName: string;
   hasVisitedBefore: boolean;
   userDisplayName: string;
-  authMethod: 'popup' | 'redirect' | null;
+  authMethod: "popup" | "redirect" | null;
+  registerListener: (unsubscribeFn: () => void) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,118 +43,137 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// Global array of active listeners
+let activeListeners: Array<() => void> = [];
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isNewUser, setIsNewUser] = useState(false);
-  const [userFirstName, setUserFirstName] = useState('');
+  const [userFirstName, setUserFirstName] = useState("");
   const [hasVisitedBefore, setHasVisitedBefore] = useState(false);
-  const [userDisplayName, setUserDisplayName] = useState('');
-  const [authMethod, setAuthMethod] = useState<'popup' | 'redirect' | null>(null);
+  const [userDisplayName, setUserDisplayName] = useState("");
+  const [authMethod, setAuthMethod] = useState<"popup" | "redirect" | null>(
+    null
+  );
+
+  // Helper to register unsubscribe functions
+  const registerListener = (unsubscribeFn: () => void) => {
+    activeListeners.push(unsubscribeFn);
+  };
+
+  // Stop all active Firestore listeners
+  const stopAllListeners = () => {
+    activeListeners.forEach((unsub) => unsub());
+    activeListeners = [];
+  };
 
   useEffect(() => {
-    // Handle redirect result on app initialization
     const handleInitialRedirectResult = async () => {
       try {
         const result = await handleRedirectResult();
         if (result) {
-          console.log('Redirect authentication successful');
-          setAuthMethod('redirect');
+          console.log("Redirect authentication successful");
+          setAuthMethod("redirect");
         }
       } catch (error) {
-        console.error('Error handling redirect result:', error);
-        setError(error instanceof Error ? error.message : 'Redirect authentication failed');
+        console.error("Error handling redirect result:", error);
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Redirect authentication failed"
+        );
       }
     };
 
     handleInitialRedirectResult();
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
-      try {
-        if (firebaseUser) {
-          // Create or update user document in Firestore
-          const result = await createUserDocument(firebaseUser);
-          const visitedBefore = await hasUserVisitedBefore(firebaseUser);
-          
-          // Set initial user state
-          setUser(firebaseUser);
-          setIsNewUser(result?.isNewUser || false);
-          setUserFirstName(getUserFirstName(firebaseUser));
-          setHasVisitedBefore(visitedBefore);
-          setUserDisplayName(getUserDisplayName(firebaseUser));
+    const unsubscribeAuth = onAuthStateChanged(
+      auth,
+      async (firebaseUser: User | null) => {
+        try {
+          // Stop previous listeners on auth change
+          stopAllListeners();
 
-          // Subscribe to real-time updates of the user document
-          const userDocRef = doc(db, 'users', firebaseUser.uid);
-          const unsubscribeSnapshot = onSnapshot(userDocRef, (doc) => {
-            if (doc.exists()) {
-              const userData = doc.data();
-              // Update user state with latest data from Firestore
-              setUser(prevUser => {
-                if (!prevUser) return prevUser;
-                return {
-                  ...prevUser,
-                  photoURL: userData.photoURL || prevUser.photoURL,
-                  displayName: userData.displayName || prevUser.displayName
-                };
-              });
-            }
-          });
+          if (firebaseUser) {
+            const result = await createUserDocument(firebaseUser);
+            const visitedBefore = await hasUserVisitedBefore(firebaseUser);
 
-          // Clean up snapshot listener when auth state changes
-          return () => unsubscribeSnapshot();
-        } else {
-          setUser(null);
-          setIsNewUser(false);
-          setUserFirstName('');
-          setHasVisitedBefore(false);
-          setUserDisplayName('');
-          setAuthMethod(null);
+            setUser(firebaseUser);
+            setIsNewUser(result?.isNewUser || false);
+            setUserFirstName(getUserFirstName(firebaseUser));
+            setHasVisitedBefore(visitedBefore);
+            setUserDisplayName(getUserDisplayName(firebaseUser));
+
+            // Listen to user document and register it
+            const userDocRef = doc(db, "users", firebaseUser.uid);
+            const unsubscribeSnapshot = onSnapshot(userDocRef, (doc) => {
+              if (doc.exists()) {
+                const userData = doc.data();
+                setUser((prevUser) => {
+                  if (!prevUser) return prevUser;
+                  return {
+                    ...prevUser,
+                    photoURL: userData.photoURL || prevUser.photoURL,
+                    displayName: userData.displayName || prevUser.displayName,
+                  };
+                });
+              }
+            });
+
+            registerListener(unsubscribeSnapshot);
+          } else {
+            // Reset all user data
+            setUser(null);
+            setIsNewUser(false);
+            setUserFirstName("");
+            setHasVisitedBefore(false);
+            setUserDisplayName("");
+            setAuthMethod(null);
+          }
+        } catch (err) {
+          console.error("Error handling auth state change:", err);
+          setError(err instanceof Error ? err.message : "Authentication error");
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error('Error handling auth state change:', err);
-        setError(err instanceof Error ? err.message : 'Authentication error');
-      } finally {
-        setLoading(false);
       }
-    });
+    );
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribeAuth();
+      stopAllListeners();
+    };
   }, []);
 
   const signIn = async () => {
     try {
       setError(null);
       setLoading(true);
-      
       const authResult = await signInWithGoogle();
-      
-      if (authResult.method === 'popup') {
-        setAuthMethod('popup');
-        console.log('Popup authentication successful');
-      } else if (authResult.method === 'redirect') {
-        setAuthMethod('redirect');
-        console.log('Redirecting for authentication...');
-        // Note: The page will redirect, so this code won't continue
+
+      if (authResult.method === "popup") {
+        setAuthMethod("popup");
+        console.log("Popup authentication successful");
+      } else if (authResult.method === "redirect") {
+        setAuthMethod("redirect");
+        console.log("Redirecting for authentication...");
       }
     } catch (err: any) {
-      console.error('Error signing in:', err);
-      
-      // Provide user-friendly error messages
-      let errorMessage = 'Failed to sign in';
-      
-      if (err.code === 'auth/popup-blocked') {
-        errorMessage = 'Popup was blocked. Please allow popups and try again.';
-      } else if (err.code === 'auth/popup-closed-by-user') {
-        errorMessage = 'Sign-in was cancelled. Please try again.';
-      } else if (err.code === 'auth/network-request-failed') {
-        errorMessage = 'Network error. Please check your connection and try again.';
-      } else if (err.message?.includes('Cross-Origin-Opener-Policy')) {
-        errorMessage = 'Authentication popup blocked. Trying alternative method...';
-      } else if (err instanceof Error) {
-        errorMessage = err.message;
-      }
-      
+      console.error("Error signing in:", err);
+      let errorMessage = "Failed to sign in";
+      if (err.code === "auth/popup-blocked")
+        errorMessage = "Popup was blocked. Please allow popups and try again.";
+      else if (err.code === "auth/popup-closed-by-user")
+        errorMessage = "Sign-in was cancelled. Please try again.";
+      else if (err.code === "auth/network-request-failed")
+        errorMessage =
+          "Network error. Please check your connection and try again.";
+      else if (err.message?.includes("Cross-Origin-Opener-Policy"))
+        errorMessage =
+          "Authentication popup blocked. Trying alternative method...";
+      else if (err instanceof Error) errorMessage = err.message;
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -147,10 +184,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       setError(null);
       setLoading(true);
+
+      // Stop all listeners before logging out
+      stopAllListeners();
+
       await signOutUser();
     } catch (err) {
-      console.error('Error signing out:', err);
-      setError(err instanceof Error ? err.message : 'Failed to sign out');
+      console.error("Error signing out:", err);
+      setError(err instanceof Error ? err.message : "Failed to sign out");
     } finally {
       setLoading(false);
     }
@@ -166,32 +207,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
     userFirstName,
     hasVisitedBefore,
     userDisplayName,
-    authMethod
+    authMethod,
+    registerListener,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
 
-// Hook for checking if user is authenticated
 export function useRequireAuth() {
   const { user, loading } = useAuth();
-  
   return {
     user,
     loading,
     isAuthenticated: !!user,
-    isUnauthenticated: !user && !loading
+    isUnauthenticated: !user && !loading,
   };
 }
