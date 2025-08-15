@@ -26,11 +26,13 @@ export default function TestNavbarPage() {
 
   const mockUsers = {
     withPhoto: {
+      uid: 'test-user-1',
       displayName: 'John Doe',
       email: 'john.doe@example.com',
       photoURL: 'https://lh3.googleusercontent.com/a/default-user'
     },
     noPhoto: {
+      uid: 'test-user-2',
       displayName: 'Jane Smith',
       email: 'jane.smith@example.com',
       photoURL: null
@@ -54,6 +56,7 @@ export default function TestNavbarPage() {
                   <h3 className="text-lg font-medium text-gray-700">Small Size</h3>
                   <AvatarWithFallback
                     src={currentUser.photoURL}
+                    userId={currentUser.uid}
                     alt={currentUser.displayName}
                     size="sm"
                     initials={currentUser.displayName.split(' ').map(n => n[0]).join('')}
@@ -66,6 +69,7 @@ export default function TestNavbarPage() {
                   <h3 className="text-lg font-medium text-gray-700">Medium Size</h3>
                   <AvatarWithFallback
                     src={currentUser.photoURL}
+                    userId={currentUser.uid}
                     alt={currentUser.displayName}
                     size="md"
                     initials={currentUser.displayName.split(' ').map(n => n[0]).join('')}
@@ -78,6 +82,7 @@ export default function TestNavbarPage() {
                   <h3 className="text-lg font-medium text-gray-700">Large Size</h3>
                   <AvatarWithFallback
                     src={currentUser.photoURL}
+                    userId={currentUser.uid}
                     alt={currentUser.displayName}
                     size="lg"
                     initials={currentUser.displayName.split(' ').map(n => n[0]).join('')}

@@ -3,6 +3,8 @@
 
 import { useState, useEffect, useContext, createContext, ReactNode } from 'react';
 import { User, onAuthStateChanged, signInWithGoogle, signOutUser, createUserDocument, auth, isUserNew, getUserFirstName, hasUserVisitedBefore, getUserDisplayName, handleRedirectResult } from '@/lib/firebase';
+import { onSnapshot, doc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 interface AuthContextType {
   user: User | null;
@@ -57,11 +59,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
           const result = await createUserDocument(firebaseUser);
           const visitedBefore = await hasUserVisitedBefore(firebaseUser);
           
+          // Set initial user state
           setUser(firebaseUser);
           setIsNewUser(result?.isNewUser || false);
           setUserFirstName(getUserFirstName(firebaseUser));
           setHasVisitedBefore(visitedBefore);
           setUserDisplayName(getUserDisplayName(firebaseUser));
+
+          // Subscribe to real-time updates of the user document
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          const unsubscribeSnapshot = onSnapshot(userDocRef, (doc) => {
+            if (doc.exists()) {
+              const userData = doc.data();
+              // Update user state with latest data from Firestore
+              setUser(prevUser => {
+                if (!prevUser) return prevUser;
+                return {
+                  ...prevUser,
+                  photoURL: userData.photoURL || prevUser.photoURL,
+                  displayName: userData.displayName || prevUser.displayName
+                };
+              });
+            }
+          });
+
+          // Clean up snapshot listener when auth state changes
+          return () => unsubscribeSnapshot();
         } else {
           setUser(null);
           setIsNewUser(false);

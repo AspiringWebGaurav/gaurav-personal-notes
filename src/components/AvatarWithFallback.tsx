@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface AvatarWithFallbackProps {
   src?: string | null;
@@ -13,6 +14,7 @@ interface AvatarWithFallbackProps {
   onLoad?: () => void;
   showOnlineStatus?: boolean;
   isOnline?: boolean;
+  userId?: string;
 }
 
 const sizeClasses = {
@@ -30,12 +32,14 @@ export default function AvatarWithFallback({
   onError,
   onLoad,
   showOnlineStatus = false,
-  isOnline = true
+  isOnline = true,
+  userId
 }: AvatarWithFallbackProps) {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(!!src);
 
   const handleImageError = () => {
+    console.error('Failed to load profile picture:', src);
     setImageError(true);
     setImageLoading(false);
     onError?.();
@@ -47,11 +51,19 @@ export default function AvatarWithFallback({
   };
 
   const getOptimizedSrc = (originalSrc: string) => {
+    if (!originalSrc) return '';
+    
     if (originalSrc.includes('googleusercontent.com')) {
-      // Request higher resolution Google profile picture
-      return originalSrc
-        .replace(/=s\d+-c/, '=s200-c')
-        .replace(/\/photo\.jpg$/, '/photo.jpg?sz=200');
+      try {
+        // Get base URL and request a larger size
+        const baseUrl = originalSrc.split('?')[0].split('=s')[0];
+        const optimizedUrl = `${baseUrl}=s400-c`;
+        // Use our proxy endpoint
+        return `/api/proxy-image?url=${encodeURIComponent(optimizedUrl)}`;
+      } catch (error) {
+        console.error('Error optimizing Google profile URL:', error);
+        return originalSrc;
+      }
     }
     return originalSrc;
   };
@@ -67,15 +79,21 @@ export default function AvatarWithFallback({
 
       {/* Avatar image or fallback */}
       {src && !imageError ? (
-        <img
-          className={`${sizeClasses[size]} rounded-full object-cover border-2 border-white/20 transition-opacity duration-200 ${
-            imageLoading ? 'opacity-0' : 'opacity-100'
-          }`}
-          src={getOptimizedSrc(src)}
-          alt={alt}
-          onError={handleImageError}
-          onLoad={handleImageLoad}
-        />
+        <div className={`relative ${sizeClasses[size]}`}>
+          <Image
+            className={`rounded-full object-cover border-2 border-white/20 transition-opacity duration-200 ${
+              imageLoading ? 'opacity-0' : 'opacity-100'
+            }`}
+            src={getOptimizedSrc(src)}
+            alt={alt}
+            onError={handleImageError}
+            onLoad={handleImageLoad}
+            fill
+            sizes={`(max-width: 768px) ${size === 'sm' ? '32px' : size === 'md' ? '40px' : '48px'}`}
+            priority
+            unoptimized={false} // Let Next.js handle optimization
+          />
+        </div>
       ) : (
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}

@@ -41,9 +41,17 @@ export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
 export const db = getFirestore(app);
 
-// Configure Google Auth provider
+// Configure Google Auth provider with necessary scopes
+provider.addScope('profile');
+provider.addScope('email');
+provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
 provider.setCustomParameters({
-  prompt: 'select_account'
+  prompt: 'select_account',
+  access_type: 'offline',
+  include_granted_scopes: 'true',
+  // Request profile photo specifically
+  auth_type: 'rerequest',
+  response_type: 'token id_token permission'
 });
 
 // Set persistence for auth state
@@ -139,6 +147,7 @@ export const createUserDocument = async (user: User) => {
       displayName: string | null;
       photoURL: string | null;
       lastLoginAt: Timestamp;
+      lastPhotoUpdate?: Timestamp;
       preferences: {
         theme: string;
         defaultTemplate: string;
@@ -151,6 +160,7 @@ export const createUserDocument = async (user: User) => {
       displayName: user.displayName,
       photoURL: user.photoURL,
       lastLoginAt: Timestamp.now(),
+      lastPhotoUpdate: Timestamp.now(),
       preferences: {
         theme: 'light',
         defaultTemplate: 'quick-notes',
