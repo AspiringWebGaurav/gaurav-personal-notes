@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/hooks/useAuth";
 import { SyncStatusProvider } from "@/components/SyncStatusProvider";
 import GlobalNavbar from "@/components/GlobalNavbar";
+import Breadcrumb from "@/components/Breadcrumb";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,6 +34,7 @@ export default function RootLayout({
         <AuthProvider>
           <SyncStatusProvider>
             <GlobalNavbar />
+            <Breadcrumb />
             {children}
           </SyncStatusProvider>
         </AuthProvider>
