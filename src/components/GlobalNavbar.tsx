@@ -238,7 +238,8 @@ export default function GlobalNavbar() {
                     <div className="animate-pulse rounded-full bg-white/20 h-8 w-8" />
                   ) : (
                     <AvatarWithFallback
-                    src={user?.photoURL}
+                     src={user?.photoURL}
+                     userId={user?.uid}
                     alt={getUserDisplayInfo().displayName + ' avatar'}
                     size="sm"
                     initials={getUserDisplayInfo().initials}
@@ -276,6 +277,7 @@ export default function GlobalNavbar() {
                         <div className="flex items-center space-x-3">
                           <AvatarWithFallback
                             src={user?.photoURL}
+                            userId={user?.uid}
                             alt={getUserDisplayInfo().displayName + ' avatar'}
                             size="md"
                             initials={getUserDisplayInfo().initials}
