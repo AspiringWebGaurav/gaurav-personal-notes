@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 
 interface SyncStatus {
+  [x: string]: string;
   isSyncing: boolean;
   lastSyncTime: Date | null;
   isOnline: boolean;
