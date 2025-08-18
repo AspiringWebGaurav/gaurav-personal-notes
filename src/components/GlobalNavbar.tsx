@@ -96,8 +96,10 @@ export default function GlobalNavbar() {
   const go = (href: string) => router.push(href);
   const logout = async () => {
     try {
-      await signOut();
-      router.push("/login");
+      router.push("/postlogout"); // go show the post-logout animation page
+      // IMPORTANT: do NOT call signOut() here.
+      // The /postlogout page will handle calling signOut() so this component unmount
+      // can never cancel our navigation.
     } catch (e) {
       console.error(e);
     }
