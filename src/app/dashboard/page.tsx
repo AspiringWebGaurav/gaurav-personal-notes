@@ -64,6 +64,35 @@ const useContainerMotion = () => {
 };
 
 // ---------------------------------------------------------------------------
+// Branded full-page loader (GPN)
+// ---------------------------------------------------------------------------
+
+function GPNLoader({
+  message = "Loading your dashboard…",
+}: {
+  message?: string;
+}) {
+  return (
+    <div className="min-h-[100dvh] flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
+      <div className="flex flex-col items-center gap-4">
+        <div className="relative">
+          <div className="w-14 h-14 rounded-full border-4 border-slate-300/70 dark:border-slate-700/70 border-t-transparent animate-spin" />
+          <div className="absolute inset-0 grid place-items-center text-xs font-semibold tracking-wider text-slate-600 dark:text-slate-300">
+            GPN
+          </div>
+        </div>
+        <div className="px-3 py-1 rounded-xl bg-white/80 dark:bg-slate-900/70 ring-1 ring-slate-200 dark:ring-slate-800 backdrop-blur">
+          <span className="text-sm font-semibold">
+            Gaurav&apos;s Personal Notes
+          </span>
+        </div>
+        <p className="text-xs text-slate-600 dark:text-slate-300">{message}</p>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main Component
 // ---------------------------------------------------------------------------
 
@@ -78,6 +107,10 @@ export default function DashboardPage() {
   const [search, setSearch] = useState("");
   const [recentNotes, setRecentNotes] = useState<Note[]>([]);
   const [moneyTrackers, setMoneyTrackers] = useState<MoneyTracker[]>([]);
+
+  // NEW: gate flags to prevent partial UI before data is ready
+  const [notesLoaded, setNotesLoaded] = useState(false);
+  const [moneyLoaded, setMoneyLoaded] = useState(false);
 
   // Compute dynamic footer text
   const displaySyncText = React.useMemo(() => {
@@ -119,6 +152,8 @@ export default function DashboardPage() {
           ...(doc.data() as any),
         })) as Note[];
         setRecentNotes(notes);
+        // mark ready on first delivery (even if empty)
+        setNotesLoaded(true);
       });
 
       const moneyQuery = query(
@@ -132,6 +167,8 @@ export default function DashboardPage() {
           ...(doc.data() as any),
         })) as MoneyTracker[];
         setMoneyTrackers(trackers);
+        // mark ready on first delivery (even if empty)
+        setMoneyLoaded(true);
       });
 
       return () => {
@@ -208,19 +245,19 @@ export default function DashboardPage() {
     };
   }, [showSwipeHint]);
 
+  // ---- FULL-PAGE LOADING & GATING ----
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"
-        />
-      </div>
-    );
+    return <GPNLoader message="Signing you in…" />;
   }
-  if (!user) return null;
+  if (!user) {
+    // redirect happens in useEffect; keep branded loader visible in the meantime
+    return <GPNLoader message="Redirecting to login…" />;
+  }
+  if (!notesLoaded || !moneyLoaded) {
+    return <GPNLoader message="Preparing your dashboard…" />;
+  }
 
+  // Once here, auth is resolved AND first snapshots have been received.
   return (
     /**
      * Responsive scroll behavior:
@@ -242,7 +279,7 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-5 w-5" />
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
-                    Gaurav's Personal Notes (GPN)
+                    Gaurav&apos;s Personal Notes (GPN)
                   </span>
                 </div>
               </div>
@@ -757,6 +794,15 @@ export default function DashboardPage() {
           visibility: hidden !important;
         }
       `}</style>
+
+      {/* Optional: thin overlay while syncing (non-blocking) */}
+      {isSyncing && (
+        <div className="fixed inset-0 z-[100] pointer-events-none flex items-start justify-center pt-16">
+          <div className="px-3 py-1 rounded-full bg-white/90 dark:bg-slate-900/90 ring-1 ring-slate-200 dark:ring-slate-800 text-xs">
+            Syncing your data…
+          </div>
+        </div>
+      )}
     </div>
   );
 }
