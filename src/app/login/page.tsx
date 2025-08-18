@@ -1,9 +1,13 @@
+// /app/(auth)/login/page.tsx
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
+import PostLoginGlassLoader from "@/components/PostLoginGlassLoader";
+
+const POST_AUTH_FLAG = "postAuthPending"; // survives redirect round-trip
 
 export default function LoginPage() {
   const {
@@ -20,23 +24,32 @@ export default function LoginPage() {
 
   const router = useRouter();
   const [welcomeMessage, setWelcomeMessage] = useState("Welcome");
-  const [authInFlight, setAuthInFlight] = useState(false);
-  const replacedRef = useRef(false);
 
-  // Prefetch for snappier transition
+  // --- Loader timing constants (NEW) ---
+  const LOADER_STEPS = [
+    "Preparing dashboard…",
+    "Loading preferences…",
+    "Optimizing experience…",
+    "Handshaking with server…",
+    "Finalizing & opening…",
+  ];
+  const STEP_DURATION_MS = 1800; // slower, readable steps
+  const TOTAL_HOLD_MS = LOADER_STEPS.length * STEP_DURATION_MS + 200; // small buffer
+
+  // Glass loader controls
+  const [showLoader, setShowLoader] = useState(false);
+  const [workPromise, setWorkPromise] = useState<Promise<void> | undefined>();
+
+  // Guards
+  const replacedRef = useRef(false);
+  const clickedRef = useRef(false);
+
+  // Prefetch dashboard for background warm-up
   useEffect(() => {
     router.prefetch("/dashboard");
   }, [router]);
 
-  // When user exists, switch immediately to dashboard without flashing login
-  useEffect(() => {
-    if (user && !replacedRef.current) {
-      replacedRef.current = true;
-      router.replace("/dashboard");
-    }
-  }, [user, router]);
-
-  // Friendly header text (unchanged logic)
+  // Friendly header text
   useEffect(() => {
     if (user && userDisplayName) {
       if (isNewUser) setWelcomeMessage("Welcome");
@@ -59,33 +72,75 @@ export default function LoginPage() {
     }
   }, [user, userDisplayName, userFirstName, isNewUser, hasVisitedBefore]);
 
-  const handleSignIn = async () => {
+  // 1) Click → start Firebase auth (do NOT show loader yet)
+  const handleSignIn = useCallback(async () => {
     try {
-      setAuthInFlight(true); // block UI right away to avoid any flicker
-      await signIn(); // your existing sign-in method
+      clickedRef.current = true;
+      if (typeof window !== "undefined")
+        sessionStorage.setItem(POST_AUTH_FLAG, "1");
+      await signIn();
     } catch (err) {
       console.error("Sign in error:", err);
-      setAuthInFlight(false);
+      clickedRef.current = false;
+      setShowLoader(false);
+      setWorkPromise(undefined);
+      if (typeof window !== "undefined")
+        sessionStorage.removeItem(POST_AUTH_FLAG);
     }
-  };
+  }, [signIn]);
 
-  // Single loading gate: while loading user, or the user already exists, or we just clicked sign-in,
-  // show a full-screen loader so the login UI never re-appears.
-  if (loading || user || authInFlight) {
+  // 2) After Firebase confirms (user truthy) → hide login, show loader for FULL step time, prefetch dashboard
+  useEffect(() => {
+    if (!user || replacedRef.current) return;
+
+    const fromRedirect =
+      typeof window !== "undefined" &&
+      sessionStorage.getItem(POST_AUTH_FLAG) === "1";
+
+    // Already signed in on arrival → straight to dashboard
+    if (!clickedRef.current && !fromRedirect) {
+      replacedRef.current = true;
+      router.replace("/dashboard");
+      return;
+    }
+
+    // Show full-screen loader once
+    if (!showLoader) {
+      setShowLoader(true);
+      router.prefetch("/dashboard"); // background warm-up during loader
+
+      // HOLD for the full duration of the steps (FIX)
+      const delay = new Promise<void>((r) => setTimeout(r, TOTAL_HOLD_MS));
+      setWorkPromise(delay);
+
+      if (fromRedirect) sessionStorage.setItem(POST_AUTH_FLAG, "consumed");
+    }
+  }, [user, router, showLoader, TOTAL_HOLD_MS]);
+
+  // 3) Loader completes → navigate to dashboard, clear flags
+  const handleLoaderDone = useCallback(() => {
+    if (typeof window !== "undefined")
+      sessionStorage.removeItem(POST_AUTH_FLAG);
+    if (!replacedRef.current) {
+      replacedRef.current = true;
+      router.replace("/dashboard");
+    }
+  }, [router]);
+
+  // While loader is visible, hide the login UI entirely
+  if (showLoader) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-        <motion.div
-          aria-label="Loading"
-          role="status"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
-          className="w-12 h-12 border-4 border-white/75 border-t-transparent rounded-full"
-        />
-      </div>
+      <PostLoginGlassLoader
+        open={true}
+        workPromise={workPromise}
+        onDone={handleLoaderDone}
+        steps={LOADER_STEPS}
+        stepDurationMs={STEP_DURATION_MS}
+      />
     );
   }
 
-  // ---- The rest of your page stays the same (layout you approved) ----
+  // ---- Login Page UI ----
   return (
     <div className="h-dvh w-full overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 text-white relative">
       {/* Decorative background */}
@@ -104,7 +159,7 @@ export default function LoginPage() {
 
       {/* Two rows: (content group) / (footer) */}
       <div className="relative z-10 grid h-full grid-rows-[1fr,auto] px-4">
-        {/* CONTENT GROUP — header + card keep close together */}
+        {/* CONTENT GROUP — header + card */}
         <div className="flex items-center justify-center">
           <div className="w-full max-w-3xl flex flex-col items-center gap-[clamp(10px,2.2vh,20px)]">
             {/* Header */}
@@ -198,8 +253,8 @@ export default function LoginPage() {
                       />
                       <span>
                         {authMethod === "redirect"
-                          ? "Redirecting..."
-                          : "Signing in..."}
+                          ? "Redirecting."
+                          : "Signing in."}
                       </span>
                     </>
                   ) : (
