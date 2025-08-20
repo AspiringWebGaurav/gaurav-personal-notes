@@ -29,6 +29,23 @@ A blazing-fast personal notes and money tracking application built with Next.js,
 - **Smooth Animations** - Framer Motion powered micro-interactions
 - **PWA Ready** - Can be installed as a mobile app
 
+### ⏲️ Todo Enhancements
+- **Timetable & Calendar** - Plan tasks in week or month views
+- **Kanban Board** - Drag tasks across Backlog, Today, Upcoming and Done
+- **Focus Mode** - Built-in Pomodoro timer and stats
+- **Subtasks, Tags, Priority** - Organize tasks with rich metadata
+- **Snooze & Reminders** - Stay on top with gentle nudges
+
+### ⌨️ Keyboard Shortcuts
+| Shortcut | Action |
+|----------|-------|
+| `N` | New task |
+| `X` | Toggle complete |
+| `/` | Search tasks |
+| `J`/`K` | Navigate list |
+| `Cmd/Ctrl + K` | Command palette |
+| `Shift` | Bulk select |
+
 ## 🛠️ Tech Stack
 
 - **Frontend**: Next.js 14+ (App Router), React 18+, TypeScript

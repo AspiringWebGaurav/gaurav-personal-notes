@@ -1,6 +1,6 @@
 {
   "name": "gaurav-personal-notes",
-  "version": "1.0.0",
+  "version": "5.0.0",
   "private": true,
   "description": "A blazing-fast personal notes and money tracking application with real-time sync and offline support",
   "author": "Gaurav",
@@ -48,6 +48,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/recharts": "^1.8.29",
+    "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
     "tailwindcss": "^4",
