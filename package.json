@@ -17,7 +17,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
+    "check": "npm run lint && npm run type-check",
     "deploy": "vercel --prod",
     "firebase:deploy": "firebase deploy --only firestore:rules"
   },
