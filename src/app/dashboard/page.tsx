@@ -15,6 +15,8 @@ import {
   RefreshCw,
   PlusCircle,
   LayoutGrid,
+  CheckSquare,
+  Clock,
 } from "lucide-react";
 
 // shadcn/ui imports
@@ -44,8 +46,10 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Note, MoneyTracker } from "@/types";
+import { Note, MoneyTracker, Todo } from "@/types";
 import { formatCurrency, DEFAULT_CURRENCY } from "@/lib/currency";
+import { useTodos } from "@/hooks/useTodos";
+import { getOverdueTodos, isOverdue } from "@/lib/todoUtils";
 
 // ---------------------------------------------------------------------------
 // Utility
@@ -111,6 +115,12 @@ export default function DashboardPage() {
   // NEW: gate flags to prevent partial UI before data is ready
   const [notesLoaded, setNotesLoaded] = useState(false);
   const [moneyLoaded, setMoneyLoaded] = useState(false);
+
+  // Todos data
+  const { todos } = useTodos();
+  const recentTodos = todos.slice(0, 5);
+  const overdueTodos = getOverdueTodos(todos);
+  const activeTodos = todos.filter(t => !t.isCompleted);
 
   // Compute dynamic footer text
   const displaySyncText = React.useMemo(() => {
@@ -190,6 +200,8 @@ export default function DashboardPage() {
   const goTemplates = () => router.push("/dashboard/templates");
   const viewAllNotes = () => router.push("/dashboard/notes");
   const viewAllMoney = () => router.push("/dashboard/money");
+  const viewAllTodos = () => router.push("/dashboard/todos");
+  const createTodo = () => router.push("/dashboard/todos");
 
   const onSearch = () => {
     if (!search.trim()) return;
@@ -340,7 +352,7 @@ export default function DashboardPage() {
         {/* Tabs */}
         <div className="mx-auto max-w-7xl px-4 pt-4">
           <div className="flex items-center justify-center gap-2">
-            {["Notes", "Money", "Search", "Create"].map((t, i) => (
+            {["Todos", "Notes", "Money", "Search", "Create"].map((t, i) => (
               <button
                 key={t}
                 onClick={() => {
@@ -382,7 +394,63 @@ export default function DashboardPage() {
             onTouchStart={() => showSwipeHint && setShowSwipeHint(false)}
             className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
-            {/* Panel 1: Recent Notes */}
+            {/* Panel 1: Recent Todos */}
+            <div className="snap-center shrink-0 w-full">
+              <div className="pt-1">
+                <Section
+                  title="Recent Todos"
+                  description={`${activeTodos.length} active${overdueTodos.length > 0 ? `, ${overdueTodos.length} overdue` : ''}`}
+                  action={{ label: "View all", onClick: viewAllTodos }}
+                >
+                  {recentTodos.length === 0 ? (
+                    <EmptyState
+                      icon={<CheckSquare className="h-5 w-5" />}
+                      title="No todos yet"
+                      subtitle="Create your first todo to see it here"
+                      ctaLabel="Create a todo"
+                      onCta={createTodo}
+                    />
+                  ) : (
+                    <div className="grid gap-3">
+                      {recentTodos.map((todo) => (
+                        <ItemRow
+                          key={todo.id}
+                          title={todo.title || "Untitled"}
+                          subtitle={
+                            todo.dueAt
+                              ? `Due ${todo.dueAt.toDate().toLocaleDateString()}`
+                              : `Created ${todo.createdAt.toDate().toLocaleDateString()}`
+                          }
+                          onClick={() => router.push("/dashboard/todos")}
+                          leading={
+                            <CheckSquare
+                              className={`h-5 w-5 ${
+                                todo.isCompleted
+                                  ? 'text-green-600'
+                                  : isOverdue(todo)
+                                  ? 'text-red-600'
+                                  : 'text-slate-600'
+                              }`}
+                            />
+                          }
+                          trailing={
+                            todo.isCompleted ? (
+                              <span className="text-xs text-green-600 font-medium">✓ Done</span>
+                            ) : isOverdue(todo) ? (
+                              <span className="text-xs text-red-600 font-medium">⚠ Overdue</span>
+                            ) : todo.dueAt ? (
+                              <Clock className="h-4 w-4 text-orange-500" />
+                            ) : null
+                          }
+                        />
+                      ))}
+                    </div>
+                  )}
+                </Section>
+              </div>
+            </div>
+
+            {/* Panel 2: Recent Notes */}
             <div className="snap-center shrink-0 w-full">
               <div className="pt-1">
                 <Section
@@ -424,7 +492,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Panel 2: Money Trackers */}
+            {/* Panel 3: Money Trackers */}
             <div className="snap-center shrink-0 w-full">
               <div className="pt-1">
                 <Section
@@ -489,7 +557,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Panel 3: Quick find */}
+            {/* Panel 4: Quick find */}
             <div className="snap-center shrink-0 w-full">
               <div className="pt-1">
                 <Card className="border-dashed bg-white/60 dark:bg-slate-900/50 backdrop-blur">
@@ -519,9 +587,16 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Panel 4: Create shortcuts */}
+            {/* Panel 5: Create shortcuts */}
             <div className="snap-center shrink-0 w-full">
               <div className="pt-1 grid grid-cols-1 xs:grid-cols-2 gap-4">
+                <PrimaryCard
+                  title="New Todo"
+                  description="Add a task"
+                  icon={<CheckSquare className="h-5 w-5" />}
+                  gradient="from-purple-500 to-pink-500"
+                  onClick={createTodo}
+                />
                 <PrimaryCard
                   title="New Note"
                   description="Start writing your thoughts"
@@ -567,6 +642,13 @@ export default function DashboardPage() {
               icon={<PencilLine className="h-5 w-5" />}
               gradient="from-blue-500 to-indigo-500"
               onClick={createNewNote}
+            />
+            <PrimaryCard
+              title="Todo List"
+              description="Manage your tasks"
+              icon={<CheckSquare className="h-5 w-5" />}
+              gradient="from-purple-500 to-pink-500"
+              onClick={createTodo}
             />
             <PrimaryCard
               title="Money Tracker"
@@ -615,7 +697,58 @@ export default function DashboardPage() {
           </div>
 
           {/* Content Sections */}
-          <div className="mt-6 grid grid-cols-2 gap-6">
+          <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Section
+              title="Recent Todos"
+              description={`${activeTodos.length} active${overdueTodos.length > 0 ? `, ${overdueTodos.length} overdue` : ''}`}
+              action={{ label: "View all", onClick: viewAllTodos }}
+            >
+              {recentTodos.length === 0 ? (
+                <EmptyState
+                  icon={<CheckSquare className="h-5 w-5" />}
+                  title="No todos yet"
+                  subtitle="Create your first todo to see it here"
+                  ctaLabel="Create a todo"
+                  onCta={createTodo}
+                />
+              ) : (
+                <div className="grid gap-3">
+                  {recentTodos.map((todo) => (
+                    <ItemRow
+                      key={todo.id}
+                      title={todo.title || "Untitled"}
+                      subtitle={
+                        todo.dueAt
+                          ? `Due ${todo.dueAt.toDate().toLocaleDateString()}`
+                          : `Created ${todo.createdAt.toDate().toLocaleDateString()}`
+                      }
+                      onClick={() => router.push("/dashboard/todos")}
+                      leading={
+                        <CheckSquare
+                          className={`h-5 w-5 ${
+                            todo.isCompleted
+                              ? 'text-green-600'
+                              : isOverdue(todo)
+                              ? 'text-red-600'
+                              : 'text-slate-600'
+                          }`}
+                        />
+                      }
+                      trailing={
+                        todo.isCompleted ? (
+                          <span className="text-xs text-green-600 font-medium">✓ Done</span>
+                        ) : isOverdue(todo) ? (
+                          <span className="text-xs text-red-600 font-medium">⚠ Overdue</span>
+                        ) : todo.dueAt ? (
+                          <Clock className="h-4 w-4 text-orange-500" />
+                        ) : null
+                      }
+                    />
+                  ))}
+                </div>
+              )}
+            </Section>
+
             <Section
               title="Recent Notes"
               description="Your latest thoughts at a glance"
@@ -650,7 +783,9 @@ export default function DashboardPage() {
                 </div>
               )}
             </Section>
+          </div>
 
+          <div className="mt-6 grid grid-cols-1 lg:grid-cols-1 gap-6">
             <Section
               title="Money Trackers"
               description="Stay on top of your finances"

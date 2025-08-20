@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import AvatarWithFallback from "./AvatarWithFallback";
 import { useAuth } from "@/hooks/useAuth";
 import { useSyncStatus } from "./SyncStatusProvider";
+import NotificationsBell from "./todos/NotificationsBell";
 
 /**
  * Elevation Pills — Enterprise Navbar for GPN
@@ -21,6 +22,7 @@ type NavItem = { name: string; href: string; icon: string; desc?: string };
 const NAV: NavItem[] = [
   { name: "Dashboard", href: "/dashboard", icon: "🏠", desc: "Overview" },
   { name: "Notes", href: "/dashboard/notes", icon: "📝", desc: "Your notes" },
+  { name: "Todos", href: "/dashboard/todos", icon: "✅", desc: "Task management" },
   {
     name: "Money",
     href: "/dashboard/money",
@@ -175,14 +177,8 @@ export default function GlobalNavbar() {
 
             {/* Utilities */}
             <div className="col-span-6 sm:col-span-8 lg:col-span-3 flex items-center justify-end gap-1.5 sm:gap-2">
-              {/* Notifications */}
-              <IconBtn
-                className="hidden sm:inline-flex"
-                label="Notifications"
-                onClick={() => go("/dashboard/notifications")}
-              >
-                🔔
-              </IconBtn>
+              {/* Todo Notifications Bell */}
+              <NotificationsBell className="hidden sm:inline-flex" />
 
               {/* Synced badge */}
               <SyncBadge label={syncStatus?.lastSyncedLabel || "Synced"} />

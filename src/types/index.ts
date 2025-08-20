@@ -83,6 +83,29 @@ export interface OfflineQueueItem {
   timestamp: number;
 }
 
+export interface Todo {
+  id: string;
+  title: string;
+  notes?: string;
+  dueAt?: Timestamp;
+  isCompleted: boolean;
+  /** optional enterprise fields */
+  isStarred?: boolean;
+  priority?: 0|1|2|3|4;
+  tags?: string[];
+  startAt?: Timestamp | null;
+  durationMin?: number | null;
+  recurrence?: string | null;
+  reminders?: Timestamp[];
+  subtasks?: { id: string; title: string; done: boolean }[];
+  attachments?: { name: string; url: string }[];
+  orderIndex?: number | null;
+  estimateMin?: number | null;
+  focusCount?: number | null;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
 export interface Currency {
   code: 'USD' | 'EUR' | 'GBP' | 'INR';
   symbol: string;
