@@ -17,6 +17,8 @@ import {
   LayoutGrid,
   CheckSquare,
   Clock,
+  Users,
+  UserPlus,
 } from "lucide-react";
 
 // shadcn/ui imports
@@ -198,6 +200,8 @@ export default function DashboardPage() {
     router.push(`/dashboard/money/${trackerId}`);
   };
   const goTemplates = () => router.push("/dashboard/templates");
+  const goCollaborative = () => router.push("/dashboard/collaborative");
+  const goJoinWithCode = () => router.push("/join");
   const viewAllNotes = () => router.push("/dashboard/notes");
   const viewAllMoney = () => router.push("/dashboard/money");
   const viewAllTodos = () => router.push("/dashboard/todos");
@@ -352,7 +356,7 @@ export default function DashboardPage() {
         {/* Tabs */}
         <div className="mx-auto max-w-7xl px-4 pt-4">
           <div className="flex items-center justify-center gap-2">
-            {["Todos", "Notes", "Money", "Search", "Create"].map((t, i) => (
+            {["Todos", "Notes", "Money", "Collab", "Create"].map((t, i) => (
               <button
                 key={t}
                 onClick={() => {
@@ -557,7 +561,44 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Panel 4: Quick find */}
+            {/* Panel 4: Collaborative Notes */}
+            <div className="snap-center shrink-0 w-full">
+              <div className="pt-1">
+                <Section
+                  title="Collaborative Notes"
+                  description="Work together in real-time"
+                  action={{ label: "View all", onClick: goCollaborative }}
+                >
+                  <div className="space-y-3">
+                    <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-4 text-white text-center">
+                      <UserPlus className="h-6 w-6 mx-auto mb-2" />
+                      <h4 className="font-semibold mb-1">Have an Invite Code?</h4>
+                      <p className="text-green-100 text-xs mb-3">Join a collaborative note instantly</p>
+                      <Button
+                        onClick={goJoinWithCode}
+                        size="sm"
+                        className="bg-white text-green-600 hover:bg-green-50 font-medium"
+                      >
+                        Enter Code
+                      </Button>
+                    </div>
+                    <div className="text-center">
+                      <Button
+                        onClick={goCollaborative}
+                        variant="outline"
+                        size="sm"
+                        className="gap-2"
+                      >
+                        <Users className="h-4 w-4" />
+                        Create & Manage
+                      </Button>
+                    </div>
+                  </div>
+                </Section>
+              </div>
+            </div>
+
+            {/* Panel 5: Quick find */}
             <div className="snap-center shrink-0 w-full">
               <div className="pt-1">
                 <Card className="border-dashed bg-white/60 dark:bg-slate-900/50 backdrop-blur">
@@ -587,7 +628,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Panel 5: Create shortcuts */}
+            {/* Panel 6: Create shortcuts */}
             <div className="snap-center shrink-0 w-full">
               <div className="pt-1 grid grid-cols-1 xs:grid-cols-2 gap-4">
                 <PrimaryCard
@@ -618,6 +659,13 @@ export default function DashboardPage() {
                   gradient="from-fuchsia-500 to-violet-500"
                   onClick={goTemplates}
                 />
+                <PrimaryCard
+                  title="Collaborative"
+                  description="Work together in real-time"
+                  icon={<Users className="h-5 w-5" />}
+                  gradient="from-orange-500 to-red-500"
+                  onClick={goCollaborative}
+                />
               </div>
             </div>
           </div>
@@ -634,7 +682,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            className="grid grid-cols-3 gap-4"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-4"
           >
             <PrimaryCard
               title="New Note"
@@ -664,6 +712,44 @@ export default function DashboardPage() {
               gradient="from-fuchsia-500 to-violet-500"
               onClick={goTemplates}
             />
+          </motion.div>
+
+          {/* Secondary actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4"
+          >
+            <PrimaryCard
+              title="Collaborative Notes"
+              description="Work together in real-time"
+              icon={<Users className="h-5 w-5" />}
+              gradient="from-orange-500 to-red-500"
+              onClick={goCollaborative}
+            />
+            <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-3xl p-0.5">
+              <div className="h-full w-full rounded-[calc(theme(borderRadius.3xl)-2px)] bg-white/80 dark:bg-slate-950/60 p-5 backdrop-blur">
+                <div className="text-center">
+                  <div className="flex items-center justify-center mb-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-green-100 dark:bg-green-900/60">
+                      <UserPlus className="h-5 w-5 text-green-600" />
+                    </div>
+                  </div>
+                  <h3 className="text-base font-semibold tracking-tight mb-2">Join with Invite Code</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
+                    Have a 6-character code? Join instantly!
+                  </p>
+                  <Button
+                    onClick={goJoinWithCode}
+                    className="bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600 gap-2"
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    Enter Code
+                  </Button>
+                </div>
+              </div>
+            </div>
           </motion.div>
 
           {/* Search */}
@@ -882,12 +968,12 @@ export default function DashboardPage() {
             Money
           </button>
           <button
-            onClick={goTemplates}
+            onClick={goCollaborative}
             className="flex flex-col items-center gap-1 rounded-xl px-2 py-1 text-xs"
-            aria-label="Open templates"
+            aria-label="Open collaborative notes"
           >
-            <LayoutTemplate className="h-5 w-5" />
-            Templates
+            <Users className="h-5 w-5" />
+            Collab
           </button>
         </div>
       </nav>

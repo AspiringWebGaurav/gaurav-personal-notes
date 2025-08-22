@@ -30,10 +30,15 @@
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
+    "@tiptap/extension-collaboration": "^2.1.13",
+    "@tiptap/extension-collaboration-cursor": "^2.1.13",
+    "@tiptap/react": "^2.1.13",
+    "@tiptap/starter-kit": "^2.1.13",
     "@types/lodash": "^4.17.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "firebase": "^12.1.0",
+    "firebase-functions": "^4.5.0",
     "framer-motion": "^12.23.12",
     "lodash": "^4.17.21",
     "lucide-react": "^0.539.0",
@@ -41,7 +46,9 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "recharts": "^3.1.2",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "y-protocols": "^1.0.6",
+    "yjs": "^13.6.10"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

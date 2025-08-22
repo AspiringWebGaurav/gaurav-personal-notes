@@ -111,3 +111,77 @@ export interface Currency {
   symbol: string;
   name: string;
 }
+
+// Collaborative Notes Types
+export interface Profile {
+  uid: string;
+  firstName: string;
+  avatarUrl?: string;
+  inviteCodeId?: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+export interface InviteCode {
+  code: string; // 4-6 char base36, used as document ID
+  ownerUid: string;
+  active: boolean;
+  createdAt: Timestamp;
+  expiresAt?: Timestamp;
+}
+
+export interface Lobby {
+  id: string;
+  createdBy: string;
+  status: 'waiting' | 'active' | 'closed';
+  noteId: string;
+  pairKey: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+export interface LobbyMember {
+  uid: string;
+  role: 'host' | 'guest';
+  joinedAt: Timestamp;
+}
+
+export interface CollabNote {
+  id: string;
+  title: string;
+  createdBy: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+export interface CollabNoteMember {
+  uid: string;
+  role: 'owner' | 'editor' | 'viewer';
+  addedAt: Timestamp;
+}
+
+export interface CollabNoteSnapshot {
+  id: string;
+  contentMarkdown: string;
+  contentJSON: any;
+  createdAt: Timestamp;
+  createdBy: string;
+}
+
+export interface PresenceData {
+  firstName: string;
+  color: string;
+  cursor?: any;
+  selection?: any;
+  lastSeen: Timestamp;
+}
+
+// Cloud Functions Response Types
+export interface CreateInviteCodeResponse {
+  code: string;
+}
+
+export interface JoinByCodeResponse {
+  lobbyId: string;
+  noteId: string;
+}
