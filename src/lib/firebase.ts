@@ -12,19 +12,23 @@ import {
   onAuthStateChanged,
   User
 } from "firebase/auth";
-import { 
-  getFirestore, 
-  doc, 
-  setDoc, 
-  onSnapshot, 
-  collection, 
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  onSnapshot,
+  collection,
   addDoc,
   query,
   orderBy,
   Timestamp,
   deleteDoc,
-  updateDoc
+  updateDoc,
+  getDoc,
+  serverTimestamp
 } from "firebase/firestore";
+import { getDatabase } from "firebase/database";
+import { getFunctions } from "firebase/functions";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
@@ -32,7 +36,8 @@ const firebaseConfig = {
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+  databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL!
 };
 
 // Initialize Firebase
@@ -40,6 +45,8 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
 export const db = getFirestore(app);
+export const rtdb = getDatabase(app);
+export const functions = getFunctions(app);
 
 // Configure Google Auth provider with necessary scopes
 provider.addScope('profile');
@@ -249,4 +256,4 @@ export const getUserFirstName = (user: User): string => {
 
 // Export types
 export type { User };
-export { onAuthStateChanged, Timestamp };
+export { onAuthStateChanged, Timestamp, serverTimestamp, getDoc };
