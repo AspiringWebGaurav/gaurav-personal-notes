@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import AvatarWithFallback from "./AvatarWithFallback";
 import { useAuth } from "@/hooks/useAuth";
 import { useSyncStatus } from "./SyncStatusProvider";
@@ -145,15 +146,24 @@ export default function GlobalNavbar() {
                 className="inline-flex items-center gap-2 rounded-xl px-2 py-1
              hover:bg-black/5 focus:outline-none focus-visible:ring-2
              focus-visible:ring-black/20 transition"
-                aria-label="GPN home"
+                aria-label="Gaurav's Personal Notes home"
               >
-                <span className="text-[22px] md:text-2xl">📝</span>
+                <div className="relative w-6 h-6 md:w-7 md:h-7 flex-shrink-0">
+                  <Image
+                    src="/icon-512x512.png"
+                    alt="Gaurav's Personal Notes logo"
+                    width={28}
+                    height={28}
+                    className="w-full h-full object-contain"
+                    priority
+                  />
+                </div>
                 <span className="font-semibold text-gray-900 truncate text-base sm:text-lg">
                   <span className="hidden xl:inline">
-                    Gaurav&apos;s Personal Notes (GPN)
+                    Gaurav&apos;s Personal Notes
                   </span>
                   <span className="hidden lg:inline xl:hidden">
-                    Gaurav&apos;s Personal Notes
+                    Gaurav&apos;s Notes
                   </span>
                   <span className="inline lg:hidden">GPN</span>
                 </span>
@@ -181,7 +191,7 @@ export default function GlobalNavbar() {
               <NotificationsBell className="hidden sm:inline-flex" />
 
               {/* Synced badge */}
-              <SyncBadge label={syncStatus?.lastSyncedLabel || "Synced"} />
+              <SyncBadge label={syncStatus?.["lastSyncedLabel"] || "Synced"} />
 
               {/* Mobile menu */}
               <IconBtn
@@ -328,7 +338,7 @@ export default function GlobalNavbar() {
                           <div className="flex items-center justify-between">
                             <span>Last synced</span>
                             <span className="font-medium text-gray-800">
-                              {syncStatus?.lastSyncedLabel || "Just now"}
+                              {syncStatus?.["lastSyncedLabel"] || "Just now"}
                             </span>
                           </div>
                         </div>
@@ -419,7 +429,7 @@ export default function GlobalNavbar() {
                 </div>
 
                 <div className="border-t border-black/5 px-4 py-3 flex items-center justify-between text-sm">
-                  <SyncBadge label={syncStatus?.lastSyncedLabel || "Synced"} />
+                  <SyncBadge label={syncStatus?.["lastSyncedLabel"] || "Synced"} />
                   <button
                     onClick={logout}
                     className="text-red-600 font-medium hover:underline"
