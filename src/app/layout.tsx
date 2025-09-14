@@ -9,6 +9,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
 });
 
 // Comprehensive SEO Metadata
@@ -152,8 +153,40 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={inter.variable} data-scroll-behavior="smooth">
       <head>
+        {/* Global Console Suppression for Production */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost') && window.location.protocol === 'https:') {
+                  var noop = function() {};
+                  console.log = noop;
+                  console.warn = noop;
+                  console.error = noop;
+                  console.info = noop;
+                  console.debug = noop;
+                  console.trace = noop;
+                  console.table = noop;
+                  console.group = noop;
+                  console.groupEnd = noop;
+                  console.groupCollapsed = noop;
+                  console.clear = noop;
+                  console.count = noop;
+                  console.countReset = noop;
+                  console.time = noop;
+                  console.timeEnd = noop;
+                  console.timeLog = noop;
+                  console.assert = noop;
+                  console.dir = noop;
+                  console.dirxml = noop;
+                }
+              })();
+            `
+          }}
+        />
+        
         {/* PWA App Capabilities */}
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -163,9 +196,7 @@ export default function RootLayout({
         {/* Microsoft Application Configuration */}
         <meta name="msapplication-TileColor" content="#0fb9b1" />
         
-        {/* Preconnect for Performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Font optimization handled by next/font */}
         
         {/* JSON-LD Structured Data */}
         <script

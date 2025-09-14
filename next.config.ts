@@ -69,7 +69,7 @@ const nextConfig: NextConfig = {
       },
       // Cache static assets
       {
-        source: '/icon-:size*.png',
+        source: '/icon-:size(\\d+)x:size(\\d+).png',
         headers: [
           {
             key: 'Cache-Control',
