@@ -15,23 +15,23 @@ export default function JoinPage() {
 
   const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) {
       router.push('/login');
       return;
     }
-    
+
     if (!code.trim()) {
       setError('Please enter an invite code');
       return;
     }
-    
+
     setJoining(true);
     setError('');
-    
+
     try {
       const result = await joinWithInviteCode(code.trim(), user.uid);
-      
+
       if (result.success && result.noteId) {
         // Successfully joined, redirect to the note
         router.push(`/notes/${result.noteId}`);
@@ -178,7 +178,7 @@ export default function JoinPage() {
           <div className="mt-6 pt-6 border-t border-gray-200">
             <div className="text-center">
               <p className="text-sm text-gray-600 mb-3">
-                Don't have an invite code?
+                Don&apos;t have an invite code?
               </p>
               <button
                 onClick={() => router.push('/dashboard/collaborative')}
@@ -202,8 +202,8 @@ export default function JoinPage() {
           </h3>
           <div className="space-y-2 text-sm text-blue-800">
             <p><strong>1.</strong> Get the 6-character invite code from your collaborator</p>
-            <p><strong>2.</strong> Enter the code above (like "ABC123")</p>
-            <p><strong>3.</strong> You'll be automatically added to their note</p>
+            <p><strong>2.</strong> Enter the code above (like &quot;ABC123&quot;)</p>
+            <p><strong>3.</strong> You&apos;ll be automatically added to their note</p>
             <p><strong>4.</strong> Start collaborating in real-time!</p>
           </div>
         </motion.div>

@@ -4,21 +4,19 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
-import { 
-  Users, 
-  Plus, 
-  ArrowRight, 
-  Clock, 
+import {
+  Users,
+  Plus,
+  Clock,
   UserPlus,
   Share2,
   Sparkles,
-  Copy,
   ExternalLink
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { createInviteCode, getActiveInviteCode, canCreateInvite } from '@/lib/inviteCodes';
 
@@ -27,11 +25,11 @@ interface CollaborativeNote {
   title: string;
   ownerUid: string;
   members: string[];
-  createdAt: any;
-  updatedAt: any;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
   invite?: {
     token: string;
-    expiresAt: any;
+    expiresAt: Timestamp;
     maxMembers: number;
   };
 }
@@ -64,13 +62,14 @@ export default function CollaborativePage() {
           id: doc.id,
           ...doc.data()
         })) as CollaborativeNote[];
-        
+
         setNotes(notesData);
         setLoadingNotes(false);
       });
 
       return () => unsubscribe();
     }
+    return undefined;
   }, [user, loading, router]);
 
   const createNewCollaborativeNote = async () => {
@@ -109,14 +108,14 @@ export default function CollaborativePage() {
 
       // Check for existing active invite code
       let code = await getActiveInviteCode(noteId, user.uid);
-      
+
       // If no active code, create a new one
       if (!code) {
         code = await createInviteCode(noteId, user.uid);
       }
-      
+
       setInviteCode(code);
-      
+
       // Copy to clipboard
       await navigator.clipboard.writeText(code);
       setShowInviteCode(true);
@@ -168,8 +167,8 @@ export default function CollaborativePage() {
                 <Badge variant="secondary">Two-Person</Badge>
               </div>
             </div>
-            <Button 
-              onClick={createNewCollaborativeNote} 
+            <Button
+              onClick={createNewCollaborativeNote}
               disabled={creatingNote}
               className="gap-2"
             >
@@ -195,7 +194,7 @@ export default function CollaborativePage() {
             Create collaborative notes that support exactly two people working together in real-time.
             Share secure invite codes with 24-hour expiration for seamless collaboration.
           </p>
-          
+
           {/* Prominent Join with Code Button */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -275,7 +274,7 @@ export default function CollaborativePage() {
                     const isOwner = note.ownerUid === user.uid;
                     const memberCount = note.members?.length || 1;
                     const hasRoom = memberCount < 2;
-                    
+
                     return (
                       <div
                         key={note.id}
@@ -344,9 +343,9 @@ export default function CollaborativePage() {
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
                 Start a new collaborative note that supports two people working together.
               </p>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={createNewCollaborativeNote}
                 disabled={creatingNote}
                 className="w-full"
@@ -367,9 +366,9 @@ export default function CollaborativePage() {
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
                 Generate secure invite links to share your notes with one collaborator.
               </p>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => router.push('/dashboard/notes')}
                 className="w-full"
               >
@@ -389,9 +388,9 @@ export default function CollaborativePage() {
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
                 See live edits, presence indicators, and collaborate seamlessly.
               </p>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 disabled
                 className="w-full"
               >
@@ -428,7 +427,7 @@ export default function CollaborativePage() {
               <div className="text-2xl mb-2">👥</div>
               <h4 className="font-medium mb-1">Presence Indicators</h4>
               <p className="text-slate-600 dark:text-slate-400">
-                See who's online and collaborating with avatar indicators
+                See who&apos;s online and collaborating with avatar indicators
               </p>
             </div>
             <div className="text-center">

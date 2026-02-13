@@ -4,27 +4,30 @@ const isDev = process.env.NODE_ENV === 'development';
 const isProd = process.env.NODE_ENV === 'production';
 
 const nextConfig: NextConfig = {
-  // Disable ESLint during builds
+  // Enable React Strict Mode
+  reactStrictMode: true,
+
+  // Enable ESLint during builds for production safety
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
-  // Disable TypeScript checking during builds
+  // Enable TypeScript checking during builds for production safety
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
-  
+
   // Logging configuration
   logging: {
     fetches: {
       fullUrl: isDev,
     },
   },
-  
+
   // Reduce dev server noise
   devIndicators: {
     position: 'bottom-right',
   },
-  
+
   // Enhanced Image Configuration
   images: {
     remotePatterns: [
@@ -39,10 +42,10 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 31536000, // 1 year
   },
-  
+
   // PWA and Performance Optimizations
   compress: true,
-  
+
   // Security Headers
   async headers() {
     return [
@@ -88,7 +91,7 @@ const nextConfig: NextConfig = {
       }
     ];
   },
-  
+
   // Webpack optimizations
   webpack: (config, { dev, isServer }) => {
     // Production optimizations
@@ -98,26 +101,26 @@ const nextConfig: NextConfig = {
         sideEffects: false,
       };
     }
-    
+
     return config;
   },
-  
+
   // Turbopack configuration (now stable in Next.js 15)
   turbopack: {
     rules: {
       '*.svg': ['@svgr/webpack'],
     },
   },
-  
+
   // Experimental features for performance
   experimental: {
     optimizeCss: true,
     optimizePackageImports: ['framer-motion', 'lucide-react'],
   },
-  
+
   // Output configuration for better SEO
   trailingSlash: false,
-  
+
   // Enable static optimization
   output: 'standalone',
 };

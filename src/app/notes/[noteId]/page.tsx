@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { doc, onSnapshot, updateDoc, serverTimestamp, addDoc, collection } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc, serverTimestamp, addDoc, collection, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { validateNoteAccess } from '@/lib/share';
 import { createInviteCode, getActiveInviteCode, canCreateInvite } from '@/lib/inviteCodes';
@@ -17,11 +17,11 @@ interface Note {
   title: string;
   content: string;
   members: string[];
-  createdAt: any;
-  updatedAt: any;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
   invite?: {
     token: string;
-    expiresAt: any;
+    expiresAt: Timestamp;
     maxMembers: number;
   };
 }
@@ -31,7 +31,7 @@ export default function NotePage() {
   const router = useRouter();
   const params = useParams();
   const noteId = params['noteId'] as string;
-  
+
   const [note, setNote] = useState<Note | null>(null);
   const [noteLoading, setNoteLoading] = useState(true);
   const [error, setError] = useState<string>('');
@@ -43,7 +43,7 @@ export default function NotePage() {
   const [showInviteCode, setShowInviteCode] = useState(false);
   const [creatingInvite, setCreatingInvite] = useState(false);
   const [presenceData, setPresenceData] = useState<Record<string, PresenceData>>({});
-  
+
   const contentRef = useRef<HTMLTextAreaElement>(null);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const presenceCleanupRef = useRef<(() => void) | null>(null);
@@ -57,23 +57,25 @@ export default function NotePage() {
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (!user || !noteId) return;
+    if (!user || !noteId) return undefined;
+
+    let unsubscribe: (() => void) | undefined;
 
     const checkAccessAndLoadNote = async () => {
       try {
-        const { hasAccess: userHasAccess, note: noteData } = await validateNoteAccess(noteId, user.uid);
-        
+        const { hasAccess: userHasAccess } = await validateNoteAccess(noteId, user.uid);
+
         if (!userHasAccess) {
           setError('You do not have access to this note.');
           setNoteLoading(false);
-          return;
+          return undefined; // Explicit return
         }
 
         setHasAccess(true);
-        
+
         // Set up real-time listener for the note
         const noteRef = doc(db, 'notes', noteId);
-        const unsubscribe = onSnapshot(noteRef, (doc) => {
+        unsubscribe = onSnapshot(noteRef, (doc) => {
           if (doc.exists()) {
             const data = doc.data() as Note;
             const noteWithId = { ...data, id: doc.id };
@@ -91,15 +93,22 @@ export default function NotePage() {
           setNoteLoading(false);
         });
 
-        return unsubscribe;
+        return undefined; // Explicit return
       } catch (err) {
         console.error('Error checking note access:', err);
         setError('Failed to load note.');
         setNoteLoading(false);
+        return undefined; // Explicit return
       }
     };
 
     checkAccessAndLoadNote();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, [user, noteId]);
 
   // Set up presence when note is loaded
@@ -154,7 +163,7 @@ export default function NotePage() {
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
     }
-    
+
     saveTimeoutRef.current = setTimeout(() => {
       saveNote(newTitle, newContent);
     }, 1000); // Save after 1 second of inactivity
@@ -186,14 +195,14 @@ export default function NotePage() {
 
       // Check for existing active invite code
       let code = await getActiveInviteCode(noteId, user.uid);
-      
+
       // If no active code, create a new one
       if (!code) {
         code = await createInviteCode(noteId, user.uid);
       }
-      
+
       setInviteCode(code);
-      
+
       // Copy to clipboard
       await navigator.clipboard.writeText(code);
       setShowInviteCode(true);
@@ -312,12 +321,12 @@ export default function NotePage() {
 
             <div className="flex items-center space-x-4">
               {/* Presence indicators */}
-              <PresenceIndicators 
-                presenceData={presenceData} 
+              <PresenceIndicators
+                presenceData={presenceData}
                 currentUserId={user.uid}
                 isWaiting={isWaitingForCollaborator}
               />
-              
+
               {/* Share button */}
               <div className="relative">
                 <button
@@ -334,7 +343,7 @@ export default function NotePage() {
                   )}
                   <span>{creatingInvite ? 'Creating...' : 'Get Code'}</span>
                 </button>
-                
+
                 {showInviteCode && inviteCode && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
@@ -378,7 +387,7 @@ export default function NotePage() {
               placeholder={isWaitingForCollaborator ? "Waiting for collaborator to join..." : "Start typing to collaborate..."}
               className="w-full h-96 p-6 text-gray-900 bg-transparent border-none focus:outline-none focus:ring-0 placeholder-gray-400 resize-none"
             />
-            
+
             {isWaitingForCollaborator && (
               <div className="absolute top-4 right-4 flex items-center space-x-2 text-sm text-gray-500">
                 <div className="animate-pulse w-2 h-2 bg-yellow-500 rounded-full"></div>

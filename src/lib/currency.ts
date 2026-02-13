@@ -22,17 +22,19 @@ export function getCurrencyName(currencyCode: Currency['code']): string {
 
 export function formatCurrency(amount: number, currencyCode: Currency['code']): string {
   const symbol = getCurrencySymbol(currencyCode);
-  
+
   // Format with appropriate decimal places
   const formattedAmount = amount.toFixed(2);
-  
+
   // For INR, we can add comma formatting for larger numbers
   if (currencyCode === 'INR') {
     const parts = formattedAmount.split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if (parts[0]) {
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
     return `${symbol}${parts.join('.')}`;
   }
-  
+
   return `${symbol}${formattedAmount}`;
 }
 

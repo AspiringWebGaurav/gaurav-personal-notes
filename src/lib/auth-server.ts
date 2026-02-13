@@ -1,6 +1,6 @@
 // src/lib/auth-server.ts
 import { NextRequest } from 'next/server';
-import { auth } from './firebase';
+
 import { getAuth } from 'firebase-admin/auth';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 
@@ -11,7 +11,7 @@ if (!getApps().length) {
       credential: cert({
         projectId: process.env['NEXT_PUBLIC_FIREBASE_PROJECT_ID']!,
         clientEmail: process.env['FIREBASE_CLIENT_EMAIL']!,
-        privateKey: process.env['FIREBASE_PRIVATE_KEY']?.replace(/\\n/g, '\n')!,
+        privateKey: (process.env['FIREBASE_PRIVATE_KEY'] || '').replace(/\\n/g, '\n'),
       }),
     });
   } catch (error) {
@@ -28,26 +28,26 @@ export async function getUidFromRequest(req: NextRequest): Promise<string> {
     // Try to get token from Authorization header
     const authHeader = req.headers.get('authorization');
     let idToken: string | null = null;
-    
+
     if (authHeader && authHeader.startsWith('Bearer ')) {
       idToken = authHeader.substring(7);
     }
-    
+
     // If no Authorization header, try to get from cookies (for browser requests)
     if (!idToken) {
       // In a real implementation, you might store the token in an httpOnly cookie
       // For now, we'll expect the token to be passed in the Authorization header
       throw new Error('No authentication token provided');
     }
-    
+
     // Verify the ID token using Firebase Admin SDK
     const adminAuth = getAuth();
     const decodedToken = await adminAuth.verifyIdToken(idToken);
-    
+
     if (!decodedToken.uid) {
       throw new Error('Invalid token: no UID found');
     }
-    
+
     return decodedToken.uid;
   } catch (error) {
     console.error('Error verifying auth token:', error);
@@ -63,14 +63,14 @@ export async function getUidFromClientRequest(req: NextRequest): Promise<string>
   // In a production app, you'd want to implement proper session management
   // For this implementation, we'll rely on the client to send the UID
   // This is NOT secure for production use
-  
+
   const body = await req.json().catch(() => ({}));
   const uid = body.uid || req.headers.get('x-user-id');
-  
+
   if (!uid) {
     throw new Error('No user ID provided');
   }
-  
+
   // In production, you'd validate this UID against a secure session
   return uid;
 }
@@ -83,10 +83,10 @@ export function withAuth(handler: (req: NextRequest, uid: string) => Promise<Res
     try {
       const uid = await getUidFromRequest(req);
       return await handler(req, uid);
-    } catch (error) {
+    } catch {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized' }), 
-        { 
+        JSON.stringify({ error: 'Unauthorized' }),
+        {
           status: 401,
           headers: { 'Content-Type': 'application/json' }
         }

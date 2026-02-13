@@ -33,12 +33,14 @@ export default function Breadcrumb() {
     const breadcrumbs: BreadcrumbItem[] = [];
 
     // Always start with Dashboard
-    breadcrumbs.push(pathMapping['/dashboard']);
+    if (pathMapping['/dashboard']) {
+      breadcrumbs.push(pathMapping['/dashboard']);
+    }
 
     let currentPath = '';
     for (let i = 0; i < pathSegments.length; i++) {
       currentPath += `/${pathSegments[i]}`;
-      
+
       if (currentPath === '/dashboard') continue; // Skip dashboard as it's already added
 
       const mappedItem = pathMapping[currentPath];
@@ -53,7 +55,10 @@ export default function Breadcrumb() {
           breadcrumbs.push({ name: 'Money Details', href: currentPath, icon: '💳' });
         } else {
           // Generic fallback
-          const segmentName = pathSegments[i].charAt(0).toUpperCase() + pathSegments[i].slice(1);
+          const segment = pathSegments[i];
+          if (!segment) continue;
+
+          const segmentName = segment.charAt(0).toUpperCase() + segment.slice(1);
           breadcrumbs.push({ name: segmentName, href: currentPath });
         }
       }
@@ -67,7 +72,7 @@ export default function Breadcrumb() {
   if (breadcrumbs.length <= 1) return null;
 
   return (
-    <nav 
+    <nav
       className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-3"
       aria-label="Breadcrumb"
     >
@@ -89,7 +94,7 @@ export default function Breadcrumb() {
                   />
                 </svg>
               )}
-              
+
               {index === breadcrumbs.length - 1 ? (
                 // Current page - not clickable
                 <span className="flex items-center text-gray-500 font-medium">

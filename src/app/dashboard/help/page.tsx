@@ -11,15 +11,15 @@ export default function HelpPage() {
   const faqs = [
     {
       question: "How do I create a new note?",
-      answer: "Click the 'New Note' button on the dashboard or navigate to Notes and click the '+' button."
+      answer: "Click the &apos;New Note&apos; button on the dashboard or navigate to Notes and click the &apos;+&apos; button."
     },
     {
       question: "Are my notes saved automatically?",
-      answer: "Yes! Your notes are automatically saved as you type. You'll see the sync status in the navbar."
+      answer: "Yes! Your notes are automatically saved as you type. You&apos;ll see the sync status in the navbar."
     },
     {
       question: "Can I use the app offline?",
-      answer: "Yes, the app works offline. Your changes will sync when you're back online."
+      answer: "Yes, the app works offline. Your changes will sync when you&apos;re back online."
     },
     {
       question: "How do I organize my notes?",
@@ -106,7 +106,7 @@ export default function HelpPage() {
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Need More Help?</h2>
             <p className="text-gray-600 mb-4">
-              Can't find what you're looking for? We're here to help!
+              Can&apos;t find what you&apos;re looking for? We&apos;re here to help!
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">

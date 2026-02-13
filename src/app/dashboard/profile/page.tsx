@@ -23,6 +23,7 @@ export default function ProfilePage() {
 
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center space-x-6 mb-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 className="h-20 w-20 rounded-full border-4 border-blue-100"
                 src={user.photoURL || '/default-avatar.png'}

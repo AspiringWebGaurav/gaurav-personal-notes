@@ -4,11 +4,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 type Props = {
   open: boolean;
-  workPromise?: Promise<unknown>;
-  onDone?: () => void;
-  stepDurationMs?: number;
-  steps?: string[];
-  brandNode?: React.ReactNode;
+  workPromise?: Promise<unknown> | undefined;
+  onDone?: (() => void) | undefined;
+  stepDurationMs?: number | undefined;
+  steps?: string[] | undefined;
+  brandNode?: React.ReactNode | undefined;
 };
 
 const DEFAULT_STEPS = [

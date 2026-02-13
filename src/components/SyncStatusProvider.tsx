@@ -3,7 +3,6 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 
 interface SyncStatus {
-  [x: string]: string;
   isSyncing: boolean;
   lastSyncTime: Date | null;
   isOnline: boolean;
@@ -53,6 +52,8 @@ export function SyncStatusProvider({ children }: SyncStatusProviderProps) {
         window.removeEventListener('offline', handleOffline);
       };
     }
+
+    return undefined;
   }, []);
 
   const startSyncing = useCallback((documentId: string) => {

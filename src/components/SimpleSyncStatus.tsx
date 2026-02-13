@@ -3,7 +3,7 @@
 import { memo, useEffect, useState, useRef } from 'react';
 
 export interface SimpleSyncStatusProps {
-  isOnline: boolean;
+  isOnline?: boolean; // Kept in interface to tolerate passing it, but marked optional/unused
   isSyncing: boolean;
   lastSyncTime: Date | null;
   hasUnsyncedChanges?: boolean;
@@ -13,7 +13,6 @@ export interface SimpleSyncStatusProps {
 type SyncState = 'syncing' | 'synced' | 'unsynced';
 
 const SimpleSyncStatus = memo(function SimpleSyncStatus({
-  isOnline,
   isSyncing,
   lastSyncTime,
   hasUnsyncedChanges,
@@ -27,11 +26,11 @@ const SimpleSyncStatus = memo(function SimpleSyncStatus({
     if (isSyncing) {
       return 'syncing';
     }
-    
+
     if (hasUnsyncedChanges) {
       return 'unsynced';
     }
-    
+
     // Always default to synced - we don't care about online/offline status
     return 'synced';
   };

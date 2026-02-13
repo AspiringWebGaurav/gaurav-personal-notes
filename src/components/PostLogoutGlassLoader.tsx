@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 interface Props {
   open: boolean;
-  workPromise?: Promise<void>;
+  workPromise?: Promise<void> | undefined;
   onDone: () => void;
   steps: string[];
   stepDurationMs: number;

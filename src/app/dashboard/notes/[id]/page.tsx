@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, use } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useAutosave } from '@/hooks/useAutosave';
-import { useSyncStatus } from '@/components/SyncStatusProvider';
+// import { useSyncStatus } from '@/components/SyncStatusProvider';
 import StaticSyncStatus from '@/components/StaticSyncStatus';
 import { motion } from 'framer-motion';
 import { doc, onSnapshot, Timestamp } from 'firebase/firestore';
@@ -19,15 +19,15 @@ interface NoteEditorProps {
 export default function NoteEditor({ params }: NoteEditorProps) {
   // Unwrap the params Promise using React.use()
   const { id } = use(params);
-  
+
   // All hooks must be called unconditionally at the top level
   const { user, loading } = useAuth();
-  const { syncStatus } = useSyncStatus();
+  // const { syncStatus } = useSyncStatus(); // Unused here
   const router = useRouter();
   const searchParams = useSearchParams();
   const titleRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLTextAreaElement>(null);
-  
+
   // State hooks
   const [note, setNote] = useState<Partial<Note>>({
     id: id,
@@ -40,14 +40,14 @@ export default function NoteEditor({ params }: NoteEditorProps) {
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now()
   });
-  
+
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Derived values
   const templateId = searchParams.get('template');
-  
+
   // Auto-save functionality - always call this hook
-  const { saveImmediately, isOnline, hasUnsyncedChanges } = useAutosave({
+  const { saveImmediately } = useAutosave({
     id: id,
     collection: 'notes',
     data: note,
@@ -116,7 +116,7 @@ export default function NoteEditor({ params }: NoteEditorProps) {
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
     setNote(prev => ({ ...prev, content: newContent }));
-    
+
     // Auto-resize textarea
     const textarea = e.target;
     textarea.style.height = 'auto';
@@ -193,23 +193,21 @@ export default function NoteEditor({ params }: NoteEditorProps) {
             <div className="flex items-center space-x-2">
               <button
                 onClick={togglePin}
-                className={`p-2 rounded-lg transition-colors ${
-                  note.isPinned
-                    ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
-                    : 'hover:bg-gray-100 text-gray-600'
-                }`}
+                className={`p-2 rounded-lg transition-colors ${note.isPinned
+                  ? 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
+                  : 'hover:bg-gray-100 text-gray-600'
+                  }`}
                 title={note.isPinned ? 'Unpin note' : 'Pin note'}
               >
                 📌
               </button>
-              
+
               <button
                 onClick={toggleArchive}
-                className={`p-2 rounded-lg transition-colors ${
-                  note.isArchived
-                    ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    : 'hover:bg-gray-100 text-gray-600'
-                }`}
+                className={`p-2 rounded-lg transition-colors ${note.isArchived
+                  ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  : 'hover:bg-gray-100 text-gray-600'
+                  }`}
                 title={note.isArchived ? 'Unarchive note' : 'Archive note'}
               >
                 📦

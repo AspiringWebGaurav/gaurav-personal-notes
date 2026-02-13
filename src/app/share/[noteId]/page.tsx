@@ -11,10 +11,10 @@ export default function SharePage() {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
-  
+
   const noteId = params['noteId'] as string;
   const token = searchParams.get('t');
-  
+
   const [status, setStatus] = useState<'loading' | 'joining' | 'success' | 'error'>('loading');
   const [error, setError] = useState<string>('');
 
@@ -32,10 +32,10 @@ export default function SharePage() {
 
     const joinNote = async () => {
       setStatus('joining');
-      
+
       try {
         const result = await joinNoteWithToken(noteId, user.uid, token);
-        
+
         if (result.success) {
           setStatus('success');
           // Redirect to the note after a brief success message
@@ -120,7 +120,7 @@ export default function SharePage() {
             <>
               <div className="text-green-500 text-4xl mb-4">✅</div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Successfully Joined!</h3>
-              <p className="text-gray-600 mb-4">You've been added to the collaborative note.</p>
+              <p className="text-gray-600 mb-4">You&apos;ve been added to the collaborative note.</p>
               <div className="text-sm text-gray-500">Redirecting to the note...</div>
             </>
           )}
@@ -128,14 +128,14 @@ export default function SharePage() {
           {status === 'error' && (
             <>
               <div className="text-red-500 text-4xl mb-4">
-                {error.includes('Room is full') ? '🚫' : 
-                 error.includes('expired') ? '⏰' : 
-                 error.includes('Invalid') ? '🔑' : '❌'}
+                {error.includes('Room is full') ? '🚫' :
+                  error.includes('expired') ? '⏰' :
+                    error.includes('Invalid') ? '🔑' : '❌'}
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 {error.includes('Room is full') ? 'Room Full' :
-                 error.includes('expired') ? 'Link Expired' :
-                 error.includes('Invalid') ? 'Invalid Link' : 'Error'}
+                  error.includes('expired') ? 'Link Expired' :
+                    error.includes('Invalid') ? 'Invalid Link' : 'Error'}
               </h3>
               <p className="text-red-600 mb-6">{error}</p>
               <div className="flex space-x-3">
