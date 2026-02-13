@@ -47,14 +47,14 @@ export default function Home() {
               />
             </div>
           </motion.div>
-          
+
           {/* Loading spinner */}
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
             className="w-8 h-8 border-3 border-[#0fb9b1] border-t-transparent rounded-full mx-auto mb-4"
           />
-          
+
           {/* Branding */}
           <motion.h1
             initial={{ opacity: 0 }}
@@ -62,7 +62,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-2xl font-bold text-gray-800 mb-2"
           >
-            Gaurav's Personal Notes
+            Gaurav&apos;s Personal Notes
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}

@@ -3,8 +3,7 @@
 
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
-import { Button } from "./button";
+
 
 interface DialogProps {
   open: boolean;

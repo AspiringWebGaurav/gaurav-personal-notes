@@ -24,7 +24,7 @@ export default function SettingsPage() {
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Coming Soon</h2>
             <p className="text-gray-600">
-              Settings page is under development. You'll be able to customize your app preferences here.
+              Settings page is under development. You&apos;ll be able to customize your app preferences here.
             </p>
           </div>
         </motion.div>

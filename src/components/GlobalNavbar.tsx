@@ -39,7 +39,7 @@ const NAV: NavItem[] = [
 ];
 
 export default function GlobalNavbar() {
-  const { user, signOut, userFirstName, userDisplayName } = useAuth();
+  const { user, userFirstName, userDisplayName } = useAuth();
   const { syncStatus } = useSyncStatus();
   const router = useRouter();
   const pathname = usePathname();
@@ -118,11 +118,16 @@ export default function GlobalNavbar() {
     .toUpperCase()
     .slice(0, 2);
 
+  const getSyncLabel = (date: Date | null) => {
+    if (!date) return "Synced";
+    return `Last synced ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  };
+
   return (
     <>
       {/* Glass App Bar */}
       <nav
-        ref={navRef as any}
+        ref={navRef}
         className="
           sticky top-0 z-[70]
           bg-white/70 backdrop-blur-xl supports-[backdrop-filter]:bg-white/70
@@ -191,7 +196,7 @@ export default function GlobalNavbar() {
               <NotificationsBell className="hidden sm:inline-flex" />
 
               {/* Synced badge */}
-              <SyncBadge label={syncStatus?.["lastSyncedLabel"] || "Synced"} />
+              <SyncBadge label={getSyncLabel(syncStatus.lastSyncTime)} />
 
               {/* Mobile menu */}
               <IconBtn
@@ -338,7 +343,7 @@ export default function GlobalNavbar() {
                           <div className="flex items-center justify-between">
                             <span>Last synced</span>
                             <span className="font-medium text-gray-800">
-                              {syncStatus?.["lastSyncedLabel"] || "Just now"}
+                              {getSyncLabel(syncStatus.lastSyncTime)}
                             </span>
                           </div>
                         </div>
@@ -429,7 +434,7 @@ export default function GlobalNavbar() {
                 </div>
 
                 <div className="border-t border-black/5 px-4 py-3 flex items-center justify-between text-sm">
-                  <SyncBadge label={syncStatus?.["lastSyncedLabel"] || "Synced"} />
+                  <SyncBadge label={getSyncLabel(syncStatus.lastSyncTime)} />
                   <button
                     onClick={logout}
                     className="text-red-600 font-medium hover:underline"

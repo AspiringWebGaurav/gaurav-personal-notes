@@ -18,6 +18,7 @@ import {
 import { useOverdueTodos, useTodos } from '@/hooks/useTodos';
 import { formatRelativeTime, formatAbsoluteTime } from '@/lib/todoUtils';
 import { useRouter } from 'next/navigation';
+import { Timestamp } from 'firebase/firestore';
 
 interface NotificationsBellProps {
   className?: string;
@@ -53,6 +54,8 @@ export default function NotificationsBell({ className = '' }: NotificationsBellP
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
+
+    return undefined;
   }, [isOpen]);
 
   const handleComplete = async (todoId: string) => {
@@ -63,9 +66,9 @@ export default function NotificationsBell({ className = '' }: NotificationsBellP
     }
   };
 
-  const handleSnooze = async (todoId: string, currentDueAt: any) => {
+  const handleSnooze = async (todoId: string, currentDueAt: Timestamp | null | undefined) => {
     try {
-      await snoozeTodo(todoId, currentDueAt);
+      await snoozeTodo(todoId, currentDueAt || undefined);
     } catch (err) {
       console.error('Error snoozing todo:', err);
     }
@@ -78,7 +81,7 @@ export default function NotificationsBell({ className = '' }: NotificationsBellP
 
   const handleDeleteConfirm = async () => {
     if (!todoToDelete) return;
-    
+
     setIsDeleting(true);
     try {
       await deleteTodo(todoToDelete.id);
@@ -113,7 +116,7 @@ export default function NotificationsBell({ className = '' }: NotificationsBellP
         aria-label={`Notifications ${overdueCount > 0 ? `(${overdueCount} overdue)` : ''}`}
       >
         <Bell className={`h-5 w-5 ${overdueCount > 0 ? 'text-red-600' : 'text-slate-600'}`} />
-        
+
         {/* Badge */}
         {overdueCount > 0 && (
           <motion.div
@@ -121,8 +124,8 @@ export default function NotificationsBell({ className = '' }: NotificationsBellP
             animate={{ scale: 1 }}
             className="absolute -top-1 -right-1"
           >
-            <Badge 
-              variant="destructive" 
+            <Badge
+              variant="destructive"
               className="h-5 w-5 p-0 flex items-center justify-center text-xs font-bold rounded-full"
             >
               {overdueCount > 99 ? '99+' : overdueCount}
@@ -156,7 +159,7 @@ export default function NotificationsBell({ className = '' }: NotificationsBellP
                   )}
                 </div>
               </CardHeader>
-              
+
               <CardContent className="pt-0">
                 {overdueCount === 0 ? (
                   <div className="text-center py-6">
@@ -189,7 +192,7 @@ export default function NotificationsBell({ className = '' }: NotificationsBellP
                             {todo.dueAt && (
                               <div className="flex items-center gap-1 mt-1">
                                 <Clock className="h-3 w-3 text-red-500" />
-                                <span 
+                                <span
                                   className="text-xs text-red-600 dark:text-red-400 font-medium"
                                   title={formatAbsoluteTime(todo.dueAt)}
                                 >
@@ -199,7 +202,7 @@ export default function NotificationsBell({ className = '' }: NotificationsBellP
                             )}
                           </div>
                         </div>
-                        
+
                         <div className="flex gap-1 mt-3">
                           <Button
                             onClick={() => handleComplete(todo.id)}
@@ -230,13 +233,13 @@ export default function NotificationsBell({ className = '' }: NotificationsBellP
                         </div>
                       </motion.div>
                     ))}
-                    
+
                     {overdueTodos.length > 5 && (
                       <p className="text-xs text-slate-500 dark:text-slate-400 text-center py-2">
                         And {overdueTodos.length - 5} more overdue todos...
                       </p>
                     )}
-                    
+
                     <div className="pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
                       <Button
                         onClick={handleOpenTodos}
@@ -270,7 +273,7 @@ export default function NotificationsBell({ className = '' }: NotificationsBellP
               Are you sure you want to delete this todo? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          
+
           {todoToDelete && (
             <div className="my-4 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border">
               <p className="font-medium text-sm text-slate-900 dark:text-slate-100">
@@ -278,23 +281,23 @@ export default function NotificationsBell({ className = '' }: NotificationsBellP
               </p>
             </div>
           )}
-          
+
           <DialogFooter>
             <div className="flex gap-2 w-full justify-end">
-            <Button
-              variant="outline"
-              onClick={handleDeleteCancel}
-              disabled={isDeleting}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteConfirm}
-              disabled={isDeleting}
-            >
-              {isDeleting ? 'Deleting...' : 'Delete'}
-            </Button>
+              <Button
+                variant="outline"
+                onClick={handleDeleteCancel}
+                disabled={isDeleting}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDeleteConfirm}
+                disabled={isDeleting}
+              >
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </Button>
             </div>
           </DialogFooter>
         </DialogContent>

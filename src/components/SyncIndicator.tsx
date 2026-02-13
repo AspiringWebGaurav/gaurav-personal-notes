@@ -5,9 +5,9 @@ import { memo, useEffect, useState } from 'react';
 export interface SyncIndicatorProps {
   isSyncing: boolean;
   lastSyncTime: Date | null;
-  hasUnsyncedChanges?: boolean;
+  hasUnsyncedChanges?: boolean | undefined;
   isOnline: boolean;
-  className?: string;
+  className?: string | undefined;
 }
 
 type SyncState = 'syncing' | 'synced' | 'unsynced' | 'waiting';
@@ -26,15 +26,15 @@ const SyncIndicator = memo(function SyncIndicator({
     if (isSyncing) {
       return 'syncing';
     }
-    
+
     if (!isOnline && hasUnsyncedChanges) {
       return 'unsynced';
     }
-    
+
     if (lastSyncTime) {
       return 'synced';
     }
-    
+
     // Online but no sync has happened yet
     return 'waiting';
   };

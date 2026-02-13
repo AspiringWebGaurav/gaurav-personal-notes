@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { collection, query, orderBy, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { MoneyTracker } from '@/types';
-import { formatCurrency, getCurrencySymbol, DEFAULT_CURRENCY } from '@/lib/currency';
+import { formatCurrency, DEFAULT_CURRENCY } from '@/lib/currency';
 
 export default function AllMoneyTrackersPage() {
   const { user, loading } = useAuth();
@@ -42,15 +42,16 @@ export default function AllMoneyTrackersPage() {
 
       return () => unsubscribe();
     }
+    return undefined;
   }, [user, loading, router]);
 
-  const filteredTrackers = trackers.filter(tracker => 
+  const filteredTrackers = trackers.filter(tracker =>
     tracker.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleDeleteTracker = async (trackerId: string) => {
     if (!user) return;
-    
+
     try {
       await deleteDoc(doc(db, 'users', user.uid, 'money', trackerId));
       setShowDeleteConfirm(false);
@@ -180,7 +181,7 @@ export default function AllMoneyTrackersPage() {
               {searchQuery ? 'No money trackers found' : 'No money trackers yet'}
             </h3>
             <p className="text-gray-600 mb-6">
-              {searchQuery 
+              {searchQuery
                 ? 'Try adjusting your search terms'
                 : 'Create your first money tracker to get started'
               }
@@ -201,7 +202,7 @@ export default function AllMoneyTrackersPage() {
                 const totalExpenses = (tracker.expenses || []).reduce((sum, expense) => sum + expense.amount, 0);
                 const remainingBalance = (tracker.startingAmount || 0) - totalExpenses;
                 const remainingPercentage = tracker.startingAmount ? (remainingBalance / tracker.startingAmount) * 100 : 0;
-                
+
                 return (
                   <motion.div
                     key={tracker.id}
@@ -235,7 +236,7 @@ export default function AllMoneyTrackersPage() {
                           </svg>
                         </button>
                       </div>
-                      
+
                       <div
                         onClick={() => router.push(`/dashboard/money/${tracker.id}`)}
                         className="cursor-pointer"
@@ -243,7 +244,7 @@ export default function AllMoneyTrackersPage() {
                         <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
                           {tracker.title || 'Untitled Budget'}
                         </h3>
-                        
+
                         {/* Budget Overview */}
                         <div className="space-y-3 mb-3">
                           <div className="flex justify-between items-center">
@@ -252,27 +253,25 @@ export default function AllMoneyTrackersPage() {
                               {formatCurrency(tracker.startingAmount || 0, tracker.currency || DEFAULT_CURRENCY)}
                             </span>
                           </div>
-                          
+
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-gray-600">Remaining</span>
-                            <span className={`text-sm font-medium ${
-                              remainingBalance >= 0 ? 'text-green-600' : 'text-red-600'
-                            }`}>
+                            <span className={`text-sm font-medium ${remainingBalance >= 0 ? 'text-green-600' : 'text-red-600'
+                              }`}>
                               {formatCurrency(remainingBalance, tracker.currency || DEFAULT_CURRENCY)}
                             </span>
                           </div>
-                          
+
                           <div className="w-full bg-gray-200 rounded-full h-2">
                             <div
-                              className={`h-2 rounded-full transition-all duration-300 ${
-                                remainingPercentage >= 50 ? 'bg-green-500' :
+                              className={`h-2 rounded-full transition-all duration-300 ${remainingPercentage >= 50 ? 'bg-green-500' :
                                 remainingPercentage >= 25 ? 'bg-yellow-500' : 'bg-red-500'
-                              }`}
+                                }`}
                               style={{ width: `${Math.max(0, Math.min(100, remainingPercentage))}%` }}
                             />
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center justify-between text-xs text-gray-400">
                           <span>{(tracker.expenses || []).length} expenses</span>
                           <span>

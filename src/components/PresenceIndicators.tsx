@@ -15,6 +15,7 @@ function initialFrom(name: unknown) {
     ? name.trim().charAt(0).toUpperCase()
     : "?";
 }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function hasName(p: any): p is PresenceData {
   return p && typeof p.displayName === "string" && p.displayName.length > 0;
 }
@@ -95,10 +96,10 @@ export default function PresenceIndicators({
             <span>Waiting for collaborator...</span>
           </motion.div>
         ) : otherUsers.length === 0 ? (
-          <span>You're editing alone</span>
+          <span>You&apos;re editing alone</span>
         ) : otherUsers.length === 1 ? (
           <span>
-            {(otherUsers[0][1] as PresenceData).displayName} is collaborating
+            {otherUsers[0]?.[1] && (otherUsers[0][1] as PresenceData).displayName} is collaborating
           </span>
         ) : (
           <span>{otherUsers.length} people collaborating</span>
@@ -120,6 +121,7 @@ export function TypingIndicator({
   const typingUsers = Object.entries(data)
     .filter(
       ([uid, presence]) =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         uid !== currentUserId && !!presence && (presence as any).typing
     )
     .map(([, presence]) => (hasName(presence) ? presence.displayName : null))
@@ -154,9 +156,8 @@ export function TypingIndicator({
       <span>
         {typingUsers.length === 1
           ? `${typingUsers[0]} is typing...`
-          : `${typingUsers.slice(0, -1).join(", ")} and ${
-              typingUsers[typingUsers.length - 1]
-            } are typing...`}
+          : `${typingUsers.slice(0, -1).join(", ")} and ${typingUsers[typingUsers.length - 1]
+          } are typing...`}
       </span>
     </motion.div>
   );

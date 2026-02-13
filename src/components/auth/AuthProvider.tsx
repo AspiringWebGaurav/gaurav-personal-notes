@@ -74,7 +74,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       try {
         const result = await handleRedirectResult();
         if (result) {
-          console.log("Redirect authentication successful");
+          if (process.env.NODE_ENV === 'development') {
+            console.log("Redirect authentication successful");
+          }
           setAuthMethod("redirect");
         }
       } catch (error) {
@@ -115,8 +117,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
                   if (!prevUser) return prevUser;
                   return {
                     ...prevUser,
-                    photoURL: userData.photoURL || prevUser.photoURL,
-                    displayName: userData.displayName || prevUser.displayName,
+                    photoURL: userData['photoURL'] || prevUser.photoURL,
+                    displayName: userData['displayName'] || prevUser.displayName,
                   };
                 });
               }
@@ -155,22 +157,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (authResult.method === "popup") {
         setAuthMethod("popup");
-        console.log("Popup authentication successful");
+        if (process.env.NODE_ENV === 'development') {
+          console.log("Popup authentication successful");
+        }
       } else if (authResult.method === "redirect") {
         setAuthMethod("redirect");
-        console.log("Redirecting for authentication...");
+        if (process.env.NODE_ENV === 'development') {
+          console.log("Redirecting for authentication...");
+        }
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error signing in:", err);
       let errorMessage = "Failed to sign in";
-      if (err.code === "auth/popup-blocked")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const firebaseError = err as any;
+
+      if (firebaseError.code === "auth/popup-blocked")
         errorMessage = "Popup was blocked. Please allow popups and try again.";
-      else if (err.code === "auth/popup-closed-by-user")
+      else if (firebaseError.code === "auth/popup-closed-by-user")
         errorMessage = "Sign-in was cancelled. Please try again.";
-      else if (err.code === "auth/network-request-failed")
+      else if (firebaseError.code === "auth/network-request-failed")
         errorMessage =
           "Network error. Please check your connection and try again.";
-      else if (err.message?.includes("Cross-Origin-Opener-Policy"))
+      else if (firebaseError.message?.includes("Cross-Origin-Opener-Policy"))
         errorMessage =
           "Authentication popup blocked. Trying alternative method...";
       else if (err instanceof Error) errorMessage = err.message;

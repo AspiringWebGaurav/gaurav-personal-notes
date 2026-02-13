@@ -42,12 +42,14 @@ export default function AllNotesPage() {
 
       return () => unsubscribe();
     }
+
+    return undefined;
   }, [user, loading, router]);
 
   const filteredNotes = notes.filter(note => {
     const matchesSearch = note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         note.content.toLowerCase().includes(searchQuery.toLowerCase());
-    
+      note.content.toLowerCase().includes(searchQuery.toLowerCase());
+
     switch (filterType) {
       case 'pinned':
         return matchesSearch && note.isPinned;
@@ -60,7 +62,7 @@ export default function AllNotesPage() {
 
   const handleDeleteNote = async (noteId: string) => {
     if (!user) return;
-    
+
     try {
       await deleteDoc(doc(db, 'users', user.uid, 'notes', noteId));
       setShowDeleteConfirm(false);
@@ -191,11 +193,10 @@ export default function AllNotesPage() {
                 <button
                   key={filter}
                   onClick={() => setFilterType(filter)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    filterType === filter
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterType === filter
                       ? 'bg-blue-600 text-white'
                       : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'
-                  }`}
+                    }`}
                 >
                   {filter.charAt(0).toUpperCase() + filter.slice(1)}
                 </button>
@@ -216,7 +217,7 @@ export default function AllNotesPage() {
               {searchQuery ? 'No notes found' : 'No notes yet'}
             </h3>
             <p className="text-gray-600 mb-6">
-              {searchQuery 
+              {searchQuery
                 ? 'Try adjusting your search terms or filters'
                 : 'Create your first note to get started'
               }
@@ -268,7 +269,7 @@ export default function AllNotesPage() {
                         </svg>
                       </button>
                     </div>
-                    
+
                     <div
                       onClick={() => router.push(`/dashboard/notes/${note.id}`)}
                       className="cursor-pointer"

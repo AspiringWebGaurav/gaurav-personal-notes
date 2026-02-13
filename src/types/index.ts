@@ -71,6 +71,7 @@ export interface Template {
 export interface AutosaveData {
   id: string;
   collection: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
   timestamp: number;
 }
@@ -78,6 +79,7 @@ export interface AutosaveData {
 export interface OfflineQueueItem {
   collection: string;
   id: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
   operation: 'create' | 'update' | 'delete';
   timestamp: number;
@@ -86,22 +88,22 @@ export interface OfflineQueueItem {
 export interface Todo {
   id: string;
   title: string;
-  notes?: string;
-  dueAt?: Timestamp;
+  notes?: string | undefined;
+  dueAt?: Timestamp | undefined;
   isCompleted: boolean;
   /** optional enterprise fields */
-  isStarred?: boolean;
-  priority?: 0|1|2|3|4;
-  tags?: string[];
-  startAt?: Timestamp | null;
-  durationMin?: number | null;
-  recurrence?: string | null;
-  reminders?: Timestamp[];
-  subtasks?: { id: string; title: string; done: boolean }[];
-  attachments?: { name: string; url: string }[];
-  orderIndex?: number | null;
-  estimateMin?: number | null;
-  focusCount?: number | null;
+  isStarred?: boolean | undefined;
+  priority?: 0 | 1 | 2 | 3 | 4 | undefined;
+  tags?: string[] | undefined;
+  startAt?: Timestamp | null | undefined;
+  durationMin?: number | null | undefined;
+  recurrence?: string | null | undefined;
+  reminders?: Timestamp[] | undefined;
+  subtasks?: { id: string; title: string; done: boolean }[] | undefined;
+  attachments?: { name: string; url: string }[] | undefined;
+  orderIndex?: number | null | undefined;
+  estimateMin?: number | null | undefined;
+  focusCount?: number | null | undefined;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -163,6 +165,7 @@ export interface CollabNoteMember {
 export interface CollabNoteSnapshot {
   id: string;
   contentMarkdown: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contentJSON: any;
   createdAt: Timestamp;
   createdBy: string;
@@ -171,7 +174,9 @@ export interface CollabNoteSnapshot {
 export interface PresenceData {
   firstName: string;
   color: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cursor?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   selection?: any;
   lastSeen: Timestamp;
 }

@@ -1,6 +1,6 @@
 // src/lib/firebase.ts
 import { initializeApp } from "firebase/app";
-import { 
+import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
@@ -16,28 +16,21 @@ import {
   getFirestore,
   doc,
   setDoc,
-  onSnapshot,
-  collection,
-  addDoc,
-  query,
-  orderBy,
   Timestamp,
-  deleteDoc,
-  updateDoc,
-  getDoc,
-  serverTimestamp
+  serverTimestamp,
+  getDoc
 } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
 import { getFunctions } from "firebase/functions";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
-  databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL!
+  apiKey: process.env['NEXT_PUBLIC_FIREBASE_API_KEY']!,
+  authDomain: process.env['NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN']!,
+  projectId: process.env['NEXT_PUBLIC_FIREBASE_PROJECT_ID']!,
+  storageBucket: process.env['NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET']!,
+  messagingSenderId: process.env['NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID']!,
+  appId: process.env['NEXT_PUBLIC_FIREBASE_APP_ID']!,
+  databaseURL: process.env['NEXT_PUBLIC_FIREBASE_DATABASE_URL']!
 };
 
 // Initialize Firebase
@@ -73,6 +66,7 @@ export async function signInWithGooglePopup() {
   try {
     const result = await signInWithPopup(auth, provider);
     return result;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Error signing in with Google popup:', error);
     throw error;
@@ -105,23 +99,24 @@ export async function signInWithGoogle() {
     // First, try popup authentication
     const result = await signInWithPopup(auth, provider);
     return { result, method: 'popup' };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Popup authentication failed:', error);
-    
+
     // Check if it's a COOP-related error or popup blocked
     const isCoopError = error.message?.includes('Cross-Origin-Opener-Policy') ||
-                       error.message?.includes('window.closed') ||
-                       error.code === 'auth/popup-blocked' ||
-                       error.code === 'auth/popup-closed-by-user' ||
-                       error.code === 'auth/cancelled-popup-request';
-    
+      error.message?.includes('window.closed') ||
+      error.code === 'auth/popup-blocked' ||
+      error.code === 'auth/popup-closed-by-user' ||
+      error.code === 'auth/cancelled-popup-request';
+
     if (isCoopError) {
       console.log('COOP/popup issue detected, falling back to redirect authentication...');
       // Fallback to redirect authentication
       await signInWithRedirect(auth, provider);
       return { result: null, method: 'redirect' }; // Will redirect, so this won't be reached
     }
-    
+
     // If it's not a COOP error, re-throw the original error
     throw error;
   }
@@ -139,15 +134,15 @@ export async function signOutUser() {
 // Firestore helper functions
 export const createUserDocument = async (user: User) => {
   if (!user) return { isNewUser: false };
-  
+
   const userRef = doc(db, 'users', user.uid);
-  
+
   try {
     // Check if user document already exists
     const { getDoc } = await import('firebase/firestore');
     const userDoc = await getDoc(userRef);
     const isNewUser = !userDoc.exists();
-    
+
     const userData: {
       uid: string;
       email: string | null;
@@ -174,7 +169,7 @@ export const createUserDocument = async (user: User) => {
         autoSaveInterval: 300
       }
     };
-    
+
     if (isNewUser) {
       // First time user - set createdAt
       userData.createdAt = Timestamp.now();
@@ -183,7 +178,7 @@ export const createUserDocument = async (user: User) => {
       // Existing user - only update lastLoginAt and other fields, preserve createdAt
       await setDoc(userRef, userData, { merge: true });
     }
-    
+
     return { isNewUser };
   } catch (error) {
     console.error('Error creating user document:', error);
@@ -194,19 +189,19 @@ export const createUserDocument = async (user: User) => {
 // Helper function to check if user is new (created within last 5 minutes)
 export const isUserNew = async (user: User): Promise<boolean> => {
   if (!user) return false;
-  
+
   try {
     const { getDoc } = await import('firebase/firestore');
     const userRef = doc(db, 'users', user.uid);
     const userDoc = await getDoc(userRef);
-    
+
     if (!userDoc.exists()) return true;
-    
+
     const userData = userDoc.data();
-    const createdAt = userData.createdAt?.toDate();
-    
+    const createdAt = userData['createdAt']?.toDate();
+
     if (!createdAt) return false;
-    
+
     // Check if user was created within the last 5 minutes
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
     return createdAt > fiveMinutesAgo;
@@ -219,20 +214,20 @@ export const isUserNew = async (user: User): Promise<boolean> => {
 // Helper function to check if user has visited before (server-side detection)
 export const hasUserVisitedBefore = async (user: User): Promise<boolean> => {
   if (!user) return false;
-  
+
   try {
     const { getDoc } = await import('firebase/firestore');
     const userRef = doc(db, 'users', user.uid);
     const userDoc = await getDoc(userRef);
-    
+
     if (!userDoc.exists()) return false;
-    
+
     const userData = userDoc.data();
-    const createdAt = userData.createdAt?.toDate();
-    const lastLoginAt = userData.lastLoginAt?.toDate();
-    
+    const createdAt = userData['createdAt']?.toDate();
+    const lastLoginAt = userData['lastLoginAt']?.toDate();
+
     if (!createdAt || !lastLoginAt) return false;
-    
+
     // If last login is significantly after creation, user has visited before
     const timeDifference = lastLoginAt.getTime() - createdAt.getTime();
     return timeDifference > 60000; // More than 1 minute difference
@@ -251,7 +246,7 @@ export const getUserDisplayName = (user: User): string => {
 // Helper function to get user's first name
 export const getUserFirstName = (user: User): string => {
   if (!user?.displayName) return '';
-  return user.displayName.split(' ')[0];
+  return user.displayName.split(' ')[0] || '';
 };
 
 // Export types

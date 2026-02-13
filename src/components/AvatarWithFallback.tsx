@@ -33,6 +33,7 @@ export default function AvatarWithFallback({
   onLoad,
   showOnlineStatus = false,
   isOnline = true,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   userId
 }: AvatarWithFallbackProps) {
   const [imageError, setImageError] = useState(false);
@@ -52,11 +53,16 @@ export default function AvatarWithFallback({
 
   const getOptimizedSrc = (originalSrc: string) => {
     if (!originalSrc) return '';
-    
+
     if (originalSrc.includes('googleusercontent.com')) {
       try {
         // Get base URL and request a larger size
-        const baseUrl = originalSrc.split('?')[0].split('=s')[0];
+        const urlParts = originalSrc.split('?');
+        const baseAndSize = urlParts[0];
+        if (!baseAndSize) return originalSrc;
+
+        const parts = baseAndSize.split('=s');
+        const baseUrl = parts[0] || '';
         const optimizedUrl = `${baseUrl}=s400-c`;
         // Use our proxy endpoint
         return `/api/proxy-image?url=${encodeURIComponent(optimizedUrl)}`;
@@ -81,9 +87,8 @@ export default function AvatarWithFallback({
       {src && !imageError ? (
         <div className={`relative ${sizeClasses[size]}`}>
           <Image
-            className={`rounded-full object-cover border-2 border-white/20 transition-opacity duration-200 ${
-              imageLoading ? 'opacity-0' : 'opacity-100'
-            }`}
+            className={`rounded-full object-cover border-2 border-white/20 transition-opacity duration-200 ${imageLoading ? 'opacity-0' : 'opacity-100'
+              }`}
             src={getOptimizedSrc(src)}
             alt={alt}
             onError={handleImageError}
@@ -106,10 +111,9 @@ export default function AvatarWithFallback({
 
       {/* Online status indicator */}
       {showOnlineStatus && (
-        <div 
-          className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${
-            isOnline ? 'bg-green-400' : 'bg-gray-400'
-          }`}
+        <div
+          className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${isOnline ? 'bg-green-400' : 'bg-gray-400'
+            }`}
           title={isOnline ? 'Online' : 'Offline'}
         />
       )}

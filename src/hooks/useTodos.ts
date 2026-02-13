@@ -59,8 +59,8 @@ export function useTodos() {
   // Create a new todo
   const createTodo = useCallback(async (todoData: {
     title: string;
-    notes?: string;
-    dueAt?: Date;
+    notes?: string | undefined;
+    dueAt?: Date | undefined;
   }) => {
     if (!user) throw new Error('User not authenticated');
 
@@ -97,8 +97,8 @@ export function useTodos() {
     } as Partial<Todo>;
 
     const cleanUpdates: Record<string, unknown> = { ...updateData };
-    delete cleanUpdates.id;
-    delete cleanUpdates.createdAt;
+    delete cleanUpdates['id'];
+    delete cleanUpdates['createdAt'];
     const filteredUpdates = Object.fromEntries(
       Object.entries(cleanUpdates).filter(([, value]) => value !== undefined)
     );

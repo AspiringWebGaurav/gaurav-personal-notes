@@ -4,8 +4,8 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { CheckSquare, ListTodo, Clock, AlertCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+// import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { useTodos } from '@/hooks/useTodos';
 import AddTodoForm from '@/components/todos/AddTodoForm';
@@ -30,7 +30,7 @@ export default function TodosPage() {
     const completed = todos.filter(t => t.isCompleted).length;
     const active = total - completed;
     const overdue = getOverdueTodos(todos).length;
-    
+
     return { total, completed, active, overdue };
   }, [todos]);
 
@@ -195,14 +195,14 @@ export default function TodosPage() {
                   </div>
                 </div>
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
-                  {activeFilter === 'all' 
-                    ? 'No todos yet' 
+                  {activeFilter === 'all'
+                    ? 'No todos yet'
                     : `No ${activeFilter} todos`
                   }
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 mb-4">
-                  {activeFilter === 'all' 
-                    ? 'Create your first todo to get started!' 
+                  {activeFilter === 'all'
+                    ? 'Create your first todo to get started!'
                     : `You don't have any ${activeFilter} todos right now.`
                   }
                 </p>

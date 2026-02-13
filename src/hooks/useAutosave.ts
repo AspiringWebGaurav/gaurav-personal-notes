@@ -3,7 +3,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { debounce } from 'lodash';
 import { doc, setDoc, Timestamp } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
-import { AutosaveData, OfflineQueueItem } from '@/types';
+import { OfflineQueueItem } from '@/types';
 import { useSyncStatus } from '@/components/SyncStatusProvider';
 
 const LOCAL_KEY = (uid: string, id: string) => `autosave:${uid}:${id}`;
@@ -11,6 +11,7 @@ const QUEUE_KEY = (uid: string) => `writeQueue:${uid}`;
 const LAST_SYNC_KEY = (uid: string) => `lastSync:${uid}`;
 
 // Local storage utilities
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getLocalData = (uid: string, id: string): any => {
   try {
     const data = localStorage.getItem(LOCAL_KEY(uid, id));
@@ -21,6 +22,7 @@ const getLocalData = (uid: string, id: string): any => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const setLocalData = (uid: string, id: string, data: any): void => {
   try {
     localStorage.setItem(LOCAL_KEY(uid, id), JSON.stringify(data));
@@ -69,7 +71,7 @@ const flushOfflineQueue = async (uid: string): Promise<void> => {
   console.log(`Flushing ${queue.length} items from offline queue`);
 
   const successfulItems: OfflineQueueItem[] = [];
-  
+
   for (const item of queue) {
     try {
       // Validate that we have all required fields for a valid document reference
@@ -78,24 +80,24 @@ const flushOfflineQueue = async (uid: string): Promise<void> => {
         successfulItems.push(item); // Remove invalid items from queue
         continue;
       }
-      
+
       const docRef = doc(db, 'users', uid, item.collection, item.id);
-      
+
       if (item.operation === 'delete') {
         // Handle delete operation if needed
         continue;
       }
-      
+
       await setDoc(docRef, {
         ...item.data,
         updatedAt: Timestamp.now()
       }, { merge: true });
-      
+
       successfulItems.push(item);
-      
+
       // Clear local backup after successful sync
       localStorage.removeItem(LOCAL_KEY(uid, item.id));
-      
+
     } catch (error) {
       console.error('Error syncing item:', error);
       // Keep failed items in queue for next attempt
@@ -109,13 +111,13 @@ const flushOfflineQueue = async (uid: string): Promise<void> => {
         success => success.collection === item.collection && success.id === item.id
       )
     );
-    
+
     if (remainingQueue.length === 0) {
       clearOfflineQueue(uid);
     } else {
       localStorage.setItem(QUEUE_KEY(uid), JSON.stringify(remainingQueue));
     }
-    
+
     // Update last sync timestamp
     localStorage.setItem(LAST_SYNC_KEY(uid), Date.now().toString());
   }
@@ -124,6 +126,7 @@ const flushOfflineQueue = async (uid: string): Promise<void> => {
 interface UseAutosaveOptions {
   id: string;
   collection: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
   enabled?: boolean;
   debounceMs?: number;
@@ -143,13 +146,14 @@ export function useAutosave({
 
   // Create debounced save function
   const debouncedSave = useRef(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     debounce(async (payload: any) => {
       if (!uid || !enabled || !id || !collection) return;
 
       // Skip if data hasn't changed
       const dataString = JSON.stringify(payload);
       if (dataString === lastSaveRef.current) return;
-      
+
       lastSaveRef.current = dataString;
 
       // Start syncing indicator
@@ -163,21 +167,21 @@ export function useAutosave({
             ...payload,
             updatedAt: Timestamp.now()
           }, { merge: true });
-          
+
           // Clear local backup after successful save
           localStorage.removeItem(LOCAL_KEY(uid, id));
-          
+
           // Successfully synced to Firestore
-          
+
         } else {
           throw new Error('Offline - saving locally');
         }
       } catch (error) {
         console.log('Saving offline:', error instanceof Error ? error.message : 'Unknown error');
-        
+
         // Save to localStorage
         setLocalData(uid, id, payload);
-        
+
         // Add to offline queue
         addToOfflineQueue(uid, {
           collection,
@@ -186,7 +190,7 @@ export function useAutosave({
           operation: 'update',
           timestamp: Date.now()
         });
-        
+
         // Data saved offline
       } finally {
         // Finish syncing indicator
@@ -210,25 +214,27 @@ export function useAutosave({
   }, [setOnlineStatus]);
 
   // Immediate save function for critical moments
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const saveImmediately = useCallback(async (payload?: any) => {
     if (!uid || !enabled || !id || !collection) return;
-    
+
+
     const dataToSave = payload || data;
-    
+
     // Start syncing indicator
     startSyncing(id);
-    
+
     try {
       // Always save to localStorage first for immediate persistence
       setLocalData(uid, id, dataToSave);
-      
+
       if (isOnlineRef.current) {
         const docRef = doc(db, 'users', uid, collection, id);
         await setDoc(docRef, {
           ...dataToSave,
           updatedAt: Timestamp.now()
         }, { merge: true });
-        
+
         // Clear local backup after successful save
         localStorage.removeItem(LOCAL_KEY(uid, id));
       } else {
@@ -252,10 +258,10 @@ export function useAutosave({
   // Effect for debounced autosave
   useEffect(() => {
     if (!uid || !enabled || !data || !id || !collection) return;
-    
+
     // Save to localStorage immediately for instant persistence
     setLocalData(uid, id, data);
-    
+
     // Trigger debounced save
     debouncedSave(data);
   }, [uid, id, collection, data, enabled, debounceMs, debouncedSave]);
@@ -264,7 +270,7 @@ export function useAutosave({
   useEffect(() => {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-    
+
     // Handle page visibility change and beforeunload
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden' && uid && data) {
@@ -272,7 +278,7 @@ export function useAutosave({
         setLocalData(uid, id, data);
       }
     };
-    
+
     const handleBeforeUnload = () => {
       if (uid && data) {
         // Synchronous save to localStorage before page unload
@@ -283,15 +289,15 @@ export function useAutosave({
         }
       }
     };
-    
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('beforeunload', handleBeforeUnload);
-    
+
     // Flush queue on mount if online
     if (uid && isOnlineRef.current) {
       flushOfflineQueue(uid);
     }
-    
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
@@ -314,23 +320,23 @@ export function useAutosave({
 // Hook for managing offline sync status
 export function useOfflineSync() {
   const uid = auth.currentUser?.uid;
-  
+
   const getQueueLength = useCallback(() => {
     return uid ? getOfflineQueue(uid).length : 0;
   }, [uid]);
-  
+
   const getLastSyncTime = useCallback(() => {
     if (!uid) return null;
     const timestamp = localStorage.getItem(LAST_SYNC_KEY(uid));
     return timestamp ? new Date(parseInt(timestamp)) : null;
   }, [uid]);
-  
+
   const forceSync = useCallback(async () => {
     if (uid && navigator.onLine) {
       await flushOfflineQueue(uid);
     }
   }, [uid]);
-  
+
   return {
     queueLength: getQueueLength(),
     lastSyncTime: getLastSyncTime(),

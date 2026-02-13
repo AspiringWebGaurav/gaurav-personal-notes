@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useAutosave } from '@/hooks/useAutosave';
-import { useSyncStatus } from '@/components/SyncStatusProvider';
+// import { useSyncStatus } from '@/components/SyncStatusProvider';
 import StaticSyncStatus from '@/components/StaticSyncStatus';
 import { motion, AnimatePresence } from 'framer-motion';
 import { doc, onSnapshot, Timestamp, DocumentSnapshot } from 'firebase/firestore';
@@ -26,17 +26,17 @@ function MoneyTrackerLoading() {
 // Main component wrapped in Suspense
 function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
   const { user, loading } = useAuth();
-  const { syncStatus } = useSyncStatus();
+  // const { syncStatus } = useSyncStatus(); // Unused in this component
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   // Unwrap params
   const [trackerId, setTrackerId] = useState<string>('');
-  
+
   useEffect(() => {
     params.then(({ id }) => setTrackerId(id));
   }, [params]);
-  
+
   const [tracker, setTracker] = useState<Partial<MoneyTracker>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -53,7 +53,7 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
   const templateId = searchParams.get('template');
 
   // Auto-save functionality - only enable when we have valid trackerId AND data is loaded
-  const { saveImmediately, isOnline, hasUnsyncedChanges } = useAutosave({
+  const { saveImmediately } = useAutosave({
     id: trackerId,
     collection: 'money',
     data: tracker,
@@ -144,7 +144,7 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
     const amount = parseFloat(e.target.value) || 0;
     const updatedTracker = { ...tracker, startingAmount: amount, updatedAt: Timestamp.now() };
     setTracker(updatedTracker);
-    
+
     // Force immediate save for critical data changes - only if data is loaded
     if (trackerId && user && isDataLoaded) {
       saveImmediately(updatedTracker);
@@ -154,7 +154,7 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const updatedTracker = { ...tracker, title: e.target.value, updatedAt: Timestamp.now() };
     setTracker(updatedTracker);
-    
+
     // Force immediate save for title changes - only if data is loaded
     if (trackerId && user && isDataLoaded) {
       saveImmediately(updatedTracker);
@@ -164,7 +164,7 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
   const handleCurrencyChange = (currency: Currency['code']) => {
     const updatedTracker = { ...tracker, currency, updatedAt: Timestamp.now() };
     setTracker(updatedTracker);
-    
+
     // Force immediate save for currency changes - only if data is loaded
     if (trackerId && user && isDataLoaded) {
       saveImmediately(updatedTracker);
@@ -175,7 +175,7 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
     const updatedTracker = { ...tracker, currency, updatedAt: Timestamp.now() };
     setTracker(updatedTracker);
     setShowCurrencySetup(false);
-    
+
     // Force immediate save for initial currency setup - only if data is loaded
     if (trackerId && user && isDataLoaded) {
       saveImmediately(updatedTracker);
@@ -200,7 +200,7 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
       updatedAt: Timestamp.now()
     };
     setTracker(updatedTracker);
-    
+
     // Force immediate save when adding expenses - only if data is loaded
     if (trackerId && user && isDataLoaded) {
       saveImmediately(updatedTracker);
@@ -218,14 +218,14 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
 
   const removeExpense = (expenseId: string) => {
     if (!isDataLoaded) return;
-    
+
     const updatedTracker = {
       ...tracker,
       expenses: (tracker.expenses || []).filter((expense: Expense) => expense.id !== expenseId),
       updatedAt: Timestamp.now()
     };
     setTracker(updatedTracker);
-    
+
     // Force immediate save when removing expenses - only if data is loaded
     if (trackerId && user && isDataLoaded) {
       saveImmediately(updatedTracker);
@@ -255,7 +255,7 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
     }
     return ['Food', 'Transportation', 'Entertainment', 'Shopping', 'Bills', 'Healthcare', 'Other'];
   };
-  
+
   const categories = getCategories();
   const totalExpenses = (tracker.expenses || []).reduce((sum: number, expense: Expense) => sum + expense.amount, 0);
   const remainingPercentage = tracker.startingAmount ? (currentBalance / tracker.startingAmount) * 100 : 0;
@@ -329,18 +329,16 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Remaining Balance
               </label>
-              <div className={`text-3xl font-bold ${
-                currentBalance >= 0 ? 'text-green-600' : 'text-red-600'
-              }`}>
+              <div className={`text-3xl font-bold ${currentBalance >= 0 ? 'text-green-600' : 'text-red-600'
+                }`}>
                 {formatCurrency(currentBalance, tracker.currency || DEFAULT_CURRENCY)}
               </div>
               <div className="mt-2">
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      remainingPercentage >= 50 ? 'bg-green-500' :
+                    className={`h-2 rounded-full transition-all duration-300 ${remainingPercentage >= 50 ? 'bg-green-500' :
                       remainingPercentage >= 25 ? 'bg-yellow-500' : 'bg-red-500'
-                    }`}
+                      }`}
                     style={{ width: `${Math.max(0, Math.min(100, remainingPercentage))}%` }}
                   />
                 </div>
@@ -409,7 +407,7 @@ function MoneyTrackerContent({ params }: { params: Promise<{ id: string }> }) {
               className="bg-white rounded-xl shadow-sm p-6 mb-6"
             >
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Add New Expense</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">

@@ -1,11 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import AvatarWithFallback from '@/components/AvatarWithFallback';
 
 export default function TestNavbarPage() {
-  const [avatarError, setAvatarError] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [showNoPhotoUser, setShowNoPhotoUser] = useState(false);
 
@@ -46,7 +44,7 @@ export default function TestNavbarPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-xl shadow-sm p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-6">Enhanced Profile Features</h1>
-          
+
           <div className="space-y-8">
             {/* Avatar Demo Section */}
             <div>
@@ -106,11 +104,10 @@ export default function TestNavbarPage() {
 
                 <button
                   onClick={() => setIsOnline(!isOnline)}
-                  className={`px-4 py-2 rounded-lg transition-colors ${
-                    isOnline 
-                      ? 'bg-green-600 hover:bg-green-700 text-white'
-                      : 'bg-gray-600 hover:bg-gray-700 text-white'
-                  }`}
+                  className={`px-4 py-2 rounded-lg transition-colors ${isOnline
+                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                    : 'bg-gray-600 hover:bg-gray-700 text-white'
+                    }`}
                 >
                   Toggle Online Status
                 </button>
@@ -134,8 +131,8 @@ export default function TestNavbarPage() {
             {/* Test Instructions */}
             <div className="bg-blue-50 p-4 rounded-lg">
               <p className="text-blue-800">
-                <strong>Test Instructions:</strong> Try toggling between users with and without photos, 
-                test online/offline status, and observe loading states and animations. The avatar component 
+                <strong>Test Instructions:</strong> Try toggling between users with and without photos,
+                test online/offline status, and observe loading states and animations. The avatar component
                 handles various edge cases and provides a consistent experience across different scenarios.
               </p>
             </div>

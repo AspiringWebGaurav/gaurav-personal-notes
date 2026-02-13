@@ -48,7 +48,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Note, MoneyTracker, Todo } from "@/types";
+import { Note, MoneyTracker } from "@/types";
 import { formatCurrency, DEFAULT_CURRENCY } from "@/lib/currency";
 import { useTodos } from "@/hooks/useTodos";
 import { getOverdueTodos, isOverdue } from "@/lib/todoUtils";
@@ -127,7 +127,8 @@ export default function DashboardPage() {
   // Compute dynamic footer text
   const displaySyncText = React.useMemo(() => {
     if (isSyncing) return "Syncing…";
-    const s: any = syncStatus as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const s: any = syncStatus;
     const raw =
       s?.lastSyncedAt ??
       s?.lastSyncAt ??
@@ -136,8 +137,11 @@ export default function DashboardPage() {
       s?.timestamp ??
       recentSyncAt;
     if (!raw) return "recently";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const d = (raw as any)?.toDate?.()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ? (raw as any).toDate()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       : new Date(raw as any);
     if (!(d instanceof Date) || isNaN(d.getTime())) return "recently";
     const delta = Date.now() - d.getTime();
@@ -161,6 +165,7 @@ export default function DashboardPage() {
       const unsubNotes = onSnapshot(notesQuery, (snapshot) => {
         const notes = snapshot.docs.map((doc) => ({
           id: doc.id,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ...(doc.data() as any),
         })) as Note[];
         setRecentNotes(notes);
@@ -176,6 +181,7 @@ export default function DashboardPage() {
       const unsubMoney = onSnapshot(moneyQuery, (snapshot) => {
         const trackers = snapshot.docs.map((doc) => ({
           id: doc.id,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           ...(doc.data() as any),
         })) as MoneyTracker[];
         setMoneyTrackers(trackers);
@@ -188,6 +194,7 @@ export default function DashboardPage() {
         unsubMoney();
       };
     }
+    return undefined;
   }, [user, loading, router]);
 
   // navigation helpers
@@ -428,13 +435,12 @@ export default function DashboardPage() {
                           onClick={() => router.push("/dashboard/todos")}
                           leading={
                             <CheckSquare
-                              className={`h-5 w-5 ${
-                                todo.isCompleted
-                                  ? 'text-green-600'
-                                  : isOverdue(todo)
+                              className={`h-5 w-5 ${todo.isCompleted
+                                ? 'text-green-600'
+                                : isOverdue(todo)
                                   ? 'text-red-600'
                                   : 'text-slate-600'
-                              }`}
+                                }`}
                             />
                           }
                           trailing={
@@ -477,10 +483,12 @@ export default function DashboardPage() {
                           key={n.id}
                           title={n.title || "Untitled"}
                           subtitle={
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             (n as any).updatedAt
                               ?.toDate?.()
                               ?.toLocaleDateString?.() ||
                             new Date(
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
                               (n as any).updatedAt || Date.now()
                             ).toLocaleString()
                           }
@@ -515,6 +523,7 @@ export default function DashboardPage() {
                   ) : (
                     <div className="grid gap-3">
                       {moneyTrackers.map((m) => {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         const expenses = ((m as any).expenses || []) as Array<{
                           amount: number;
                         }>;
@@ -522,22 +531,28 @@ export default function DashboardPage() {
                           (sum, e) => sum + (e?.amount || 0),
                           0
                         );
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         const starting = (m as any).startingAmount || 0;
                         const remaining = starting - totalExpenses;
                         const currency =
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           (m as any).currency || DEFAULT_CURRENCY;
                         return (
                           <ItemRow
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             key={(m as any).id}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             title={(m as any).title || "Untitled Budget"}
                             subtitle={`Updated ${
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
                               (m as any).updatedAt
                                 ?.toDate?.()
                                 ?.toLocaleDateString?.() ||
                               new Date(
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 (m as any).updatedAt || Date.now()
                               ).toLocaleDateString()
-                            }`}
+                              }`}
                             trailing={
                               <span
                                 className={cn(
@@ -549,6 +564,7 @@ export default function DashboardPage() {
                               </span>
                             }
                             onClick={() =>
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
                               router.push(`/dashboard/money/${(m as any).id}`)
                             }
                             leading={<Wallet className="h-5 w-5" />}
@@ -811,13 +827,12 @@ export default function DashboardPage() {
                       onClick={() => router.push("/dashboard/todos")}
                       leading={
                         <CheckSquare
-                          className={`h-5 w-5 ${
-                            todo.isCompleted
-                              ? 'text-green-600'
-                              : isOverdue(todo)
+                          className={`h-5 w-5 ${todo.isCompleted
+                            ? 'text-green-600'
+                            : isOverdue(todo)
                               ? 'text-red-600'
                               : 'text-slate-600'
-                          }`}
+                            }`}
                         />
                       }
                       trailing={
@@ -855,10 +870,12 @@ export default function DashboardPage() {
                       key={n.id}
                       title={n.title || "Untitled"}
                       subtitle={
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         (n as any).updatedAt
                           ?.toDate?.()
                           ?.toLocaleDateString?.() ||
                         new Date(
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           (n as any).updatedAt || Date.now()
                         ).toLocaleString()
                       }
@@ -888,6 +905,7 @@ export default function DashboardPage() {
               ) : (
                 <div className="grid gap-3">
                   {moneyTrackers.map((m) => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const expenses = ((m as any).expenses || []) as Array<{
                       amount: number;
                     }>;
@@ -895,21 +913,27 @@ export default function DashboardPage() {
                       (sum, e) => sum + (e?.amount || 0),
                       0
                     );
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const starting = (m as any).startingAmount || 0;
                     const remaining = starting - totalExpenses;
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const currency = (m as any).currency || DEFAULT_CURRENCY;
                     return (
                       <ItemRow
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         key={(m as any).id}
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         title={(m as any).title || "Untitled Budget"}
                         subtitle={`Updated ${
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           (m as any).updatedAt
                             ?.toDate?.()
                             ?.toLocaleDateString?.() ||
                           new Date(
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             (m as any).updatedAt || Date.now()
                           ).toLocaleDateString()
-                        }`}
+                          }`}
                         trailing={
                           <span
                             className={cn(
@@ -921,6 +945,7 @@ export default function DashboardPage() {
                           </span>
                         }
                         onClick={() =>
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           router.push(`/dashboard/money/${(m as any).id}`)
                         }
                         leading={<Wallet className="h-5 w-5" />}
@@ -1188,36 +1213,36 @@ function EmptyState({
   );
 }
 
-function TemplateCard({
-  title,
-  category,
-  icon,
-  onClick,
-}: {
-  title: string;
-  category: string;
-  icon: React.ReactNode;
-  onClick?: () => void;
-}) {
-  return (
-    <motion.button
-      whileHover={{ y: -2 }}
-      whileTap={{ scale: 0.99 }}
-      onClick={onClick}
-      className="group flex items-center justify-between rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3 text-left shadow-sm ring-1 ring-black/5 transition hover:bg-white dark:border-slate-800/70 dark:bg-slate-950/50 dark:hover:bg-slate-900"
-    >
-      <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 ring-1 ring-black/5 dark:bg-slate-800">
-          {icon}
-        </div>
-        <div>
-          <div className="text-sm font-medium">{title}</div>
-          <div className="text-xs text-slate-600 dark:text-slate-400">
-            {category}
-          </div>
-        </div>
-      </div>
-      <ArrowRight className="h-4 w-4 opacity-50 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
-    </motion.button>
-  );
-}
+// function TemplateCard({
+//   title,
+//   category,
+//   icon,
+//   onClick,
+// }: {
+//   title: string;
+//   category: string;
+//   icon: React.ReactNode;
+//   onClick?: () => void;
+// }) {
+//   return (
+//     <motion.button
+//       whileHover={{ y: -2 }}
+//       whileTap={{ scale: 0.99 }}
+//       onClick={onClick}
+//       className="group flex items-center justify-between rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3 text-left shadow-sm ring-1 ring-black/5 transition hover:bg-white dark:border-slate-800/70 dark:bg-slate-950/50 dark:hover:bg-slate-900"
+//     >
+//       <div className="flex items-center gap-3">
+//         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 ring-1 ring-black/5 dark:bg-slate-800">
+//           {icon}
+//         </div>
+//         <div>
+//           <div className="text-sm font-medium">{title}</div>
+//           <div className="text-xs text-slate-600 dark:text-slate-400">
+//             {category}
+//           </div>
+//         </div>
+//       </div>
+//       <ArrowRight className="h-4 w-4 opacity-50 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
+//     </motion.button>
+//   );
+// }

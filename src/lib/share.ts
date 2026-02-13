@@ -14,39 +14,39 @@ export interface InviteToken {
 export async function ensureInvite(noteId: string): Promise<InviteToken> {
   const noteRef = doc(db, 'notes', noteId);
   const noteSnap = await getDoc(noteRef);
-  
+
   if (!noteSnap.exists()) {
     throw new Error('Note not found');
   }
-  
+
   const noteData = noteSnap.data();
   const existingInvite = noteData['invite'];
-  
+
   // Check if existing invite is still valid
   if (existingInvite && existingInvite.expiresAt && existingInvite.token) {
     const now = new Date();
     const expiresAt = existingInvite.expiresAt.toDate();
-    
+
     if (expiresAt > now) {
       return existingInvite as InviteToken;
     }
   }
-  
+
   // Create new invite token
   const token = generateToken();
   const expiresAt = Timestamp.fromDate(new Date(Date.now() + 24 * 60 * 60 * 1000)); // 24 hours
-  
+
   const newInvite: InviteToken = {
     token,
     expiresAt,
     maxMembers: 2
   };
-  
+
   await updateDoc(noteRef, {
     invite: newInvite,
     updatedAt: serverTimestamp()
   });
-  
+
   return newInvite;
 }
 
@@ -57,43 +57,43 @@ export async function joinNoteWithToken(noteId: string, uid: string, token: stri
   try {
     const noteRef = doc(db, 'notes', noteId);
     const noteSnap = await getDoc(noteRef);
-    
+
     if (!noteSnap.exists()) {
       return { success: false, error: 'Note not found' };
     }
-    
+
     const noteData = noteSnap.data();
-    
+
     // Validate invite token
     if (!noteData['invite'] || noteData['invite'].token !== token) {
       return { success: false, error: 'Invalid invite token' };
     }
-    
+
     // Check if token is expired
     const now = new Date();
     const expiresAt = noteData['invite'].expiresAt.toDate();
     if (expiresAt <= now) {
       return { success: false, error: 'Invite token has expired' };
     }
-    
+
     // Check if user is already a member
     if (noteData['members'] && noteData['members'].includes(uid)) {
       return { success: true }; // Already a member, that's fine
     }
-    
+
     // Check if room is full
     if (noteData['members'] && noteData['members'].length >= 2) {
       return { success: false, error: 'Room is full (maximum 2 members)' };
     }
-    
+
     // Add user to members array
     const updatedMembers = noteData['members'] ? [...noteData['members'], uid] : [uid];
-    
+
     await updateDoc(noteRef, {
       members: updatedMembers,
       updatedAt: serverTimestamp()
     });
-    
+
     return { success: true };
   } catch (error) {
     console.error('Error joining note with token:', error);
@@ -114,7 +114,7 @@ function generateToken(): string {
       .replace(/\//g, '_')
       .replace(/=/g, '');
   }
-  
+
   // Fallback for server-side or older browsers
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
   let result = '';
@@ -134,23 +134,24 @@ export function createInviteUrl(noteId: string, token: string, origin: string): 
 /**
  * Validates if a user can access a note
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function validateNoteAccess(noteId: string, uid: string): Promise<{ hasAccess: boolean; note?: any }> {
   try {
     const noteRef = doc(db, 'notes', noteId);
     const noteSnap = await getDoc(noteRef);
-    
+
     if (!noteSnap.exists()) {
       return { hasAccess: false };
     }
-    
+
     const noteData = noteSnap.data();
-    
+
     // Check if user is a member
     const hasAccess = noteData['members'] && noteData['members'].includes(uid);
-    
-    return { 
-      hasAccess, 
-      note: hasAccess ? { id: noteId, ...noteData } : undefined 
+
+    return {
+      hasAccess,
+      note: hasAccess ? { id: noteId, ...noteData } : undefined
     };
   } catch (error) {
     console.error('Error validating note access:', error);
