@@ -8,6 +8,7 @@ import AvatarWithFallback from "./AvatarWithFallback";
 import { useAuth } from "@/hooks/useAuth";
 import { useSyncStatus } from "./SyncStatusProvider";
 import NotificationsBell from "./todos/NotificationsBell";
+import { User, Settings, HelpCircle, LogOut, ChevronDown, LayoutGrid, NotepadText, CheckSquare, Wallet, LayoutTemplate } from "lucide-react";
 
 /**
  * Elevation Pills — Enterprise Navbar for GPN
@@ -18,22 +19,22 @@ import NotificationsBell from "./todos/NotificationsBell";
  * - Safe-area aware (iOS/Android notches)
  */
 
-type NavItem = { name: string; href: string; icon: string; desc?: string };
+type NavItem = { name: string; href: string; icon: React.ReactNode; desc?: string };
 
 const NAV: NavItem[] = [
-  { name: "Dashboard", href: "/dashboard", icon: "🏠", desc: "Overview" },
-  { name: "Notes", href: "/dashboard/notes", icon: "📝", desc: "Your notes" },
-  { name: "Todos", href: "/dashboard/todos", icon: "✅", desc: "Task management" },
+  { name: "Dashboard", href: "/dashboard", icon: <LayoutGrid className="h-4 w-4" />, desc: "Overview" },
+  { name: "Notes", href: "/dashboard/notes", icon: <NotepadText className="h-4 w-4" />, desc: "Your notes" },
+  { name: "Todos", href: "/dashboard/todos", icon: <CheckSquare className="h-4 w-4" />, desc: "Task management" },
   {
     name: "Money",
     href: "/dashboard/money",
-    icon: "💰",
+    icon: <Wallet className="h-4 w-4" />,
     desc: "Track expenses",
   },
   {
     name: "Templates",
     href: "/dashboard/templates",
-    icon: "📋",
+    icon: <LayoutTemplate className="h-4 w-4" />,
     desc: "Starter templates",
   },
 ];
@@ -239,7 +240,7 @@ export default function GlobalNavbar() {
               <div className="relative">
                 <button
                   onClick={() => setMenuOpen((v) => !v)}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-black/5 px-2.5 py-1.5 text-gray-800 hover:bg-black/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/50 px-1 py-1 pr-3 text-slate-700 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 transition-all dark:border-slate-800 dark:bg-slate-950/50 dark:text-slate-300 dark:hover:bg-slate-900"
                   aria-expanded={menuOpen}
                   aria-label="Open user menu"
                 >
@@ -253,39 +254,29 @@ export default function GlobalNavbar() {
                     isOnline={isOnline}
                     className="shrink-0"
                   />
-                  <span className="hidden md:block text-sm font-medium max-w-[140px] truncate">
+                  <span className="hidden md:block text-sm font-medium max-w-[120px] truncate">
                     {firstName}
                   </span>
-                  <svg
-                    className="h-4 w-4 shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d={menuOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
-                    />
-                  </svg>
+                  <ChevronDown
+                    className={`h-4 w-4 shrink-0 transition-transform text-slate-400 ${menuOpen ? "rotate-180" : ""}`}
+                  />
                 </button>
 
                 {/* Profile menu (fixed) */}
                 <AnimatePresence>
                   {menuOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: -6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -6 }}
+                      initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -6, scale: 0.98 }}
                       transition={{ duration: 0.16, ease: "easeOut" }}
                       className="fixed right-3 sm:right-4 z-[80]"
                       style={{
                         top: `calc(${navH}px + env(safe-area-inset-top) + 8px)`,
                       }}
                     >
-                      <div className="w-72 rounded-2xl border border-black/10 bg-white/85 backdrop-blur-xl shadow-xl overflow-hidden">
-                        <div className="px-4 py-3 border-b border-black/5">
+                      <div className="w-72 rounded-xl border border-slate-200 bg-white shadow-lg overflow-hidden dark:bg-slate-950 dark:border-slate-800">
+                        <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/20">
                           <div className="flex items-center gap-3">
                             <AvatarWithFallback
                               src={user.photoURL}
@@ -297,63 +288,66 @@ export default function GlobalNavbar() {
                               isOnline={isOnline}
                             />
                             <div className="min-w-0">
-                              <p className="text-sm font-semibold text-gray-900 truncate">
+                              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
                                 {displayName}
                               </p>
-                              <p className="text-xs text-gray-600 truncate">
+                              <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
                                 {email}
                               </p>
-                              <div className="mt-1 inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
-                                <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                              <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-md bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-400">
+                                <span className={`inline-block h-1.5 w-1.5 rounded-full ${isOnline ? "bg-emerald-500" : "bg-slate-400"}`} />
                                 {isOnline ? "Online" : "Offline"}
                               </div>
                             </div>
                           </div>
                         </div>
 
-                        <MenuBtn
-                          onClick={() => {
-                            router.push("/dashboard/profile");
-                            setMenuOpen(false);
-                          }}
-                          icon="👤"
-                          title="Profile"
-                          subtitle="Manage your account"
-                        />
-                        <MenuBtn
-                          onClick={() => {
-                            router.push("/dashboard/settings");
-                            setMenuOpen(false);
-                          }}
-                          icon="⚙️"
-                          title="Settings"
-                          subtitle="App preferences"
-                        />
-                        <MenuBtn
-                          onClick={() => {
-                            router.push("/dashboard/help");
-                            setMenuOpen(false);
-                          }}
-                          icon="❓"
-                          title="Help & Support"
-                          subtitle="Get assistance"
-                        />
-
-                        <div className="border-t border-black/5 px-4 py-2 text-xs text-gray-600">
-                          <div className="flex items-center justify-between">
-                            <span>Last synced</span>
-                            <span className="font-medium text-gray-800">
-                              {getSyncLabel(syncStatus.lastSyncTime)}
-                            </span>
-                          </div>
+                        <div className="py-1 border-b border-slate-100 dark:border-slate-800">
+                          <MenuBtn
+                            onClick={() => {
+                              router.push("/dashboard/profile");
+                              setMenuOpen(false);
+                            }}
+                            icon={<User className="h-4 w-4" />}
+                            title="Profile"
+                            subtitle="Manage your account"
+                          />
+                          <MenuBtn
+                            onClick={() => {
+                              router.push("/dashboard/settings");
+                              setMenuOpen(false);
+                            }}
+                            icon={<Settings className="h-4 w-4" />}
+                            title="Settings"
+                            subtitle="App preferences"
+                          />
+                          <MenuBtn
+                            onClick={() => {
+                              router.push("/dashboard/help");
+                              setMenuOpen(false);
+                            }}
+                            icon={<HelpCircle className="h-4 w-4" />}
+                            title="Help & Support"
+                            subtitle="Get assistance"
+                          />
                         </div>
 
-                        <button
-                          onClick={logout}
-                          className="w-full px-4 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50"
-                        >
-                          <span className="mr-2">🚪</span>Sign Out
-                        </button>
+                        <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/10 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                          <span>Last synced</span>
+                          <span className="font-medium text-slate-700 dark:text-slate-300">
+                            {getSyncLabel(syncStatus.lastSyncTime).replace('Last synced ', '')}
+                          </span>
+                        </div>
+
+                        <div className="p-1">
+                          <button
+                            onClick={logout}
+                            className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                          >
+                            <LogOut className="h-4 w-4" />
+                            Sign Out
+                          </button>
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -415,20 +409,20 @@ export default function GlobalNavbar() {
                         setDrawerOpen(false);
                       }}
                       className={[
-                        "mx-2 mb-2 w-[calc(100%-1rem)]",
-                        "inline-flex items-center justify-between rounded-2xl px-4 py-3",
+                        "mx-2 mb-1 w-[calc(100%-1rem)]",
+                        "inline-flex items-center justify-between rounded-md px-3 py-2.5 transition-colors",
                         active(item.href)
-                          ? "bg-white shadow-[0_8px_20px_-10px_rgba(0,0,0,.25)] border border-black/5"
-                          : "bg-white/70 hover:bg-white border border-black/5",
+                          ? "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100 font-medium"
+                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-100",
                       ].join(" ")}
                     >
                       <span className="flex items-center gap-3">
-                        <span className="text-lg">{item.icon}</span>
-                        <span className="font-medium text-gray-900">
+                        {item.icon}
+                        <span className={active(item.href) ? "font-semibold" : "font-medium"}>
                           {item.name}
                         </span>
                       </span>
-                      <span className="text-xs text-gray-600">{item.desc}</span>
+                      <span className="text-xs opacity-70">{item.desc}</span>
                     </button>
                   ))}
                 </div>
@@ -459,29 +453,26 @@ function PillButton({
   active,
   onClick,
 }: {
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   active?: boolean;
   onClick: () => void;
 }) {
   return (
-    <motion.button
-      whileHover={{ y: -1 }}
-      whileTap={{ scale: 0.98 }}
+    <button
       onClick={onClick}
       className={[
-        "inline-flex items-center gap-2 rounded-2xl px-3.5 py-2 text-sm font-medium transition-all",
-        "border",
+        "inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors",
         active
-          ? "bg-white border-black/5 text-gray-900 shadow-[0_10px_25px_-12px_rgba(0,0,0,.35)]"
-          : "bg-white/70 hover:bg-white border-black/10 text-gray-800 hover:shadow-[0_12px_26px_-14px_rgba(0,0,0,.35)]",
+          ? "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100 font-medium"
+          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-slate-100 font-medium",
       ].join(" ")}
       title={label}
       aria-label={label}
     >
-      <span className="text-base leading-none">{icon}</span>
+      {icon}
       <span>{label}</span>
-    </motion.button>
+    </button>
   );
 }
 
@@ -527,19 +518,22 @@ function MenuBtn({
   subtitle,
 }: {
   onClick: () => void;
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   subtitle: string;
 }) {
   return (
     <button
       onClick={onClick}
-      className="flex w-full items-center gap-3 px-4 py-2 text-sm hover:bg-black/5 text-gray-800"
+      className="flex w-full items-center gap-3 px-3 py-2 mx-1 rounded-md text-sm hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-700 dark:text-slate-200 transition-colors"
+      style={{ width: "calc(100% - 8px)" }}
     >
-      <span className="text-base leading-none">{icon}</span>
+      <div className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+        {icon}
+      </div>
       <div className="text-left">
-        <div className="font-medium text-gray-900">{title}</div>
-        <div className="text-xs text-gray-600">{subtitle}</div>
+        <div className="font-medium text-slate-900 dark:text-slate-100">{title}</div>
+        <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{subtitle}</div>
       </div>
     </button>
   );

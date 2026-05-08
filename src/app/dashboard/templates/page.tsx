@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
 import { TEMPLATES, TEMPLATE_CATEGORIES } from '@/lib/templates';
+import { ChevronLeft, LayoutTemplate, Search, FileText, Wallet, Loader2 } from 'lucide-react';
 
 export default function TemplatesPage() {
   const { user, loading } = useAuth();
@@ -15,12 +16,8 @@ export default function TemplatesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full"
-        />
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <Loader2 className="h-8 w-8 animate-spin text-slate-400 dark:text-slate-500" />
       </div>
     );
   }
@@ -61,24 +58,24 @@ export default function TemplatesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-10">
+      <header className="bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-3">
               <button
                 onClick={goBack}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors text-slate-500 dark:text-slate-400"
                 title="Go back to dashboard"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
+                <ChevronLeft className="w-5 h-5" />
               </button>
-              <div className="flex items-center space-x-2">
-                <span className="text-xl">📋</span>
-                <h1 className="text-lg font-medium text-gray-900">Templates</h1>
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                  <LayoutTemplate className="h-4 w-4" />
+                </div>
+                <h1 className="text-sm font-semibold tracking-tight text-slate-900 dark:text-slate-100">Templates</h1>
               </div>
             </div>
           </div>
@@ -92,11 +89,11 @@ export default function TemplatesPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-2 tracking-tight">
             Choose a Template
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Get started quickly with our collection of 30+ professionally designed templates
+          <p className="text-sm text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+            Get started quickly with our collection of professionally designed templates
             for notes, money tracking, planning, and productivity.
           </p>
         </motion.div>
@@ -109,30 +106,32 @@ export default function TemplatesPage() {
           className="mb-8"
         >
           <div className="flex justify-center">
-            <div className="bg-gray-100 p-1 rounded-lg">
+            <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex items-center">
               <button
                 onClick={() => {
                   setSelectedTemplateType('notes');
                   setSelectedCategory('All');
                 }}
-                className={`px-6 py-3 rounded-md text-sm font-medium transition-all ${selectedTemplateType === 'notes'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                className={`flex items-center gap-2 px-6 py-2 rounded-md text-sm font-medium transition-all ${selectedTemplateType === 'notes'
+                  ? 'bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 shadow-sm border border-slate-200 dark:border-slate-700'
+                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-100'
                   }`}
               >
-                📝 Notes Templates
+                <FileText className="h-4 w-4" />
+                Notes Templates
               </button>
               <button
                 onClick={() => {
                   setSelectedTemplateType('money');
                   setSelectedCategory('All');
                 }}
-                className={`px-6 py-3 rounded-md text-sm font-medium transition-all ${selectedTemplateType === 'money'
-                  ? 'bg-white text-green-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                className={`flex items-center gap-2 px-6 py-2 rounded-md text-sm font-medium transition-all ${selectedTemplateType === 'money'
+                  ? 'bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 shadow-sm border border-slate-200 dark:border-slate-700'
+                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-100'
                   }`}
               >
-                💰 Money Tracker Templates
+                <Wallet className="h-4 w-4" />
+                Money Templates
               </button>
             </div>
           </div>
@@ -148,20 +147,15 @@ export default function TemplatesPage() {
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             {/* Search */}
             <div className="relative flex-1 max-w-md">
-              <svg
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-slate-400" />
+              </div>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search templates..."
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full pl-9 pr-4 py-2 text-sm bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-300 dark:focus:ring-slate-700 placeholder:text-slate-400"
               />
             </div>
 
@@ -178,9 +172,9 @@ export default function TemplatesPage() {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === category
-                    ? (selectedTemplateType === 'notes' ? 'bg-blue-600 text-white' : 'bg-green-600 text-white')
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors border ${selectedCategory === category
+                    ? 'bg-slate-900 text-white border-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 dark:bg-slate-950 dark:text-slate-400 dark:border-slate-800 dark:hover:bg-slate-900'
                     }`}
                 >
                   {category}
@@ -197,10 +191,12 @@ export default function TemplatesPage() {
           transition={{ delay: 0.2 }}
         >
           {filteredTemplates.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No templates found</h3>
-              <p className="text-gray-600">
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-800 text-slate-400 mb-4">
+                <Search className="h-6 w-6" />
+              </div>
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">No templates found</h3>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
                 Try adjusting your search or selecting a different category.
               </p>
             </div>
@@ -209,64 +205,56 @@ export default function TemplatesPage() {
               {filteredTemplates.map((template, index) => (
                 <motion.div
                   key={template.id}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  transition={{ delay: index * 0.03 }}
                   onClick={() => handleUseTemplate(template.id)}
-                  className={`bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all cursor-pointer overflow-hidden ${template.type === 'money'
-                    ? 'hover:border-green-300'
-                    : 'hover:border-blue-300'
-                    }`}
+                  className="group bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm transition-all cursor-pointer flex flex-col"
                 >
-                  <div className="p-6">
+                  <div className="p-5 flex-1">
                     {/* Template Icon and Category */}
                     <div className="flex items-center justify-between mb-4">
                       <div className="text-3xl">{template.icon}</div>
-                      <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                      <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-medium rounded-md uppercase tracking-wider">
                         {template.category}
                       </span>
                     </div>
 
                     {/* Template Title and Description */}
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-2">
                       {template.title}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">
                       {template.description}
                     </p>
 
                     {/* Template Tags */}
-                    <div className="flex flex-wrap gap-1 mb-4">
+                    <div className="flex flex-wrap gap-1.5 mb-6">
                       {template.tags.slice(0, 3).map((tag) => (
                         <span
                           key={tag}
-                          className="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded"
+                          className="px-1.5 py-0.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[10px] rounded"
                         >
                           {tag}
                         </span>
                       ))}
                       {template.tags.length > 3 && (
-                        <span className="px-2 py-1 bg-gray-50 text-gray-500 text-xs rounded">
+                        <span className="px-1.5 py-0.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[10px] rounded">
                           +{template.tags.length - 3}
                         </span>
                       )}
                     </div>
 
                     {/* Use Template Button */}
-                    <button className={`w-full py-2 px-4 rounded-lg transition-colors text-sm font-medium text-white ${template.type === 'money'
-                      ? 'bg-green-600 hover:bg-green-700'
-                      : 'bg-blue-600 hover:bg-blue-700'
-                      }`}>
-                      {template.type === 'money' ? 'Create Money Tracker' : 'Use Template'}
+                    <button className="w-full py-1.5 rounded-md transition-colors text-xs font-medium bg-slate-900 text-slate-50 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200">
+                      {template.type === 'money' ? 'Create Tracker' : 'Use Template'}
                     </button>
                   </div>
 
                   {/* Preview Content */}
-                  <div className="px-6 pb-6">
-                    <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-600 font-mono leading-relaxed max-h-24 overflow-hidden">
-                      {template.content.substring(0, 120)}...
+                  <div className="px-5 pb-5 mt-auto">
+                    <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-md p-3 text-[10px] text-slate-400 dark:text-slate-500 font-mono leading-relaxed max-h-20 overflow-hidden">
+                      {template.content.substring(0, 100)}...
                     </div>
                   </div>
                 </motion.div>
@@ -282,18 +270,18 @@ export default function TemplatesPage() {
           transition={{ delay: 0.3 }}
           className="mt-12 text-center"
         >
-          <div className="inline-flex items-center space-x-8 bg-white rounded-xl shadow-sm px-8 py-4">
+          <div className="inline-flex items-center space-x-8 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-md shadow-sm px-8 py-3">
             <div>
-              <div className={`text-2xl font-bold ${selectedTemplateType === 'notes' ? 'text-blue-600' : 'text-green-600'}`}>
+              <div className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                 {templatesByType.length}
               </div>
-              <div className="text-sm text-gray-600">
-                {selectedTemplateType === 'notes' ? 'Notes Templates' : 'Money Templates'}
+              <div className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Templates
               </div>
             </div>
-            <div className="w-px h-8 bg-gray-200"></div>
+            <div className="w-px h-6 bg-slate-200 dark:bg-slate-800"></div>
             <div>
-              <div className={`text-2xl font-bold ${selectedTemplateType === 'notes' ? 'text-blue-600' : 'text-green-600'}`}>
+              <div className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                 {TEMPLATE_CATEGORIES.filter(cat => {
                   if (selectedTemplateType === 'notes') {
                     return !['Budget Planning', 'Business', 'Savings', 'Project Management', 'Education'].includes(cat);
@@ -302,14 +290,14 @@ export default function TemplatesPage() {
                   }
                 }).length}
               </div>
-              <div className="text-sm text-gray-600">Categories</div>
+              <div className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Categories</div>
             </div>
-            <div className="w-px h-8 bg-gray-200"></div>
+            <div className="w-px h-6 bg-slate-200 dark:bg-slate-800"></div>
             <div>
-              <div className={`text-2xl font-bold ${selectedTemplateType === 'notes' ? 'text-blue-600' : 'text-green-600'}`}>
+              <div className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                 {filteredTemplates.length}
               </div>
-              <div className="text-sm text-gray-600">Showing</div>
+              <div className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Showing</div>
             </div>
           </div>
         </motion.div>
@@ -319,13 +307,10 @@ export default function TemplatesPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className={`mt-12 text-center rounded-xl p-8 text-white ${selectedTemplateType === 'notes'
-            ? 'bg-gradient-to-r from-blue-500 to-indigo-600'
-            : 'bg-gradient-to-r from-green-500 to-emerald-600'
-            }`}
+          className="mt-12 text-center rounded-xl p-8 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950"
         >
-          <h3 className="text-2xl font-bold mb-2">Can&apos;t find what you need?</h3>
-          <p className={`mb-6 ${selectedTemplateType === 'notes' ? 'text-blue-100' : 'text-green-100'}`}>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">Can&apos;t find what you need?</h3>
+          <p className="mb-6 text-sm text-slate-500 dark:text-slate-400">
             {selectedTemplateType === 'notes'
               ? 'Start with a blank note and create your own custom template.'
               : 'Start with a blank money tracker and customize it for your needs.'
@@ -341,10 +326,7 @@ export default function TemplatesPage() {
                 router.push(`/dashboard/money/${trackerId}`);
               }
             }}
-            className={`px-6 py-3 rounded-lg font-medium transition-colors ${selectedTemplateType === 'notes'
-              ? 'bg-white text-blue-600 hover:bg-gray-100'
-              : 'bg-white text-green-600 hover:bg-gray-100'
-              }`}
+            className="px-6 py-2 rounded-md font-medium transition-colors text-xs bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
           >
             {selectedTemplateType === 'notes' ? 'Create Blank Note' : 'Create Blank Tracker'}
           </button>

@@ -11,7 +11,11 @@ import {
   UserPlus,
   Share2,
   Sparkles,
-  ExternalLink
+  ExternalLink,
+  Loader2,
+  Lock,
+  Zap,
+  Timer
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -136,8 +140,8 @@ export default function CollaborativePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <Loader2 className="h-8 w-8 animate-spin text-slate-400 dark:text-slate-500" />
       </div>
     );
   }
@@ -147,9 +151,9 @@ export default function CollaborativePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/80 backdrop-blur dark:border-slate-800/60 dark:bg-slate-950/50">
+      <header className="sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -162,18 +166,20 @@ export default function CollaborativePage() {
                 ← Back to Dashboard
               </Button>
               <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-blue-600" />
-                <h1 className="text-xl font-semibold">Collaborative Notes</h1>
-                <Badge variant="secondary">Two-Person</Badge>
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                  <Users className="h-4 w-4" />
+                </div>
+                <h1 className="text-sm font-semibold tracking-tight text-slate-900 dark:text-slate-100">Collaborative Notes</h1>
+                <Badge variant="outline" className="ml-2 font-normal text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-800">Two-Person</Badge>
               </div>
             </div>
             <Button
               onClick={createNewCollaborativeNote}
               disabled={creatingNote}
-              className="gap-2"
+              className="gap-2 bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 h-9 px-4 text-xs font-medium"
             >
               <Plus className="h-4 w-4" />
-              {creatingNote ? 'Creating...' : 'New Collaborative Note'}
+              {creatingNote ? 'Creating...' : 'New Note'}
             </Button>
           </div>
         </div>
@@ -187,35 +193,35 @@ export default function CollaborativePage() {
           className="text-center mb-8"
         >
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Sparkles className="h-6 w-6 text-blue-600" />
-            <h2 className="text-2xl font-bold">Two-Person Real-time Collaboration</h2>
+            <div className="flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400">
+              <Sparkles className="h-5 w-5" />
+            </div>
           </div>
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">Two-Person Real-time Collaboration</h2>
           <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-6">
             Create collaborative notes that support exactly two people working together in real-time.
             Share secure invite codes with 24-hour expiration for seamless collaboration.
           </p>
 
-          {/* Prominent Join with Code Button */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
-            className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-6 mb-8 text-white"
+            className="bg-white dark:bg-slate-950 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-8 mb-8 max-w-2xl mx-auto flex flex-col items-center"
           >
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <UserPlus className="h-6 w-6" />
-              <h3 className="text-xl font-semibold">Want to Join a Collaborative Note?</h3>
+            <div className="flex items-center justify-center gap-3 mb-2 text-slate-900 dark:text-slate-100">
+              <UserPlus className="h-5 w-5" />
+              <h3 className="text-sm font-semibold">Join a Collaborative Note</h3>
             </div>
-            <p className="text-green-100 mb-4">
-              Have an invite code from a friend? Enter it below to join their collaborative note instantly!
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 text-center max-w-md">
+              Have an invite code from a friend? Enter it below to join their collaborative note instantly.
             </p>
             <Button
               onClick={handleJoinWithCode}
-              size="lg"
-              className="bg-white text-green-600 hover:bg-green-50 font-semibold px-8 py-3 gap-2"
+              className="bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 font-medium px-6 py-2 gap-2 h-9 text-xs"
             >
-              <UserPlus className="h-5 w-5" />
-              Join with Invite Code
+              <UserPlus className="h-4 w-4" />
+              Join with Code
             </Button>
           </motion.div>
         </motion.div>
@@ -242,20 +248,20 @@ export default function CollaborativePage() {
 
         {/* Collaborative Notes */}
         <div className="mb-8">
-          <Card className="bg-white/60 dark:bg-slate-900/50 backdrop-blur">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
+          <Card className="bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2 text-slate-900 dark:text-slate-100">
+                <Clock className="h-4 w-4 text-slate-500" />
                 Your Collaborative Notes
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs">
                 Notes you own or collaborate on with others
               </CardDescription>
             </CardHeader>
             <CardContent>
               {loadingNotes ? (
                 <div className="flex items-center justify-center py-8">
-                  <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                  <Loader2 className="animate-spin w-6 h-6 text-slate-400" />
                 </div>
               ) : notes.length === 0 ? (
                 <div className="text-center py-8">
@@ -332,13 +338,13 @@ export default function CollaborativePage() {
           transition={{ delay: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
-          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
+          <Card className="bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
-                  <Plus className="h-5 w-5 text-blue-600" />
+                <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded-md border border-slate-100 dark:border-slate-800">
+                  <Plus className="h-4 w-4 text-slate-600 dark:text-slate-400" />
                 </div>
-                <h3 className="font-semibold">Create Note</h3>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Create Note</h3>
               </div>
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
                 Start a new collaborative note that supports two people working together.
@@ -355,13 +361,13 @@ export default function CollaborativePage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800">
+          <Card className="bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-green-100 dark:bg-green-900/50 rounded-lg">
-                  <Share2 className="h-5 w-5 text-green-600" />
+                <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded-md border border-slate-100 dark:border-slate-800">
+                  <Share2 className="h-4 w-4 text-slate-600 dark:text-slate-400" />
                 </div>
-                <h3 className="font-semibold">Share & Collaborate</h3>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Share & Collaborate</h3>
               </div>
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
                 Generate secure invite links to share your notes with one collaborator.
@@ -377,13 +383,13 @@ export default function CollaborativePage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/20 dark:to-violet-950/20 border-purple-200 dark:border-purple-800">
+          <Card className="bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 bg-purple-100 dark:bg-purple-900/50 rounded-lg">
-                  <Users className="h-5 w-5 text-purple-600" />
+                <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded-md border border-slate-100 dark:border-slate-800">
+                  <Users className="h-4 w-4 text-slate-600 dark:text-slate-400" />
                 </div>
-                <h3 className="font-semibold">Real-time Sync</h3>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Real-time Sync</h3>
               </div>
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
                 See live edits, presence indicators, and collaborate seamlessly.
@@ -405,36 +411,44 @@ export default function CollaborativePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mt-12 bg-slate-50 dark:bg-slate-900/50 rounded-xl p-6"
+          className="mt-12 bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 p-8 text-center max-w-4xl mx-auto"
         >
-          <h3 className="text-lg font-semibold mb-4 text-center">How Two-Person Collaboration Works</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-            <div className="text-center">
-              <div className="text-2xl mb-2">🔐</div>
-              <h4 className="font-medium mb-1">Secure Access</h4>
-              <p className="text-slate-600 dark:text-slate-400">
-                Only note owners and invited collaborators can access notes
+          <h3 className="text-sm font-semibold mb-8 text-slate-900 dark:text-slate-100 tracking-tight">How Collaboration Works</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-xs">
+            <div className="flex flex-col items-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-500 mb-3">
+                <Lock className="h-4 w-4" />
+              </div>
+              <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Secure Access</h4>
+              <p className="text-slate-500 dark:text-slate-400">
+                Only invited collaborators can access your notes.
               </p>
             </div>
-            <div className="text-center">
-              <div className="text-2xl mb-2">⚡</div>
-              <h4 className="font-medium mb-1">Real-time Sync</h4>
-              <p className="text-slate-600 dark:text-slate-400">
-                See changes instantly with last-write-wins conflict resolution
+            <div className="flex flex-col items-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-500 mb-3">
+                <Zap className="h-4 w-4" />
+              </div>
+              <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Real-time Sync</h4>
+              <p className="text-slate-500 dark:text-slate-400">
+                See changes instantly with conflict resolution.
               </p>
             </div>
-            <div className="text-center">
-              <div className="text-2xl mb-2">👥</div>
-              <h4 className="font-medium mb-1">Presence Indicators</h4>
-              <p className="text-slate-600 dark:text-slate-400">
-                See who&apos;s online and collaborating with avatar indicators
+            <div className="flex flex-col items-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-500 mb-3">
+                <Users className="h-4 w-4" />
+              </div>
+              <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">Presence</h4>
+              <p className="text-slate-500 dark:text-slate-400">
+                See who&apos;s online and collaborating.
               </p>
             </div>
-            <div className="text-center">
-              <div className="text-2xl mb-2">⏰</div>
-              <h4 className="font-medium mb-1">24h Invite Links</h4>
-              <p className="text-slate-600 dark:text-slate-400">
-                Share links expire automatically for security
+            <div className="flex flex-col items-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-500 mb-3">
+                <Timer className="h-4 w-4" />
+              </div>
+              <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">24h Links</h4>
+              <p className="text-slate-500 dark:text-slate-400">
+                Share links expire automatically.
               </p>
             </div>
           </div>

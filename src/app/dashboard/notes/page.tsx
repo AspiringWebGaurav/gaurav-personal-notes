@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { collection, query, orderBy, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Note } from '@/types';
+import { Plus, Users, Search, Trash2, Pin, Archive, FileText, ChevronLeft, Loader2 } from 'lucide-react';
 
 export default function AllNotesPage() {
   const { user, loading } = useAuth();
@@ -103,12 +104,8 @@ export default function AllNotesPage() {
 
   if (loading || isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"
-        />
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <Loader2 className="h-8 w-8 animate-spin text-slate-400 dark:text-slate-500" />
       </div>
     );
   }
@@ -118,53 +115,49 @@ export default function AllNotesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-10">
+      <header className="bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => router.push('/dashboard')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors text-slate-500 dark:text-slate-400"
                 title="Go back to dashboard"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
+                <ChevronLeft className="w-5 h-5" />
               </button>
-              <div className="flex items-center space-x-2">
-                <span className="text-xl">📝</span>
-                <h1 className="text-lg font-medium text-gray-900">All Notes</h1>
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                  <FileText className="h-4 w-4" />
+                </div>
+                <h1 className="text-sm font-semibold text-slate-900 dark:text-slate-100 tracking-tight">All Notes</h1>
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-3">
               {selectedNotes.size > 0 && (
                 <button
                   onClick={handleBulkDelete}
-                  className="px-3 py-1 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
+                  className="px-3 py-1.5 bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400 text-xs font-medium rounded-md hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors border border-red-200 dark:border-red-900/50"
                 >
                   Delete {selectedNotes.size} notes
                 </button>
               )}
               <button
                 onClick={() => router.push('/dashboard/collaborative')}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                <span>Collaborative</span>
+                <Users className="w-4 h-4" />
+                Collaborative
               </button>
               <button
                 onClick={createNewNote}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                className="flex items-center gap-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-3 py-1.5 rounded-md hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors text-xs font-medium"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                <span>New Note</span>
+                <Plus className="w-4 h-4" />
+                New Note
               </button>
             </div>
           </div>
@@ -179,23 +172,26 @@ export default function AllNotesPage() {
           className="mb-6 space-y-4"
         >
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
+            <div className="flex-1 relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-slate-400" />
+              </div>
               <input
                 type="text"
                 placeholder="Search notes..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-9 pr-4 py-2 text-sm bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-md focus:outline-none focus:ring-1 focus:ring-slate-300 dark:focus:ring-slate-700 placeholder:text-slate-400"
               />
             </div>
-            <div className="flex space-x-2">
+            <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-900 rounded-md">
               {(['all', 'pinned', 'archived'] as const).map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setFilterType(filter)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filterType === filter
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'
+                  className={`px-3 py-1 rounded-[4px] text-xs font-medium transition-colors ${filterType === filter
+                      ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm border border-slate-200/50 dark:border-slate-700/50'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                     }`}
                 >
                   {filter.charAt(0).toUpperCase() + filter.slice(1)}
@@ -210,23 +206,26 @@ export default function AllNotesPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center py-12"
+            className="flex flex-col items-center justify-center py-20 text-center"
           >
-            <div className="text-6xl mb-4">📝</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-900 ring-1 ring-slate-200 dark:ring-slate-800 text-slate-400 mb-4">
+              <FileText className="h-6 w-6" />
+            </div>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
               {searchQuery ? 'No notes found' : 'No notes yet'}
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium max-w-[250px]">
               {searchQuery
-                ? 'Try adjusting your search terms or filters'
-                : 'Create your first note to get started'
+                ? 'Try adjusting your search terms or filters.'
+                : 'Create your first note to capture your thoughts.'
               }
             </p>
             {!searchQuery && (
               <button
                 onClick={createNewNote}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-4 py-2 rounded-md hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors text-xs font-medium"
               >
+                <Plus className="w-4 h-4" />
                 Create Note
               </button>
             )}
@@ -237,36 +236,34 @@ export default function AllNotesPage() {
               {filteredNotes.map((note) => (
                 <motion.div
                   key={note.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="group bg-white dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm transition-all overflow-hidden"
                 >
-                  <div className="p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center space-x-2">
+                  <div className="p-5">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-2">
                         <input
                           type="checkbox"
                           checked={selectedNotes.has(note.id)}
                           onChange={() => toggleNoteSelection(note.id)}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-slate-900 dark:focus:ring-slate-100 bg-transparent"
                           title={`Select note: ${note.title || 'Untitled'}`}
                           aria-label={`Select note: ${note.title || 'Untitled'}`}
                         />
-                        {note.isPinned && <span className="text-yellow-500">📌</span>}
-                        {note.isArchived && <span className="text-gray-500">📦</span>}
+                        {note.isPinned && <Pin className="h-3 w-3 text-amber-500 fill-amber-500/20" />}
+                        {note.isArchived && <Archive className="h-3 w-3 text-slate-400" />}
                       </div>
                       <button
                         onClick={() => {
                           setNoteToDelete(note.id);
                           setShowDeleteConfirm(true);
                         }}
-                        className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                        className="text-slate-400 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all -m-1 p-1"
                         title="Delete note"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
 
@@ -274,14 +271,14 @@ export default function AllNotesPage() {
                       onClick={() => router.push(`/dashboard/notes/${note.id}`)}
                       className="cursor-pointer"
                     >
-                      <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                      <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-2 truncate">
                         {note.title || 'Untitled'}
                       </h3>
-                      <p className="text-sm text-gray-600 line-clamp-3 mb-3">
-                        {note.content.substring(0, 150)}...
+                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 mb-4 font-medium leading-relaxed">
+                        {note.content ? note.content.substring(0, 150) + (note.content.length > 150 ? '...' : '') : 'Empty note'}
                       </p>
-                      <div className="flex items-center justify-between text-xs text-gray-400">
-                        <span>{note.type}</span>
+                      <div className="flex items-center justify-between text-[10px] font-medium text-slate-400 dark:text-slate-500 pt-4 border-t border-slate-100 dark:border-slate-800/60">
+                        <span className="uppercase tracking-wider">{note.type || 'NOTE'}</span>
                         <span>
                           {note.updatedAt?.toDate?.()?.toLocaleDateString() || 'Recently'}
                         </span>
@@ -296,42 +293,47 @@ export default function AllNotesPage() {
       </main>
 
       {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4"
-          >
-            <div className="text-center">
-              <div className="text-4xl mb-3">🗑️</div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Delete Note
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Are you sure you want to delete this note? This action cannot be undone.
-              </p>
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => {
-                    setShowDeleteConfirm(false);
-                    setNoteToDelete(null);
-                  }}
-                  className="flex-1 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => noteToDelete && handleDeleteNote(noteToDelete)}
-                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  Delete
-                </button>
+      <AnimatePresence>
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white dark:bg-slate-950 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 p-6 max-w-sm w-full"
+            >
+              <div className="text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 mx-auto mb-4">
+                  <Trash2 className="h-6 w-6" />
+                </div>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                  Delete Note
+                </h3>
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-6">
+                  Are you sure you want to delete this note? This action cannot be undone.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setShowDeleteConfirm(false);
+                      setNoteToDelete(null);
+                    }}
+                    className="flex-1 px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 rounded-md hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => noteToDelete && handleDeleteNote(noteToDelete)}
+                    className="flex-1 px-4 py-2 text-xs font-medium bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

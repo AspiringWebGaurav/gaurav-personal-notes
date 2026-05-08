@@ -160,7 +160,7 @@ export default function TodoItem({ todo, className = '' }: TodoItemProps) {
         animate={{ opacity: 1, y: 0 }}
         className={className}
       >
-        <Card className="bg-white/80 dark:bg-slate-900/60 backdrop-blur border-slate-200/70 dark:border-slate-800/70">
+        <Card className="bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 shadow-sm">
           <CardContent className="p-4">
             <div className="space-y-3">
               {/* Title Input */}
@@ -179,7 +179,7 @@ export default function TodoItem({ todo, className = '' }: TodoItemProps) {
                   placeholder="Add notes (optional)"
                   value={editNotes}
                   onChange={(e) => setEditNotes(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 text-sm bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  className="w-full pl-10 pr-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md resize-none focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 focus:border-slate-400 dark:focus:border-slate-600"
                   rows={2}
                   maxLength={500}
                 />
@@ -194,7 +194,7 @@ export default function TodoItem({ todo, className = '' }: TodoItemProps) {
                       type="date"
                       value={editDueDate}
                       onChange={(e) => setEditDueDate(e.target.value)}
-                      className="pl-10 bg-slate-50 dark:bg-slate-800/50"
+                      className="pl-10 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-md focus:ring-1 focus:ring-slate-400"
                       min={new Date().toISOString().split('T')[0]}
                     />
                   </div>
@@ -205,7 +205,7 @@ export default function TodoItem({ todo, className = '' }: TodoItemProps) {
                       type="time"
                       value={editDueTime}
                       onChange={(e) => setEditDueTime(e.target.value)}
-                      className="bg-slate-50 dark:bg-slate-800/50"
+                      className="bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-md focus:ring-1 focus:ring-slate-400"
                     />
                   </div>
                 )}
@@ -223,8 +223,7 @@ export default function TodoItem({ todo, className = '' }: TodoItemProps) {
                 <Button
                   onClick={handleSave}
                   disabled={!editTitle.trim() || isUpdating}
-                  size="sm"
-                  className="flex-1"
+                  className="flex-1 bg-slate-900 text-slate-50 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 rounded-md"
                 >
                   {isUpdating ? (
                     <>
@@ -241,8 +240,7 @@ export default function TodoItem({ todo, className = '' }: TodoItemProps) {
                 <Button
                   onClick={handleCancel}
                   variant="outline"
-                  size="sm"
-                  disabled={isUpdating}
+                  className="rounded-md border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -256,7 +254,7 @@ export default function TodoItem({ todo, className = '' }: TodoItemProps) {
           <DialogContent>
             <DialogHeader>
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
+                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/50">
                   <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
@@ -268,7 +266,7 @@ export default function TodoItem({ todo, className = '' }: TodoItemProps) {
               </div>
             </DialogHeader>
             
-            <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 mx-6 rounded-lg">
+            <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 mx-6 rounded-md border border-slate-200 dark:border-slate-800">
               <div className="flex items-start gap-3">
                 <div className="flex h-5 w-5 items-center justify-center rounded border-2 border-slate-300 dark:border-slate-600 mt-0.5">
                   {todo.isCompleted && <Check className="h-3 w-3 text-green-600" />}
@@ -306,7 +304,7 @@ export default function TodoItem({ todo, className = '' }: TodoItemProps) {
                 variant="destructive"
                 onClick={handleDeleteConfirm}
                 disabled={isDeleting}
-                className="bg-red-600 hover:bg-red-700 text-white"
+                className="bg-red-600 hover:bg-red-700 text-white rounded-md"
               >
                 {isDeleting ? (
                   <>
@@ -334,13 +332,12 @@ export default function TodoItem({ todo, className = '' }: TodoItemProps) {
       className={className}
     >
       <Card className={`
-        group transition-all duration-200 hover:shadow-md
+        group transition-all duration-200 hover:shadow-sm rounded-xl
         ${completed 
-          ? 'bg-slate-50/80 dark:bg-slate-900/40 border-slate-200/50 dark:border-slate-800/50' 
-          : 'bg-white/80 dark:bg-slate-900/60 border-slate-200/70 dark:border-slate-800/70'
+          ? 'bg-slate-50 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800/50 opacity-70' 
+          : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800'
         }
-        ${overdue && !completed ? 'border-red-200 dark:border-red-800/50 bg-red-50/50 dark:bg-red-900/10' : ''}
-        backdrop-blur
+        ${overdue && !completed ? 'border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-950/20' : ''}
       `}>
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
@@ -348,16 +345,16 @@ export default function TodoItem({ todo, className = '' }: TodoItemProps) {
             <button
               onClick={handleToggleComplete}
               className={`
-                mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-all
+                mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-[4px] border transition-all focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1 dark:focus:ring-offset-slate-950
                 ${completed
-                  ? 'bg-green-500 border-green-500 text-white'
+                  ? 'bg-slate-900 border-slate-900 text-white dark:bg-slate-100 dark:border-slate-100 dark:text-slate-900'
                   : overdue
-                  ? 'border-red-400 hover:border-red-500'
-                  : 'border-slate-300 hover:border-slate-400 dark:border-slate-600 dark:hover:border-slate-500'
+                  ? 'border-red-300 hover:border-red-400 dark:border-red-800 dark:hover:border-red-700'
+                  : 'border-slate-300 hover:border-slate-400 dark:border-slate-700 dark:hover:border-slate-600'
                 }
               `}
             >
-              {completed && <Check className="h-3 w-3" />}
+              {completed && <Check className="h-3 w-3 stroke-[3]" />}
             </button>
 
             {/* Content */}
@@ -382,7 +379,7 @@ export default function TodoItem({ todo, className = '' }: TodoItemProps) {
                 <div className="flex items-center gap-1 mt-2">
                   <Clock className={`h-3 w-3 ${overdue && !completed ? 'text-red-500' : 'text-slate-400'}`} />
                   <span
-                    className={`text-xs ${overdue && !completed ? 'text-red-600 font-medium' : 'text-slate-500'}`}
+                    className={`text-[11px] font-medium ${overdue && !completed ? 'text-red-600 dark:text-red-400' : 'text-slate-500'}`}
                     title={formatAbsoluteTime(todo.dueAt)}
                   >
                     {formatRelativeTime(todo.dueAt)}
