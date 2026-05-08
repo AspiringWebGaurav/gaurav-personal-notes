@@ -92,7 +92,7 @@ export default function AddTodoForm({ onSuccess, className = '' }: AddTodoFormPr
         <Button
           onClick={() => setIsExpanded(true)}
           variant="outline"
-          className="w-full justify-start gap-2 h-12 text-left bg-white/60 dark:bg-slate-900/50 backdrop-blur border-dashed hover:bg-white dark:hover:bg-slate-900"
+          className="w-full justify-start gap-2 h-12 text-left bg-white dark:bg-slate-950 border-dashed border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
         >
           <Plus className="h-4 w-4" />
           Add a new todo...
@@ -107,7 +107,7 @@ export default function AddTodoForm({ onSuccess, className = '' }: AddTodoFormPr
       animate={{ opacity: 1, y: 0 }}
       className={className}
     >
-      <Card className="bg-white/80 dark:bg-slate-900/60 backdrop-blur border-slate-200/70 dark:border-slate-800/70">
+      <Card className="bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 shadow-sm">
         <CardContent className="p-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Title Input */}
@@ -132,7 +132,7 @@ export default function AddTodoForm({ onSuccess, className = '' }: AddTodoFormPr
                 placeholder="Add notes (optional)"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 text-sm bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                className="w-full pl-10 pr-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md resize-none focus:outline-none focus:ring-1 focus:ring-slate-400 dark:focus:ring-slate-600 focus:border-slate-400 dark:focus:border-slate-600"
                 rows={2}
                 maxLength={500}
               />
@@ -147,7 +147,7 @@ export default function AddTodoForm({ onSuccess, className = '' }: AddTodoFormPr
                     type="date"
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
-                    className="pl-10 bg-slate-50 dark:bg-slate-800/50"
+                    className="pl-10 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-md focus:ring-1 focus:ring-slate-400"
                     min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
@@ -158,7 +158,7 @@ export default function AddTodoForm({ onSuccess, className = '' }: AddTodoFormPr
                     type="time"
                     value={dueTime}
                     onChange={(e) => setDueTime(e.target.value)}
-                    className="bg-slate-50 dark:bg-slate-800/50"
+                    className="bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-md focus:ring-1 focus:ring-slate-400"
                   />
                 </div>
               )}
@@ -176,7 +176,7 @@ export default function AddTodoForm({ onSuccess, className = '' }: AddTodoFormPr
               <Button
                 type="submit"
                 disabled={!title.trim() || isSubmitting}
-                className="flex-1"
+                className="flex-1 bg-slate-900 text-slate-50 hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200 rounded-md"
               >
                 {isSubmitting ? (
                   <>
@@ -194,7 +194,7 @@ export default function AddTodoForm({ onSuccess, className = '' }: AddTodoFormPr
                 type="button"
                 variant="outline"
                 onClick={handleCancel}
-                disabled={isSubmitting}
+                className="rounded-md border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 <X className="h-4 w-4" />
               </Button>

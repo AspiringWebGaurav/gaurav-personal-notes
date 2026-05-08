@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { useTodos } from '@/hooks/useTodos';
 import { filterTodos, getOverdueTodos } from '@/lib/todoUtils';
+import { LayoutList, Zap, CheckCircle2, Flame } from 'lucide-react';
 
 type FilterType = 'all' | 'active' | 'completed' | 'overdue';
 
@@ -24,11 +25,11 @@ export default function Filters({ activeFilter, onFilterChange, className = '' }
     overdue: getOverdueTodos(todos).length,
   };
 
-  const filters: { key: FilterType; label: string; emoji: string }[] = [
-    { key: 'all', label: 'All', emoji: '📋' },
-    { key: 'active', label: 'Active', emoji: '⚡' },
-    { key: 'completed', label: 'Completed', emoji: '✅' },
-    { key: 'overdue', label: 'Overdue', emoji: '🔥' },
+  const filters: { key: FilterType; label: string; icon: React.ReactNode }[] = [
+    { key: 'all', label: 'All', icon: <LayoutList className="h-4 w-4" /> },
+    { key: 'active', label: 'Active', icon: <Zap className="h-4 w-4" /> },
+    { key: 'completed', label: 'Completed', icon: <CheckCircle2 className="h-4 w-4" /> },
+    { key: 'overdue', label: 'Overdue', icon: <Flame className="h-4 w-4" /> },
   ];
 
   return (
@@ -38,26 +39,23 @@ export default function Filters({ activeFilter, onFilterChange, className = '' }
         const count = counts[filter.key];
         
         return (
-          <motion.button
-            key={filter.key}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => onFilterChange(filter.key)}
-            className={`
-              relative inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all
-              ${isActive
-                ? 'bg-slate-900 text-white shadow-lg dark:bg-white dark:text-slate-900'
-                : 'bg-white/70 text-slate-700 hover:bg-white hover:shadow-md dark:bg-slate-800/50 dark:text-slate-200 dark:hover:bg-slate-800'
-              }
-              ${filter.key === 'overdue' && count > 0 && !isActive
-                ? 'ring-2 ring-red-200 dark:ring-red-800/50'
-                : ''
-              }
-              border border-slate-200/50 dark:border-slate-700/50
-            `}
-          >
-            <span className="text-base leading-none">{filter.emoji}</span>
-            <span>{filter.label}</span>
+            <button
+              key={filter.key}
+              onClick={() => onFilterChange(filter.key)}
+              className={`
+                inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors border
+                ${isActive
+                  ? 'bg-slate-100 text-slate-900 border-slate-200 shadow-sm dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700'
+                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900 dark:bg-slate-950 dark:text-slate-400 dark:border-slate-800 dark:hover:bg-slate-900 dark:hover:text-slate-100'
+                }
+                ${filter.key === 'overdue' && count > 0 && !isActive
+                  ? 'border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-900/50 dark:text-red-400 dark:hover:bg-red-900/20'
+                  : ''
+                }
+              `}
+            >
+              {filter.icon}
+              <span>{filter.label}</span>
             
             {count > 0 && (
               <Badge 
@@ -75,7 +73,7 @@ export default function Filters({ activeFilter, onFilterChange, className = '' }
                 {count > 99 ? '99+' : count}
               </Badge>
             )}
-          </motion.button>
+            </button>
         );
       })}
     </div>

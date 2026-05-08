@@ -422,7 +422,7 @@ export default function DashboardPage() {
                       onCta={createTodo}
                     />
                   ) : (
-                    <div className="grid gap-3">
+                    <div className="divide-y divide-slate-100 dark:divide-slate-800/60 -mx-2 px-2">
                       {recentTodos.map((todo) => (
                         <ItemRow
                           key={todo.id}
@@ -435,11 +435,11 @@ export default function DashboardPage() {
                           onClick={() => router.push("/dashboard/todos")}
                           leading={
                             <CheckSquare
-                              className={`h-5 w-5 ${todo.isCompleted
+                              className={`h-4 w-4 ${todo.isCompleted
                                 ? 'text-green-600'
                                 : isOverdue(todo)
                                   ? 'text-red-600'
-                                  : 'text-slate-600'
+                                  : 'text-slate-500'
                                 }`}
                             />
                           }
@@ -477,7 +477,7 @@ export default function DashboardPage() {
                       onCta={createNewNote}
                     />
                   ) : (
-                    <div className="grid gap-3">
+                    <div className="divide-y divide-slate-100 dark:divide-slate-800/60 -mx-2 px-2">
                       {recentNotes.map((n) => (
                         <ItemRow
                           key={n.id}
@@ -495,7 +495,7 @@ export default function DashboardPage() {
                           onClick={() =>
                             router.push(`/dashboard/notes/${n.id}`)
                           }
-                          leading={<NotepadText className="h-5 w-5" />}
+                          leading={<NotepadText className="h-4 w-4" />}
                         />
                       ))}
                     </div>
@@ -521,7 +521,7 @@ export default function DashboardPage() {
                       onCta={createMoneyTracker}
                     />
                   ) : (
-                    <div className="grid gap-3">
+                    <div className="divide-y divide-slate-100 dark:divide-slate-800/60 -mx-2 px-2">
                       {moneyTrackers.map((m) => {
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         const expenses = ((m as any).expenses || []) as Array<{
@@ -567,7 +567,7 @@ export default function DashboardPage() {
                               // eslint-disable-next-line @typescript-eslint/no-explicit-any
                               router.push(`/dashboard/money/${(m as any).id}`)
                             }
-                            leading={<Wallet className="h-5 w-5" />}
+                            leading={<Wallet className="h-4 w-4" />}
                           />
                         );
                       })}
@@ -586,24 +586,22 @@ export default function DashboardPage() {
                   action={{ label: "View all", onClick: goCollaborative }}
                 >
                   <div className="space-y-3">
-                    <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-4 text-white text-center">
-                      <UserPlus className="h-6 w-6 mx-auto mb-2" />
-                      <h4 className="font-semibold mb-1">Have an Invite Code?</h4>
-                      <p className="text-green-100 text-xs mb-3">Join a collaborative note instantly</p>
-                      <Button
-                        onClick={goJoinWithCode}
-                        size="sm"
-                        className="bg-white text-green-600 hover:bg-green-50 font-medium"
-                      >
-                        Enter Code
-                      </Button>
-                    </div>
-                    <div className="text-center">
+                    <button
+                      onClick={goJoinWithCode}
+                      className="w-full group flex flex-col items-center justify-center rounded-xl border border-dashed border-emerald-200 dark:border-emerald-800 bg-emerald-50/30 dark:bg-emerald-950/20 p-5 text-center transition-colors hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
+                    >
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400 mb-3">
+                        <UserPlus className="h-5 w-5" />
+                      </div>
+                      <h4 className="text-sm font-semibold text-emerald-900 dark:text-emerald-100 tracking-tight mb-1">Have an Invite Code?</h4>
+                      <p className="text-emerald-700/80 dark:text-emerald-300/70 text-xs font-medium">Join a collaborative note instantly</p>
+                    </button>
+                    <div className="text-center pt-2">
                       <Button
                         onClick={goCollaborative}
                         variant="outline"
                         size="sm"
-                        className="gap-2"
+                        className="gap-2 w-full h-10 text-xs font-medium"
                       >
                         <Users className="h-4 w-4" />
                         Create & Manage
@@ -617,30 +615,29 @@ export default function DashboardPage() {
             {/* Panel 5: Quick find */}
             <div className="snap-center shrink-0 w-full">
               <div className="pt-1">
-                <Card className="border-dashed bg-white/60 dark:bg-slate-900/50 backdrop-blur">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 mb-3">
-                      <LayoutGrid className="h-4 w-4" /> Quick find
-                    </div>
-                    <div className="flex w-full gap-2">
-                      <Input
-                        placeholder="Search notes, trackers, templates…"
-                        aria-label="Search"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && onSearch()}
-                      />
-                      <Button
-                        variant="secondary"
-                        className="gap-2"
-                        onClick={onSearch}
-                      >
-                        Search
-                        <ArrowRight className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <LayoutGrid className="h-4 w-4 text-slate-400 group-focus-within:text-slate-600 transition-colors" />
+                  </div>
+                  <Input
+                    placeholder="Search notes, trackers..."
+                    aria-label="Search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && onSearch()}
+                    className="pl-10 h-12 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 rounded-xl shadow-sm focus-visible:ring-1 focus-visible:ring-slate-300 text-sm font-medium"
+                  />
+                  <div className="absolute inset-y-0 right-1 flex items-center pr-1">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-9 px-3 text-xs font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-100"
+                      onClick={onSearch}
+                    >
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -744,58 +741,50 @@ export default function DashboardPage() {
               gradient="from-orange-500 to-red-500"
               onClick={goCollaborative}
             />
-            <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-3xl p-0.5">
-              <div className="h-full w-full rounded-[calc(theme(borderRadius.3xl)-2px)] bg-white/80 dark:bg-slate-950/60 p-5 backdrop-blur">
-                <div className="text-center">
-                  <div className="flex items-center justify-center mb-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-green-100 dark:bg-green-900/60">
-                      <UserPlus className="h-5 w-5 text-green-600" />
-                    </div>
-                  </div>
-                  <h3 className="text-base font-semibold tracking-tight mb-2">Join with Invite Code</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
-                    Have a 6-character code? Join instantly!
-                  </p>
-                  <Button
-                    onClick={goJoinWithCode}
-                    className="bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600 gap-2"
-                  >
-                    <UserPlus className="h-4 w-4" />
-                    Enter Code
-                  </Button>
+            <button
+              onClick={goJoinWithCode}
+              className="group flex flex-col items-start justify-center rounded-2xl border border-dashed border-emerald-200 dark:border-emerald-800 bg-emerald-50/30 dark:bg-emerald-950/20 p-5 text-left transition-colors hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400">
+                  <UserPlus className="h-4 w-4" />
                 </div>
+                <h3 className="text-sm font-semibold text-emerald-900 dark:text-emerald-100 tracking-tight">Join with Invite Code</h3>
               </div>
-            </div>
+              <p className="text-xs text-emerald-700/80 dark:text-emerald-300/70 font-medium">
+                Have a 6-character code? Click here to join a collaborative note instantly.
+              </p>
+            </button>
           </motion.div>
 
           {/* Search */}
-          <div className="mt-6">
-            <Card className="border-dashed bg-white/60 dark:bg-slate-900/50 backdrop-blur">
-              <CardContent className="p-4">
-                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                    <LayoutGrid className="h-4 w-4" /> Quick find
-                  </div>
-                  <div className="flex w-full gap-2 md:w-1/2">
-                    <Input
-                      placeholder="Search notes, trackers, templates…"
-                      aria-label="Search"
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && onSearch()}
-                    />
-                    <Button
-                      variant="secondary"
-                      className="gap-2"
-                      onClick={onSearch}
-                    >
-                      Search
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </div>
+          <div className="mt-8">
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <LayoutGrid className="h-4 w-4 text-slate-400 group-focus-within:text-slate-600 transition-colors" />
+              </div>
+              <Input
+                placeholder="Search notes, trackers, templates..."
+                aria-label="Search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && onSearch()}
+                className="pl-10 h-12 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 rounded-xl shadow-sm focus-visible:ring-1 focus-visible:ring-slate-300 text-sm font-medium"
+              />
+              <div className="absolute inset-y-0 right-1 flex items-center pr-1">
+                <div className="hidden sm:flex items-center gap-1 mr-2 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-[10px] font-medium text-slate-500">
+                  <span>Enter</span>
                 </div>
-              </CardContent>
-            </Card>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-9 px-3 text-xs font-medium text-slate-500 hover:text-slate-900 dark:hover:text-slate-100"
+                  onClick={onSearch}
+                >
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
 
           {/* Content Sections */}
@@ -814,7 +803,7 @@ export default function DashboardPage() {
                   onCta={createTodo}
                 />
               ) : (
-                <div className="grid gap-3">
+                <div className="divide-y divide-slate-100 dark:divide-slate-800/60 -mx-2 px-2">
                   {recentTodos.map((todo) => (
                     <ItemRow
                       key={todo.id}
@@ -827,11 +816,11 @@ export default function DashboardPage() {
                       onClick={() => router.push("/dashboard/todos")}
                       leading={
                         <CheckSquare
-                          className={`h-5 w-5 ${todo.isCompleted
+                          className={`h-4 w-4 ${todo.isCompleted
                             ? 'text-green-600'
                             : isOverdue(todo)
                               ? 'text-red-600'
-                              : 'text-slate-600'
+                              : 'text-slate-500'
                             }`}
                         />
                       }
@@ -864,7 +853,7 @@ export default function DashboardPage() {
                   onCta={createNewNote}
                 />
               ) : (
-                <div className="grid gap-3">
+                <div className="divide-y divide-slate-100 dark:divide-slate-800/60 -mx-2 px-2">
                   {recentNotes.map((n) => (
                     <ItemRow
                       key={n.id}
@@ -880,7 +869,7 @@ export default function DashboardPage() {
                         ).toLocaleString()
                       }
                       onClick={() => router.push(`/dashboard/notes/${n.id}`)}
-                      leading={<NotepadText className="h-5 w-5" />}
+                      leading={<NotepadText className="h-4 w-4" />}
                     />
                   ))}
                 </div>
@@ -903,7 +892,7 @@ export default function DashboardPage() {
                   onCta={createMoneyTracker}
                 />
               ) : (
-                <div className="grid gap-3">
+                <div className="divide-y divide-slate-100 dark:divide-slate-800/60 -mx-2 px-2">
                   {moneyTrackers.map((m) => {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const expenses = ((m as any).expenses || []) as Array<{
@@ -948,7 +937,7 @@ export default function DashboardPage() {
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           router.push(`/dashboard/money/${(m as any).id}`)
                         }
-                        leading={<Wallet className="h-5 w-5" />}
+                        leading={<Wallet className="h-4 w-4" />}
                       />
                     );
                   })}
@@ -1061,45 +1050,43 @@ function PrimaryCard({
   title,
   description,
   icon,
-  gradient,
+  // gradient is ignored but kept in signature so we don't have to change all usage calls
   onClick,
 }: {
   title: string;
   description: string;
   icon: React.ReactNode;
-  gradient: string;
+  gradient?: string;
   onClick?: () => void;
 }) {
   return (
     <motion.button
-      whileHover={{ y: -2, scale: 1.01 }}
-      whileTap={{ scale: 0.99 }}
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.98 }}
       onClick={onClick}
       className={cn(
-        "group relative w-full overflow-hidden rounded-3xl text-left",
-        "ring-1 ring-slate-200/80 dark:ring-slate-800/80",
-        "bg-gradient-to-br p-0.5",
-        gradient
+        "group relative w-full overflow-hidden rounded-2xl text-left transition-all duration-200",
+        "border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950",
+        "hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm"
       )}
     >
-      <div className="relative h-full w-full rounded-[calc(theme(borderRadius.3xl)-2px)] bg-white/80 dark:bg-slate-950/60 p-5 backdrop-blur">
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/70 shadow-sm ring-1 ring-black/5 dark:bg-slate-900/60">
+      <div className="relative h-full w-full p-5">
+        <div className="mb-6 flex items-start justify-between">
+          <div className="flex flex-col gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-900 ring-1 ring-slate-100 dark:ring-slate-800 text-slate-700 dark:text-slate-300 transition-colors group-hover:bg-slate-100 dark:group-hover:bg-slate-800">
               {icon}
             </div>
             <div>
-              <div className="text-base font-semibold tracking-tight">
+              <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                 {title}
               </div>
-              <div className="text-sm text-slate-600 dark:text-slate-300">
+              <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
                 {description}
               </div>
             </div>
           </div>
-          <ArrowRight className="h-5 w-5 opacity-60 transition group-hover:translate-x-0.5 group-hover:opacity-100" />
+          <ArrowRight className="h-4 w-4 text-slate-400 opacity-0 -translate-x-2 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
         </div>
-        <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/40 blur-2xl" />
       </div>
     </motion.button>
   );
@@ -1117,24 +1104,24 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <Card className="bg-white/60 dark:bg-slate-900/50 backdrop-blur">
-      <CardHeader className="pb-2">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 overflow-hidden shadow-sm">
+      <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/20">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-base md:text-lg">{title}</CardTitle>
+            <h2 className="text-sm font-semibold tracking-tight text-slate-900 dark:text-slate-100">{title}</h2>
             {description ? (
-              <CardDescription>{description}</CardDescription>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">{description}</p>
             ) : null}
           </div>
           {action ? (
-            <Button variant="ghost" size="sm" onClick={action.onClick}>
+            <Button variant="ghost" size="sm" onClick={action.onClick} className="h-8 text-xs font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100">
               {action.label}
             </Button>
           ) : null}
         </div>
-      </CardHeader>
-      <CardContent>{children}</CardContent>
-    </Card>
+      </div>
+      <div className="p-5">{children}</div>
+    </div>
   );
 }
 
@@ -1154,25 +1141,25 @@ function ItemRow({
   return (
     <button
       onClick={onClick}
-      className="group flex w-full items-center justify-between rounded-xl border border-slate-200/70 bg-white/70 px-3 py-3 text-left transition hover:bg-white dark:border-slate-800/70 dark:bg-slate-950/50 dark:hover:bg-slate-900"
+      className="group flex w-full items-center justify-between py-3 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-900/50 -mx-2 px-2 rounded-lg"
     >
       <div className="flex min-w-0 items-center gap-3">
         {leading ? (
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 ring-1 ring-black/5 dark:bg-slate-800">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-slate-100/80 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
             {leading}
           </div>
         ) : null}
         <div className="min-w-0">
-          <div className="truncate text-sm font-medium">{title}</div>
+          <div className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">{title}</div>
           {subtitle ? (
-            <div className="truncate text-xs text-slate-600 dark:text-slate-400">
+            <div className="truncate text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
               {subtitle}
             </div>
           ) : null}
         </div>
       </div>
       {trailing ? (
-        <div className="ml-3 shrink-0 text-right text-slate-700 dark:text-slate-200">
+        <div className="ml-3 shrink-0 text-right text-sm text-slate-600 dark:text-slate-300 font-medium">
           {trailing}
         </div>
       ) : null}
@@ -1194,18 +1181,20 @@ function EmptyState({
   onCta?: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-300/80 bg-white/60 p-10 text-center dark:border-slate-700/80 dark:bg-slate-950/40">
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 ring-1 ring-black/5 dark:bg-slate-800">
+    <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
+      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-900 ring-1 ring-slate-100 dark:ring-slate-800 text-slate-400">
         {icon}
       </div>
-      <div className="text-sm font-medium">{title}</div>
-      {subtitle ? (
-        <div className="max-w-sm text-xs text-slate-600 dark:text-slate-400">
-          {subtitle}
-        </div>
-      ) : null}
+      <div className="mt-1">
+        <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">{title}</div>
+        {subtitle ? (
+          <div className="max-w-[250px] text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium mx-auto">
+            {subtitle}
+          </div>
+        ) : null}
+      </div>
       {ctaLabel ? (
-        <Button className="mt-1" onClick={onCta}>
+        <Button variant="outline" size="sm" className="mt-2 h-8 text-xs font-medium" onClick={onCta}>
           {ctaLabel}
         </Button>
       ) : null}
