@@ -1,150 +1,59 @@
-import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/hooks/useAuth";
-import { SyncStatusProvider } from "@/components/SyncStatusProvider";
-import GlobalNavbar from "@/components/GlobalNavbar";
-import Breadcrumb from "@/components/Breadcrumb";
+import { AuthProvider } from "@/features/auth/AuthProvider";
 
-const inter = Inter({
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
 });
 
-// Comprehensive SEO Metadata
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
-  title: "Gaurav's Personal Notes",
-  description: "Fast, private note-taking by Gaurav — create, search, and sync your personal notes.",
-  keywords: ["notes", "personal notes", "markdown", "notebook", "Gaurav", "productivity", "sync", "private"],
-  authors: [{ name: "Gaurav", url: "https://gaurav-personal-notes.vercel.app" }],
-  creator: "Gaurav",
-  publisher: "Gaurav",
-  metadataBase: new URL("https://gaurav-personal-notes.vercel.app"),
-  
-  // Icons and Theme
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/icon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/icon-48x48.png", sizes: "48x48", type: "image/png" },
-      { url: "/icon-64x64.png", sizes: "64x64", type: "image/png" },
-      { url: "/icon-128x128.png", sizes: "128x128", type: "image/png" },
-      { url: "/icon-192x192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icon-256x256.png", sizes: "256x256", type: "image/png" },
-      { url: "/icon-512x512.png", sizes: "512x512", type: "image/png" }
-    ],
-    shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png"
-  },
-  
-  manifest: "/manifest.json",
-  
-  
-  // Open Graph Protocol
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL 
+      ? `https://${process.env.NEXT_PUBLIC_SITE_URL}`
+      : process.env.VERCEL_PROJECT_PRODUCTION_URL 
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : 'http://localhost:3000'
+  ),
+  title: "GPN | Gaurav Personal Notes",
+  description: "Enterprise-grade personal knowledge base and real-time collaboration workspace.",
+  keywords: ["knowledge base", "notes", "collaboration", "real-time", "workspace", "gpn", "enterprise", "productivity"],
+  authors: [{ name: "Gaurav" }],
   openGraph: {
-    type: "website",
-    url: "https://gaurav-personal-notes.vercel.app",
-    siteName: "Gaurav's Personal Notes",
-    title: "Gaurav's Personal Notes",
-    description: "Fast, private note-taking by Gaurav — create, search, and sync your personal notes.",
+    title: "GPN | Enterprise Knowledge Base",
+    description: "Enterprise-grade personal knowledge base and real-time collaboration workspace.",
+    siteName: "GPN",
     images: [
       {
-        url: "/icon-512x512.png",
-        width: 512,
-        height: 512,
-        alt: "Gaurav's Personal Notes Logo",
-        type: "image/png"
-      }
+        url: "/apple-icon.png",
+        width: 180,
+        height: 180,
+        alt: "GPN Logo",
+      },
     ],
-    locale: "en_US"
+    locale: "en_US",
+    type: "website",
   },
-  
-  // Twitter Cards
   twitter: {
     card: "summary_large_image",
-    site: "@gaurav", // Replace with actual Twitter handle if available
-    creator: "@gaurav",
-    title: "Gaurav's Personal Notes",
-    description: "Fast, private note-taking by Gaurav — create, search, and sync your personal notes.",
-    images: ["/icon-512x512.png"]
+    title: "GPN | Enterprise Knowledge Base",
+    description: "Enterprise-grade personal knowledge base and real-time collaboration workspace.",
+    images: ["/apple-icon.png"],
   },
-  
-  // Additional SEO
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1
-    }
+  icons: {
+    icon: "/icon.svg",
+    apple: "/apple-icon.png",
   },
-  
-  // Verification (add when available)
-  // verification: {
-  //   google: "your-google-verification-code",
-  //   yandex: "your-yandex-verification-code",
-  // },
-  
-  category: "productivity"
-};
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 5,
-  userScalable: true,
-  themeColor: "#0fb9b1",
-  colorScheme: "light"
-};
-
-// JSON-LD Structured Data
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebSite",
-      "@id": "https://gaurav-personal-notes.vercel.app/#website",
-      "url": "https://gaurav-personal-notes.vercel.app",
-      "name": "Gaurav's Personal Notes",
-      "description": "Fast, private note-taking by Gaurav — create, search, and sync your personal notes.",
-      "publisher": {
-        "@id": "https://gaurav-personal-notes.vercel.app/#organization"
-      },
-      "potentialAction": [
-        {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://gaurav-personal-notes.vercel.app/dashboard/notes?search={search_term_string}"
-          },
-          "query-input": "required name=search_term_string"
-        }
-      ],
-      "inLanguage": "en-US"
-    },
-    {
-      "@type": "Organization",
-      "@id": "https://gaurav-personal-notes.vercel.app/#organization",
-      "name": "Gaurav's Personal Notes",
-      "url": "https://gaurav-personal-notes.vercel.app",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://gaurav-personal-notes.vercel.app/icon-512x512.png",
-        "width": 512,
-        "height": 512
-      },
-      "sameAs": [],
-      "founder": {
-        "@type": "Person",
-        "name": "Gaurav"
-      }
-    }
-  ]
 };
 
 export default function RootLayout({
@@ -153,66 +62,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable} data-scroll-behavior="smooth">
+    <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Global Console Suppression for Production */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost') && window.location.protocol === 'https:') {
-                  var noop = function() {};
-                  console.log = noop;
-                  console.warn = noop;
-                  console.error = noop;
-                  console.info = noop;
-                  console.debug = noop;
-                  console.trace = noop;
-                  console.table = noop;
-                  console.group = noop;
-                  console.groupEnd = noop;
-                  console.groupCollapsed = noop;
-                  console.clear = noop;
-                  console.count = noop;
-                  console.countReset = noop;
-                  console.time = noop;
-                  console.timeEnd = noop;
-                  console.timeLog = noop;
-                  console.assert = noop;
-                  console.dir = noop;
-                  console.dirxml = noop;
-                }
-              })();
-            `
-          }}
-        />
-        
-        {/* PWA App Capabilities */}
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Notes" />
-        
-        {/* Microsoft Application Configuration */}
-        <meta name="msapplication-TileColor" content="#0fb9b1" />
-        
-        {/* Font optimization handled by next/font */}
-        
-        {/* JSON-LD Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(jsonLd)
-          }}
-        />
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            try {
+              const theme = localStorage.getItem('app-theme');
+              if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) || theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+              } else {
+                document.documentElement.classList.remove('dark');
+              }
+            } catch (_) {}
+          `
+        }} />
       </head>
-      <body className="font-sans antialiased bg-gray-50 text-gray-900 min-h-screen">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <AuthProvider>
-          <SyncStatusProvider>
-            <GlobalNavbar />
-            <Breadcrumb />
-            {children}
-          </SyncStatusProvider>
+          {children}
         </AuthProvider>
       </body>
     </html>
