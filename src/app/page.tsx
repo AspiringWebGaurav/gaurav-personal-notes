@@ -1,81 +1,41 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
-import { motion } from 'framer-motion';
-import Image from 'next/image';
+import { useAuthStore } from "@/features/auth/useAuthStore";
+import { loginWithGoogle } from "@/features/auth/AuthProvider";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import Image from "next/image";
 
-export default function Home() {
-  const { user, loading } = useAuth();
+export default function LoginPage() {
+  const { user, loading } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading) {
-      if (user) {
-        router.push('/dashboard');
-      } else {
-        router.push('/login');
-      }
+    if (!loading && user) {
+      router.push("/dashboard");
     }
   }, [user, loading, router]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-center"
+  if (loading) return null;
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
+      <div className="max-w-md w-full p-8 border border-gray-200 dark:border-gray-800 rounded-2xl bg-white dark:bg-gray-900 shadow-xl flex flex-col items-center">
+        <div className="w-16 h-16 bg-black dark:bg-white rounded-full flex items-center justify-center text-white dark:text-black font-bold text-2xl mb-6">
+          G
+        </div>
+        <h1 className="text-2xl font-bold mb-2">Welcome to GPN</h1>
+        <p className="text-gray-500 dark:text-gray-400 text-center mb-8">
+          Enterprise personal knowledge base and collaboration workspace.
+        </p>
+        <button 
+          onClick={() => loginWithGoogle()}
+          className="w-full flex items-center justify-center gap-3 bg-black dark:bg-white text-white dark:text-black font-medium py-3 px-4 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition"
         >
-          {/* Logo with subtle animation */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-6"
-          >
-            <div className="relative w-16 h-16 mx-auto mb-4">
-              <Image
-                src="/icon-512x512.png"
-                alt="Gaurav's Personal Notes logo"
-                width={64}
-                height={64}
-                className="w-full h-full object-contain drop-shadow-lg"
-                priority
-              />
-            </div>
-          </motion.div>
-
-          {/* Loading spinner */}
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            className="w-8 h-8 border-3 border-[#0fb9b1] border-t-transparent rounded-full mx-auto mb-4"
-          />
-
-          {/* Branding */}
-          <motion.h1
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-2xl font-bold text-gray-800 mb-2"
-          >
-            Gaurav&apos;s Personal Notes
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-gray-600 text-lg"
-          >
-            Loading your workspace...
-          </motion.p>
-        </motion.div>
+          <Image src="/globe.svg" alt="Google" width={20} height={20} className="invert dark:invert-0" />
+          Continue with Google
+        </button>
       </div>
-    );
-  }
-
-  return null;
+    </div>
+  );
 }
