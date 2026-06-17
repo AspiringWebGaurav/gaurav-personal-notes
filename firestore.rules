@@ -46,7 +46,16 @@ service cloud.firestore {
       }
     }
     
-    // 6. Legacy shared notes fallback
+    // 6. Smart Burn Notes (View-Once)
+    match /burn_notes/{token} {
+      // Must be authenticated to create a burn note
+      allow create: if request.auth != null;
+      // Anyone with the exact cryptographic token can read and delete it (self-destruct mechanism)
+      allow read, delete: if true;
+      allow update: if false; // Burn notes are strictly immutable
+    }
+    
+    // 7. Legacy shared notes fallback
     match /notes/{noteId} {
       allow read, write: if request.auth != null;
     }
