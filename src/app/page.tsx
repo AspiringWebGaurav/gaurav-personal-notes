@@ -47,6 +47,7 @@ export default function LoginPage() {
   const { user, loading } = useAuthStore();
   const router = useRouter();
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [isReturningUser, setIsReturningUser] = useState(true);
@@ -71,8 +72,10 @@ export default function LoginPage() {
       setErrorMsg(null);
       setIsAuthenticating(true);
       await loginWithGoogle();
+      setLoginSuccess(true);
     } catch (error: unknown) {
       setIsAuthenticating(false);
+      setLoginSuccess(false);
       if ((error as { code?: string })?.code === 'auth/popup-closed-by-user') {
         setErrorMsg("Sign-in cancelled. Please try again.");
       } else {
@@ -81,7 +84,7 @@ export default function LoginPage() {
     }
   };
 
-  if (loading) {
+  if (loading || loginSuccess) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-950 relative overflow-hidden">
         {/* Colorful background blobs for loader */}
@@ -96,8 +99,8 @@ export default function LoginPage() {
           </div>
         </div>
         <div className="flex flex-col items-center gap-3 relative z-10">
-          <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-violet-600 to-fuchsia-600 dark:from-cyan-400 dark:via-violet-400 dark:to-fuchsia-400">Loading Workspace</h3>
-          <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Please wait while we initialize your session...</p>
+          <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-violet-600 to-fuchsia-600 dark:from-cyan-400 dark:via-violet-400 dark:to-fuchsia-400">{loginSuccess ? 'Authentication Successful' : 'Loading Workspace'}</h3>
+          <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">{loginSuccess ? 'Redirecting to your dashboard...' : 'Please wait while we initialize your session...'}</p>
         </div>
       </div>
     );
@@ -185,7 +188,7 @@ export default function LoginPage() {
 
           <div className="h-14 mb-4 flex flex-col justify-end">
             {errorMsg && (
-              <div className="w-full px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 flex items-center gap-3 animate-[pulse_0.5s_ease-out]">
+              <div className="w-full px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 flex items-center gap-3 animate-[pulse_0.5s_ease-out] shadow-sm">
                 <svg className="w-5 h-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
