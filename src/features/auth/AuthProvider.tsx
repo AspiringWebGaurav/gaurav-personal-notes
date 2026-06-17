@@ -28,7 +28,10 @@ export const loginWithGoogle = async () => {
     if (err.code === 'auth/popup-blocked' || err.code === 'auth/cross-origin-opener-policy-failed') {
       await signInWithRedirect(auth, googleProvider);
     } else {
-      console.error("Login failed:", error);
+      // Don't trigger the Next.js dev overlay for intentional user cancellations
+      if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+        console.error("Login failed:", error);
+      }
       throw error;
     }
   }

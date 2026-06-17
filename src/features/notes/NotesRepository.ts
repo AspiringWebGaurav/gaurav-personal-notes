@@ -13,6 +13,7 @@ export const NoteSchema = z.object({
   id: z.string(),
   title: z.string().default("Untitled Note"),
   content: z.any().optional().default(""),
+  wordCount: z.number().optional().default(0),
   isArchived: z.boolean().optional().default(false),
   createdAt: z.preprocess(parseTimestamp, z.number()),
   updatedAt: z.preprocess(parseTimestamp, z.number()),

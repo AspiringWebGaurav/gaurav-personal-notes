@@ -17,7 +17,7 @@ import {
 
 interface EditorProps {
   initialContent?: string;
-  onUpdate?: (content: string) => void;
+  onUpdate?: (content: string, wordCount: number) => void;
   editable?: boolean;
 }
 
@@ -69,7 +69,9 @@ export function Editor({ initialContent = "", onUpdate, editable = true }: Edito
     content: formattedContent,
     editable,
     onUpdate: ({ editor }) => {
-      onUpdate?.(editor.getHTML());
+      const text = editor.getText();
+      const wordCount = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+      onUpdate?.(editor.getHTML(), wordCount);
     },
     editorProps: {
       attributes: {
