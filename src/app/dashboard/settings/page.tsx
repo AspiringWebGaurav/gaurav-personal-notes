@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, Palette, Shield, Bell, CheckCircle2, Monitor, Smartphone, Globe, Book } from "lucide-react";
+import { User, Palette, Shield, Bell, CheckCircle2, Monitor, Smartphone, Globe, Book, AppWindow } from "lucide-react";
 import { useAuthStore } from "@/features/auth/useAuthStore";
+import { usePWA } from "@/hooks/usePWA";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("appearance");
   const { user } = useAuthStore();
+  const { isInstallable, isInstalled, promptInstall } = usePWA();
   const [saved, setSaved] = useState(false);
 
   // App Settings State
@@ -162,6 +164,30 @@ export default function SettingsPage() {
                       {theme === 'dark' && <div className="absolute inset-0 bg-indigo-500/5 dark:bg-indigo-500/10" />}
                       <Smartphone size={28} />
                       Dark Mode
+                    </button>
+                  </div>
+
+                  {/* App Installation section inside Appearance tab */}
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-10">Application</h3>
+                  <div className="p-5 rounded-2xl border border-slate-200 dark:border-gray-800 flex items-center justify-between">
+                    <div>
+                      <h4 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <AppWindow size={18} /> Install Web App
+                      </h4>
+                      <p className="text-sm text-slate-500 mt-1">Install GPN to your device for offline capabilities and native feel.</p>
+                    </div>
+                    <button 
+                      onClick={promptInstall}
+                      disabled={isInstalled || !isInstallable}
+                      className={`px-5 py-2.5 font-bold rounded-xl transition-colors shrink-0 ${
+                        isInstalled 
+                          ? 'bg-slate-100 dark:bg-gray-800 text-slate-400 cursor-not-allowed' 
+                          : isInstallable
+                          ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm'
+                          : 'bg-slate-100 dark:bg-gray-800 text-slate-400 cursor-not-allowed'
+                      }`}
+                    >
+                      {isInstalled ? "Installed" : "Install App"}
                     </button>
                   </div>
                 </div>
