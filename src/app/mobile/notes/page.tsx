@@ -63,7 +63,7 @@ export default function MobileNotesList() {
 
 
   return (
-    <div className="flex flex-col h-full bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+    <div className="flex flex-col min-h-full shrink-0 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
       <div className="sticky top-0 z-20 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800 p-4 pb-2 shrink-0">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-black tracking-tight">Notes</h1>
@@ -87,7 +87,7 @@ export default function MobileNotesList() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar overscroll-y-auto">
+      <div className="p-4">
         {loading ? (
           <div className="flex flex-col gap-3 pb-safe animate-pulse">
              {[...Array(5)].map((_, i) => (
