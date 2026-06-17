@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Palette, Shield, CheckCircle2, Monitor, Smartphone, Globe, Book, LogOut } from "lucide-react";
+import { Palette, Shield, CheckCircle2, Monitor, Smartphone, Globe, Book, LogOut, AppWindow } from "lucide-react";
 import { useAuthStore } from "@/features/auth/useAuthStore";
-import { useRouter } from "next/navigation";
+import { usePWA } from "@/hooks/usePWA";
 
 import { logout } from "@/features/auth/AuthProvider";
 
 export default function MobileSettingsPage() {
   const { user } = useAuthStore();
-  const router = useRouter();
+  const { isInstallable, isInstalled, promptInstall } = usePWA();
   const [saved, setSaved] = useState(false);
 
   // App Settings State
@@ -150,6 +150,35 @@ export default function MobileSettingsPage() {
             <div className="p-4 flex items-center justify-between">
               <span className="font-bold text-sm">Change Password</span>
               <button className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-xs font-bold rounded-full">Update</button>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Application / PWA */}
+        <div className="space-y-3">
+          <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 ml-2 flex items-center gap-2">
+            <AppWindow size={14} /> Application
+          </h3>
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm overflow-hidden flex flex-col divide-y divide-zinc-100 dark:divide-zinc-800">
+            <div className="p-4 flex items-center justify-between">
+              <div>
+                <span className="font-bold text-sm block">Install App</span>
+                <span className="text-xs text-zinc-500">For offline access & native feel</span>
+              </div>
+              <button 
+                onClick={promptInstall}
+                disabled={isInstalled || !isInstallable}
+                className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors shrink-0 ${
+                  isInstalled 
+                    ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed' 
+                    : isInstallable
+                    ? 'bg-violet-500 hover:bg-violet-600 text-white shadow-sm'
+                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed'
+                }`}
+              >
+                {isInstalled ? "Installed" : "Install App"}
+              </button>
             </div>
           </div>
         </div>

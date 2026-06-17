@@ -6,6 +6,7 @@ import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import * as Y from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
+import { IndexeddbPersistence } from 'y-indexeddb';
 import { useEffect, useState } from 'react';
 import { 
   Bold, Italic, Strikethrough, Heading1, Heading2, 
@@ -47,7 +48,8 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
     const repo = new CollabRepository();
     let saveTimeout: ReturnType<typeof setTimeout>;
 
-    // 1. Synchronously initialize provider to guarantee cleanup
+    // 1. Synchronously initialize providers to guarantee cleanup
+    const indexeddbProvider = new IndexeddbPersistence(`gpn-collab-room-${roomId}`, ydoc);
     const provider = new WebrtcProvider(`gpn-collab-room-${roomId}`, ydoc, {
       signaling: ['wss://signaling.yjs.dev', 'wss://y-webrtc-signaling-eu.herokuapp.com']
     });
@@ -100,6 +102,7 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
       unsubscribe();
       if (saveTimeout) clearTimeout(saveTimeout);
       provider.destroy();
+      indexeddbProvider.destroy();
       ydoc.destroy();
     };
   }, [roomId]);
@@ -200,8 +203,11 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
           </span>
         </div>
         <div className="flex items-center gap-1 opacity-80">
-          {status === 'connected' ? <Wifi size={14} /> : <WifiOff size={14} className="text-red-300" />}
-          <span className="capitalize">{status}</span>
+          {status === 'connected' ? (
+            <><Wifi size={14} /> <span>Connected</span></>
+          ) : (
+            <><WifiOff size={14} className="text-zinc-300" /> <span className="text-zinc-200 text-xs italic tracking-wide">Saved locally</span></>
+          )}
         </div>
       </div>
 
