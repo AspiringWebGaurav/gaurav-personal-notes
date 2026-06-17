@@ -47,6 +47,7 @@ export default function MobileLoginPage() {
   const { user, loading } = useAuthStore();
   const router = useRouter();
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -65,8 +66,10 @@ export default function MobileLoginPage() {
       setErrorMsg(null);
       setIsAuthenticating(true);
       await loginWithGoogle();
+      setLoginSuccess(true);
     } catch (error: unknown) {
       setIsAuthenticating(false);
+      setLoginSuccess(false);
       if ((error as { code?: string })?.code === 'auth/popup-closed-by-user') {
         setErrorMsg("Sign-in cancelled. Please try again.");
       } else {
@@ -75,10 +78,23 @@ export default function MobileLoginPage() {
     }
   };
 
-  if (loading) {
+  if (loading || loginSuccess) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center min-h-[100dvh]">
-        <div className="w-12 h-12 border-4 border-zinc-200 border-t-violet-500 rounded-full animate-spin"></div>
+      <div className="flex-1 flex flex-col items-center justify-center min-h-[100dvh] bg-zinc-50 dark:bg-zinc-950 relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500/10 blur-[80px] rounded-full animate-pulse"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-fuchsia-500/10 blur-[60px] rounded-full animate-pulse delay-500"></div>
+        
+        <div className="relative flex items-center justify-center w-28 h-28 mb-8 group">
+          <div className="absolute inset-0 border-[4px] border-zinc-200 dark:border-zinc-800 rounded-full transition-all duration-500"></div>
+          <div className="absolute inset-0 border-[4px] border-transparent border-t-cyan-500 border-r-violet-500 border-b-fuchsia-500 rounded-full animate-[spin_1s_linear_infinite]"></div>
+          <div className="w-16 h-16 bg-gradient-to-tr from-cyan-500 via-violet-500 to-fuchsia-500 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(139,92,246,0.3)] animate-pulse">
+            <span className="text-white font-black text-3xl tracking-tighter">G</span>
+          </div>
+        </div>
+        <div className="flex flex-col items-center gap-3 relative z-10">
+          <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-violet-600 to-fuchsia-600 dark:from-cyan-400 dark:via-violet-400 dark:to-fuchsia-400">{loginSuccess ? 'Authentication Successful' : 'Loading Workspace'}</h3>
+          <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">{loginSuccess ? 'Redirecting to your dashboard...' : 'Please wait while we initialize your session...'}</p>
+        </div>
       </div>
     );
   }
@@ -104,7 +120,7 @@ export default function MobileLoginPage() {
         </div>
 
         {errorMsg && (
-          <div className="w-full px-4 py-4 mb-6 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 flex items-center gap-3">
+          <div className="w-full px-4 py-4 mb-6 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 flex items-center gap-3 animate-[pulse_0.5s_ease-out] shadow-sm">
             <svg className="w-6 h-6 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
