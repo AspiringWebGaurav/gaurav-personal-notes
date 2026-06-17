@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState, useRef } from "react";
+import { use, useEffect, useState, useRef, useCallback } from "react";
 import { useAuthStore } from "@/features/auth/useAuthStore";
 import { NotesRepository, Note } from "@/features/notes/NotesRepository";
 import { Editor } from "@/features/notes/components/Editor";
@@ -15,6 +15,7 @@ export default function NoteEditorPage({ params }: { params: Promise<{ id: strin
   const [loading, setLoading] = useState(true);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const repoRef = useRef<NotesRepository | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,14 +30,17 @@ export default function NoteEditorPage({ params }: { params: Promise<{ id: strin
     }
   }, [user, id]);
 
-  const handleUpdate = (content: string) => {
-    if (repoRef.current && note) {
-      // Optimistic UI could go here
-      repoRef.current.updateNote(id, { content }).catch(err => {
-         console.error("Failed to save note:", err);
-      });
-    }
-  };
+  const handleUpdate = useCallback((content: string, newWordCount: number) => {
+    // Debounce network save to prevent Firestore rate limits and lag
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      if (repoRef.current) {
+        repoRef.current.updateNote(id, { content, wordCount: newWordCount }).catch(err => {
+           console.error("Failed to save note:", err);
+        });
+      }
+    }, 1000);
+  }, [id]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
@@ -64,17 +68,18 @@ export default function NoteEditorPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="p-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 shrink-0 flex items-center gap-4">
+      <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shrink-0 flex items-center gap-4">
         <input 
           type="text" 
           value={note.title} 
           onChange={handleTitleChange}
-          className="text-2xl font-bold bg-transparent outline-none flex-1"
+          className="text-2xl font-bold bg-transparent outline-none flex-1 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400"
           placeholder="Untitled Note"
         />
+
         <button 
           onClick={() => setIsDeleteModalOpen(true)}
-          className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition"
+          className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition shrink-0"
           title="Delete Note"
         >
           <Trash2 size={20} />

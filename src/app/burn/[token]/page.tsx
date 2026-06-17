@@ -64,6 +64,19 @@ export default function ViewBurnNotePage({ params }: { params: Promise<{ token: 
     };
   }, [token]);
 
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (status === "ready" && !isRevealed && content) {
+      timer = setTimeout(() => {
+        handleDecrypt();
+      }, 3000);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, isRevealed, content]);
+
   const handleDecrypt = async () => {
     if (!content) return;
     
@@ -195,16 +208,23 @@ export default function ViewBurnNotePage({ params }: { params: Promise<{ token: 
             </p>
           </div>
           
-          <div className="pt-8">
-            <button 
-              onClick={handleDecrypt}
-              className="inline-flex items-center gap-4 px-10 py-5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full font-bold text-xl shadow-[0_0_30px_rgba(16,185,129,0.4)] transition-all hover:scale-105 hover:shadow-[0_0_50px_rgba(16,185,129,0.6)] group"
-            >
-              <LockOpen size={28} className="group-hover:animate-pulse" />
-              DECRYPT & REVEAL
-            </button>
+          <div className="pt-8 h-24 flex flex-col items-center justify-center">
+            <div className="flex items-center gap-3 text-emerald-400 font-mono tracking-widest font-bold">
+              <div className="w-5 h-5 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+              DECRYPTING PAYLOAD...
+            </div>
+            <div className="w-64 h-1.5 bg-gray-800/80 rounded-full mt-5 overflow-hidden shadow-inner">
+              <div className="h-full bg-emerald-500 rounded-full animate-[progress_3s_ease-in-out_forwards] shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+            </div>
           </div>
         </div>
+        
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+          }
+        `}} />
       </div>
     );
   }
@@ -257,7 +277,7 @@ export default function ViewBurnNotePage({ params }: { params: Promise<{ token: 
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600" />
           
           <div 
-            className="p-6 sm:p-10 lg:p-16 prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert max-w-none w-full min-h-[50vh] relative z-10"
+            className="p-6 sm:p-10 lg:p-16 prose sm:prose-lg lg:prose-xl dark:prose-invert max-w-none w-full min-h-[50vh] relative z-10"
             dangerouslySetInnerHTML={{ __html: content || "" }}
           />
         </div>

@@ -68,6 +68,48 @@ export class CollabRepository {
     return activeRooms.sort((a, b) => b.updatedAt - a.updatedAt);
   }
 
+  subscribeToActiveRooms(callback: (rooms: ActiveRoom[]) => void): () => void {
+    const q = query(collection(db, "collab_rooms"), where("deleted", "==", false));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let currentDocs: any[] = [];
+
+    const evaluate = () => {
+      const now = Date.now();
+      const THREE_HOURS = 3 * 60 * 60 * 1000;
+      const activeRooms: ActiveRoom[] = [];
+      const roomsToDelete: string[] = [];
+      
+      currentDocs.forEach((docSnap) => {
+        const data = docSnap.data();
+        const updatedAt = data.updatedAt || 0;
+        
+        if (now - updatedAt <= THREE_HOURS) {
+          activeRooms.push({ roomId: docSnap.id, updatedAt });
+        } else {
+          roomsToDelete.push(docSnap.id);
+        }
+      });
+      
+      // Auto-clean expired rooms so they drop from the active count
+      Promise.all(roomsToDelete.map(id => this.deleteRoom(id))).catch(console.error);
+      
+      callback(activeRooms.sort((a, b) => b.updatedAt - a.updatedAt));
+    };
+
+    const unsub = onSnapshot(q, (querySnapshot) => {
+      currentDocs = querySnapshot.docs;
+      evaluate();
+    });
+
+    // Re-evaluate every 60 seconds to catch rooms that expire while the dashboard is open
+    const intervalId = setInterval(evaluate, 60000);
+
+    return () => {
+      clearInterval(intervalId);
+      unsub();
+    };
+  }
+
 
 
   async saveRoom(roomId: string, stateUpdateBase64: string): Promise<void> {
