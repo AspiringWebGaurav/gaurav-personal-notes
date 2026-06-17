@@ -120,11 +120,11 @@ export default function MobileLoginPage() {
           G
         </div>
         
-        <div className={`transition-all duration-700 ease-out flex flex-col items-center ${isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <div className={`transition-all duration-700 ease-out flex flex-col items-center pointer-events-none ${isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-3 text-center min-h-[40px] select-none outline-none">
             {isMounted ? <Typewriter text="Welcome to GPN" delay={200} speed={40} cursor={false} /> : ""}
           </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 text-base sm:text-lg text-center mb-12 font-medium select-none outline-none">
+          <p className="text-zinc-500 dark:text-zinc-400 text-base sm:text-lg text-center mb-12 font-medium select-none outline-none min-h-[28px]">
             {isMounted ? <Typewriter text="Your enterprise workspace, optimized for the go." delay={800} speed={30} cursor={false} /> : ""}
           </p>
         </div>
@@ -159,9 +159,9 @@ export default function MobileLoginPage() {
         <div className="mt-12 text-center text-sm text-zinc-500 flex flex-col gap-2">
           <p className="font-medium">By continuing, you agree to our</p>
           <div className="flex justify-center gap-3 font-bold tracking-wide">
-            <a href="/terms" className="text-violet-600 dark:text-violet-400">Terms</a>
+            <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 transition-colors">Terms</a>
             <span>&bull;</span>
-            <a href="/privacy" className="text-fuchsia-600 dark:text-fuchsia-400">Privacy</a>
+            <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-fuchsia-600 dark:text-fuchsia-400 hover:text-fuchsia-700 dark:hover:text-fuchsia-300 transition-colors">Privacy</a>
           </div>
         </div>
       </div>

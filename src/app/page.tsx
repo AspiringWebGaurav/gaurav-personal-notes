@@ -195,18 +195,14 @@ export default function LoginPage() {
 
         <div className="mx-auto w-full max-w-md relative z-10">
           {/* Mobile Logo Header */}
-          <div className="flex items-center gap-3 mb-12 lg:hidden">
-            <div className="w-12 h-12 bg-gradient-to-tr from-cyan-500 via-violet-500 to-fuchsia-500 rounded-xl flex items-center justify-center text-white font-black text-2xl shadow-lg">
+          <div className="flex lg:hidden flex-col items-center mb-10 group cursor-default pointer-events-none">
+            <div className="w-16 h-16 bg-gradient-to-tr from-cyan-500 via-violet-500 to-fuchsia-500 rounded-3xl flex items-center justify-center text-white font-black text-4xl shadow-[0_0_30px_rgba(139,92,246,0.2)] mb-6 transition-transform duration-500 animate-float-slow">
               G
             </div>
-            <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">GPN Workspace</h1>
-          </div>
-
-          <div className={`mb-6 text-left transition-all duration-700 ${isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <h2 className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-3 min-h-[40px]">
+            <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-2 text-center min-h-[40px] select-none outline-none">
               {isMounted ? <Typewriter text={isReturningUser ? "Welcome back" : "Welcome to GPN"} delay={200} speed={40} cursor={false} /> : ""}
-            </h2>
-            <p className="text-zinc-500 dark:text-zinc-400 text-lg">
+            </h1>
+            <p className="text-zinc-500 dark:text-zinc-400 text-center font-medium select-none outline-none min-h-[28px] pointer-events-none">
               {isMounted ? <Typewriter text={isReturningUser ? "Sign in to your account to access your workspace." : "Hi there! Let's explore your new enterprise workspace."} delay={isReturningUser ? 800 : 900} speed={30} cursor={false} /> : ""}
             </p>
           </div>
