@@ -51,6 +51,7 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [isReturningUser, setIsReturningUser] = useState(true);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     setIsMounted(true);
@@ -59,6 +60,22 @@ export default function LoginPage() {
       setIsReturningUser(false);
       localStorage.setItem('gpn_has_visited', 'true');
     }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      // Calculate normalized mouse position (-1 to 1)
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = (e.clientY / window.innerHeight) * 2 - 1;
+      setMousePos({ x, y });
+    };
+
+    // Only attach listener if we are on a device that supports hover
+    if (window.matchMedia('(hover: hover)').matches) {
+      window.addEventListener('mousemove', handleMouseMove);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
   }, []);
 
   useEffect(() => {
@@ -107,36 +124,44 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-white dark:bg-zinc-950 selection:bg-violet-500/30">
+    <div className="min-h-screen flex bg-white dark:bg-zinc-950 selection:bg-violet-500/30 font-sans">
       {/* Left Panel: Enterprise Branding & Animation */}
-      <div className="relative hidden lg:flex flex-1 flex-col justify-center items-center bg-zinc-950 overflow-hidden">
+      <div className="relative hidden lg:flex flex-1 flex-col justify-center items-center bg-zinc-950 overflow-hidden border-r border-zinc-800/30">
         
-        {/* Dynamic Rotating Mesh Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-950 via-zinc-950 to-fuchsia-950 opacity-60"></div>
-        <div className="absolute inset-0 overflow-hidden pointer-events-none mix-blend-screen">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] animate-[spin_60s_linear_infinite]">
-            <div className="absolute top-[15%] left-[20%] w-[45%] h-[45%] rounded-full bg-cyan-600/30 blur-[140px] animate-pulse"></div>
-            <div className="absolute bottom-[10%] right-[15%] w-[55%] h-[55%] rounded-full bg-fuchsia-600/20 blur-[150px] animate-[pulse_6s_infinite]"></div>
-            <div className="absolute top-[40%] right-[30%] w-[35%] h-[35%] rounded-full bg-violet-600/30 blur-[130px] animate-[pulse_4s_infinite]"></div>
-          </div>
+        {/* Layer 1 & 2: Animated Aurora Background with Parallax */}
+        <div 
+          className="absolute inset-0 transition-transform duration-1000 ease-out will-change-transform"
+          style={{ transform: `translate(${mousePos.x * 10}px, ${mousePos.y * 10}px)` }}
+        >
+          {/* Base gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-950 to-[#0c0a1a] opacity-90"></div>
+          
+          {/* Drifting Aurora Blobs */}
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-500/20 rounded-full blur-[120px] animate-aurora-1 mix-blend-screen"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] bg-violet-600/20 rounded-full blur-[140px] animate-aurora-2 mix-blend-screen"></div>
+          <div className="absolute top-[20%] right-[-20%] w-[50%] h-[50%] bg-cyan-500/15 rounded-full blur-[100px] animate-aurora-3 mix-blend-screen"></div>
+          <div className="absolute bottom-[10%] left-[10%] w-[60%] h-[60%] bg-indigo-500/20 rounded-full blur-[130px] animate-aurora-4 mix-blend-screen"></div>
         </div>
         
+        {/* Layer 3: Noise Texture */}
+        <div className="absolute inset-0 bg-noise opacity-[0.025] mix-blend-overlay pointer-events-none"></div>
+
         {/* Grid Overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:40px_40px] mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff04_1px,transparent_1px),linear-gradient(to_bottom,#ffffff04_1px,transparent_1px)] bg-[size:64px_64px] mix-blend-overlay pointer-events-none"></div>
 
         <div className="relative z-10 max-w-lg text-white px-12">
-          <div className="flex items-center gap-4 mb-8 group cursor-default">
-            <div className="w-14 h-14 bg-gradient-to-tr from-cyan-500 via-violet-500 to-fuchsia-500 rounded-2xl flex items-center justify-center text-white font-black text-3xl shadow-[0_0_40px_rgba(139,92,246,0.4)] group-hover:scale-105 group-hover:shadow-[0_0_60px_rgba(139,92,246,0.6)] transition-all duration-500">
+          <div className="flex items-center gap-4 mb-10 group cursor-default">
+            <div className="w-14 h-14 bg-gradient-to-tr from-cyan-500 via-violet-500 to-fuchsia-500 rounded-2xl flex items-center justify-center text-white font-black text-3xl shadow-[0_0_40px_rgba(139,92,246,0.2)] transition-all duration-700 animate-float-slow border border-white/10">
               G
             </div>
-            <h1 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+            <h1 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400">
               {isMounted ? <Typewriter text="GPN Workspace" delay={300} speed={60} cursor={false} /> : ""}
             </h1>
           </div>
-          <h2 className="text-5xl font-extrabold mb-6 leading-[1.15] bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 min-h-[110px]">
+          <h2 className="text-[3.25rem] font-bold mb-6 leading-[1.1] text-zinc-50 min-h-[110px] tracking-tight">
             {isMounted ? <Typewriter text="Enterprise knowledge, unified." delay={800} speed={40} cursor={true} /> : ""}
           </h2>
-          <p className="text-zinc-300 text-lg leading-relaxed mb-12 max-w-md font-medium transition-all duration-1000 delay-1000 opacity-0" style={{ opacity: isMounted ? 1 : 0 }}>
+          <p className="text-zinc-400 text-lg leading-relaxed mb-12 max-w-md font-normal transition-all duration-1000 delay-1000 opacity-0" style={{ opacity: isMounted ? 1 : 0 }}>
             The secure, collaborative workspace for high-performing teams. Organize thoughts, build documentation, and unlock collective productivity.
           </p>
           
@@ -163,10 +188,10 @@ export default function LoginPage() {
       </div>
 
       {/* Right Panel: Auth Form */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-24 xl:px-32 relative bg-white dark:bg-zinc-950">
-        {/* Subtle background glow for right panel */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-fuchsia-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="flex-1 flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-24 xl:px-32 relative bg-white dark:bg-[#09090b] overflow-hidden">
+        
+        {/* Layer 4: Glass Glow (Right side) */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none"></div>
 
         <div className="mx-auto w-full max-w-md relative z-10">
           {/* Mobile Logo Header */}
@@ -200,19 +225,17 @@ export default function LoginPage() {
           <button 
             onClick={handleLogin}
             disabled={isAuthenticating}
-            className={`group relative w-full flex items-center justify-center gap-3 bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white py-4 px-4 rounded-xl transition-all duration-300 overflow-hidden ${isAuthenticating ? 'opacity-80 cursor-not-allowed shadow-inner' : 'hover:bg-white dark:hover:bg-zinc-900 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:hover:shadow-[0_8px_30px_rgba(139,92,246,0.15)] hover:border-violet-300 dark:hover:border-violet-700/50 hover:-translate-y-0.5'}`}
+            className={`group relative w-full flex items-center justify-center gap-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/60 text-zinc-900 dark:text-zinc-100 py-4 px-4 rounded-xl transition-all duration-300 overflow-hidden shadow-sm ${isAuthenticating ? 'opacity-80 cursor-not-allowed' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/80 hover:shadow-lg dark:hover:shadow-[0_8px_30px_rgba(139,92,246,0.12)] hover:border-zinc-300 dark:hover:border-zinc-700 hover:-translate-y-[1px]'}`}
           >
-            {!isAuthenticating && <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-violet-500/10 to-fuchsia-500/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>}
-            
             {isAuthenticating ? (
               <div className="flex items-center gap-3 z-10">
-                <div className="w-5 h-5 border-[2px] border-zinc-300 dark:border-zinc-600 border-t-violet-600 dark:border-t-violet-500 rounded-full animate-spin"></div>
-                <span className="tracking-wide font-semibold text-lg bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-violet-600 to-fuchsia-600 dark:from-cyan-400 dark:via-violet-400 dark:to-fuchsia-400 animate-pulse">Authenticating...</span>
+                <div className="w-5 h-5 border-[2px] border-zinc-300 dark:border-zinc-600 border-t-zinc-900 dark:border-t-zinc-100 rounded-full animate-spin"></div>
+                <span className="tracking-wide font-medium text-lg animate-pulse">Authenticating...</span>
               </div>
             ) : (
               <>
-                <Image src="/globe.svg" alt="Google" width={22} height={22} className="invert dark:invert-0 z-10 opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300" />
-                <span className="z-10 tracking-wide font-semibold text-lg">Continue with Google</span>
+                <Image src="/globe.svg" alt="Google" width={20} height={20} className="invert dark:invert-0 z-10 opacity-70 transition-all duration-300" />
+                <span className="z-10 tracking-wide font-medium text-lg">Continue with Google</span>
               </>
             )}
           </button>

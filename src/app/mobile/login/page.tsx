@@ -101,12 +101,22 @@ export default function MobileLoginPage() {
 
   return (
     <div className="min-h-full flex flex-col justify-center px-4 sm:px-6 py-8 relative bg-zinc-50 dark:bg-zinc-950 overflow-hidden w-full">
-      {/* Background ambient glows */}
-      <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-cyan-500/10 dark:bg-cyan-500/20 rounded-full blur-[80px] pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-fuchsia-500/10 dark:bg-fuchsia-500/20 rounded-full blur-[80px] pointer-events-none"></div>
+      {/* Animated Aurora Background Layer */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-zinc-50 via-zinc-100 to-zinc-50 dark:from-zinc-950 dark:via-[#09090b] dark:to-zinc-950 opacity-90"></div>
+        <div className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] bg-blue-500/10 dark:bg-blue-500/15 rounded-full blur-[100px] animate-aurora-1 mix-blend-screen"></div>
+        <div className="absolute bottom-[-10%] right-[-20%] w-[90%] h-[90%] bg-violet-600/10 dark:bg-violet-600/15 rounded-full blur-[120px] animate-aurora-2 mix-blend-screen"></div>
+        <div className="absolute top-[30%] right-[-30%] w-[70%] h-[70%] bg-cyan-500/10 dark:bg-cyan-500/10 rounded-full blur-[90px] animate-aurora-3 mix-blend-screen"></div>
+        <div className="absolute bottom-[20%] left-[-10%] w-[80%] h-[80%] bg-indigo-500/10 dark:bg-indigo-500/15 rounded-full blur-[110px] animate-aurora-4 mix-blend-screen"></div>
+      </div>
 
-      <div className="mx-auto w-full max-w-sm relative z-10 flex flex-col items-center">
-        <div className="w-20 h-20 bg-gradient-to-tr from-cyan-500 via-violet-500 to-fuchsia-500 rounded-3xl flex items-center justify-center text-white font-black text-4xl shadow-xl mb-8 animate-[pulse_3s_ease-in-out_infinite]">
+      {/* Layer 3: Noise Texture */}
+      <div className="absolute inset-0 bg-noise opacity-[0.025] mix-blend-overlay pointer-events-none"></div>
+
+      <div className="w-full max-w-sm px-6 py-8 flex flex-col items-center z-10 relative mt-auto mb-auto">
+        
+        {/* Animated Logo */}
+        <div className={`w-20 h-20 bg-gradient-to-tr from-cyan-500 via-violet-500 to-fuchsia-500 rounded-3xl flex items-center justify-center text-white font-black text-4xl shadow-[0_0_30px_rgba(139,92,246,0.2)] mb-8 transition-all duration-1000 animate-float-slow border border-white/10 ${isMounted ? 'scale-100 opacity-100' : 'scale-50 opacity-0'}`}>
           G
         </div>
         
@@ -131,16 +141,17 @@ export default function MobileLoginPage() {
         <button 
           onClick={handleLogin}
           disabled={isAuthenticating}
-          className={`group relative w-full flex items-center justify-center gap-2 sm:gap-3 bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white py-4 px-3 sm:py-5 sm:px-6 rounded-2xl sm:rounded-3xl transition-all active:scale-95 shadow-sm overflow-hidden ${isAuthenticating ? 'opacity-80' : ''}`}
+          className={`group relative w-full flex items-center justify-center gap-2 sm:gap-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800/60 text-zinc-900 dark:text-zinc-100 py-4 px-3 sm:py-5 sm:px-6 rounded-2xl sm:rounded-xl transition-all duration-300 overflow-hidden shadow-sm active:scale-[0.98] ${isAuthenticating ? 'opacity-80 cursor-not-allowed' : 'active:bg-zinc-50 dark:active:bg-zinc-800/80 hover:shadow-lg dark:hover:shadow-[0_8px_30px_rgba(139,92,246,0.12)] hover:border-zinc-300 dark:hover:border-zinc-700'}`}
         >
-          {!isAuthenticating && <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-violet-500/10 to-fuchsia-500/10 translate-x-[-100%] group-active:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>}
-          
           {isAuthenticating ? (
-            <div className="w-6 h-6 border-[3px] border-zinc-300 dark:border-zinc-600 border-t-violet-600 dark:border-t-violet-500 rounded-full animate-spin z-10"></div>
+            <div className="flex items-center gap-3 z-10">
+              <div className="w-5 h-5 border-[2px] border-zinc-300 dark:border-zinc-600 border-t-zinc-900 dark:border-t-zinc-100 rounded-full animate-spin"></div>
+              <span className="tracking-wide font-medium text-lg animate-pulse">Authenticating...</span>
+            </div>
           ) : (
             <>
-              <Image src="/globe.svg" alt="Google" width={20} height={20} className="invert dark:invert-0 opacity-80 sm:w-[24px] sm:h-[24px] z-10 transition-transform active:scale-110" />
-              <span className="font-bold text-base sm:text-lg whitespace-nowrap z-10">Continue with Google</span>
+              <Image src="/globe.svg" alt="Google" width={20} height={20} className="invert dark:invert-0 z-10 opacity-70 transition-all duration-300" />
+              <span className="z-10 tracking-wide font-medium text-lg">Continue with Google</span>
             </>
           )}
         </button>
