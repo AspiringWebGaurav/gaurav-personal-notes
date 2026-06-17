@@ -89,7 +89,7 @@ export default function MobileCollabLobbyPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-[100dvh] bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-y-auto custom-scrollbar relative">
+    <div className="flex flex-col min-h-full shrink-0 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 relative">
       <div className="absolute top-0 right-0 w-[250px] h-[250px] bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none"></div>
       
       <div className="p-4 pb-24 space-y-6 relative z-10">

@@ -40,7 +40,7 @@ export default function MobileLayout({
         The pb-16 gives room for the fixed 16-h BottomNav at the bottom 
         h-[100dvh] ensures it takes exactly the dynamic viewport height, perfect for mobile browsers.
       */}
-      <main className={`flex-1 flex flex-col w-full overflow-y-auto overflow-x-hidden ${!isLoginPage ? 'pb-16' : ''}`}>
+      <main className={`flex-1 flex flex-col w-full overflow-y-auto overflow-x-hidden min-h-0 ${!isLoginPage ? 'pb-16' : ''}`}>
         {children}
       </main>
 

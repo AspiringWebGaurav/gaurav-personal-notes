@@ -49,7 +49,7 @@ export default function MobileCreateBurnNotePage() {
   };
 
   return (
-    <div className="flex flex-col min-h-[100dvh] bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 relative">
+    <div className="flex flex-col min-h-full shrink-0 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 relative">
       <div className="absolute top-0 right-0 w-[250px] h-[250px] bg-orange-500/10 rounded-full blur-[80px] pointer-events-none"></div>
 
       <div className="p-4 pb-24 space-y-4 relative z-10 flex flex-col h-full flex-1">
@@ -104,7 +104,7 @@ export default function MobileCreateBurnNotePage() {
               <ShieldAlert size={14} className="text-emerald-500" />
               <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">End-to-End Encrypted</span>
             </div>
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 p-2">
               <Editor 
                 initialContent={content} 
                 onUpdate={setContent} 

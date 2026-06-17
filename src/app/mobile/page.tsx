@@ -38,7 +38,7 @@ export default function MobileDashboardPage() {
   }, [notes]);
 
   return (
-    <div className="flex-1 p-4 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 selection:bg-violet-500/30 relative flex flex-col min-h-full">
+    <div className="shrink-0 p-4 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 selection:bg-violet-500/30 relative flex flex-col min-h-full">
       {/* Background ambient glows */}
       <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-cyan-500/10 dark:bg-cyan-500/20 rounded-full blur-[100px] pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-fuchsia-500/10 dark:bg-fuchsia-500/20 rounded-full blur-[100px] pointer-events-none"></div>
