@@ -78,7 +78,7 @@ export default function MobileLoginPage() {
     }
   };
 
-  if (loading || loginSuccess) {
+  if (loading || loginSuccess || user) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center min-h-[100dvh] bg-zinc-50 dark:bg-zinc-950 relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500/10 blur-[80px] rounded-full animate-pulse"></div>
@@ -111,10 +111,10 @@ export default function MobileLoginPage() {
         </div>
         
         <div className={`transition-all duration-700 ease-out flex flex-col items-center ${isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-3 text-center min-h-[40px]">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white mb-3 text-center min-h-[40px] select-none outline-none">
             {isMounted ? <Typewriter text="Welcome to GPN" delay={200} speed={40} cursor={false} /> : ""}
           </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 text-base sm:text-lg text-center mb-12 font-medium">
+          <p className="text-zinc-500 dark:text-zinc-400 text-base sm:text-lg text-center mb-12 font-medium select-none outline-none">
             {isMounted ? <Typewriter text="Your enterprise workspace, optimized for the go." delay={800} speed={30} cursor={false} /> : ""}
           </p>
         </div>

@@ -84,7 +84,7 @@ export default function LoginPage() {
     }
   };
 
-  if (loading || loginSuccess) {
+  if (loading || loginSuccess || user) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-950 relative overflow-hidden">
         {/* Colorful background blobs for loader */}
