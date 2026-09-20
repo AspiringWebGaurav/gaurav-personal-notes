@@ -19,6 +19,12 @@ export async function GET(request: NextRequest) {
         </svg>
       </div>
     ),
-    { width: validSize, height: validSize }
+    {
+      width: validSize,
+      height: validSize,
+      headers: {
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    }
   );
 }
