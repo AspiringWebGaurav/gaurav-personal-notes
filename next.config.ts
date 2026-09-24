@@ -2,7 +2,8 @@ import type { NextConfig } from "next";
 import withSerwistInit from "@serwist/next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  reactStrictMode: true,
+  poweredByHeader: false,
 };
 
 const withSerwist = withSerwistInit({
