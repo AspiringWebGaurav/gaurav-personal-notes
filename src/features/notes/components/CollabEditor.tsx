@@ -129,7 +129,6 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
 }
 
 function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; userName: string; ydoc: Y.Doc; provider: WebrtcProvider }) {
-  console.log("InnerEditor rendering, ydoc =", ydoc, "provider =", provider);
   const [status, setStatus] = useState<string>("connecting");
   const [usersCount, setUsersCount] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
