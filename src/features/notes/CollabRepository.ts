@@ -70,7 +70,6 @@ export class CollabRepository {
 
   subscribeToActiveRooms(callback: (rooms: ActiveRoom[]) => void): () => void {
     const q = query(collection(db, "collab_rooms"), where("deleted", "==", false));
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let currentDocs: any[] = [];
 
     const evaluate = () => {
