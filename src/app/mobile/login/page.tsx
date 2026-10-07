@@ -150,7 +150,7 @@ export default function MobileLoginPage() {
             </div>
           ) : (
             <>
-              <Image src="/globe.svg" alt="Google" width={20} height={20} className="invert dark:invert-0 z-10 opacity-70 transition-all duration-300" />
+              <Image src="/globe.svg" alt="Google" width={20} height={20} unoptimized className="invert dark:invert-0 z-10 opacity-70 transition-all duration-300" />
               <span className="z-10 tracking-wide font-medium text-lg">Continue with Google</span>
             </>
           )}
