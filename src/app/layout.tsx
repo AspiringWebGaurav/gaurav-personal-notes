@@ -79,10 +79,34 @@ export default function RootLayout({
           __html: `
             try {
               const theme = localStorage.getItem('app-theme');
-              if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) || theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+              if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
               } else {
                 document.documentElement.classList.remove('dark');
+              }
+            } catch (_) {}
+
+            try {
+              var isMobile = window.innerWidth < 768;
+              var path = window.location.pathname;
+              if (isMobile) {
+                if (path === '/') {
+                  window.location.replace('/mobile');
+                } else if (path.startsWith('/dashboard')) {
+                  window.location.replace(path.replace('/dashboard', '/mobile'));
+                } else if (path.startsWith('/burn') && !path.startsWith('/mobile/burn')) {
+                  window.location.replace('/mobile' + path);
+                }
+              } else {
+                if (path === '/mobile') {
+                  window.location.replace('/dashboard');
+                } else if (path === '/mobile/login') {
+                  window.location.replace('/');
+                } else if (path.startsWith('/mobile/burn')) {
+                  window.location.replace(path.replace('/mobile/burn', '/burn'));
+                } else if (path.startsWith('/mobile')) {
+                  window.location.replace(path.replace('/mobile', '/dashboard'));
+                }
               }
             } catch (_) {}
           `
