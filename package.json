@@ -1,6 +1,6 @@
 {
-  "name": "temp-app",
-  "version": "0.1.0",
+  "name": "gaurav-personal-notes",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -11,19 +11,18 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@serwist/next": "9.5.11",
-    "@serwist/precaching": "9.5.11",
-    "@serwist/sw": "9.5.11",
+    "@serwist/next": "9.5.13",
+    "@serwist/precaching": "9.5.13",
+    "@serwist/sw": "9.5.13",
     "@tailwindcss/typography": "0.5.20",
-    "@tiptap/extension-collaboration": "^2.27.2",
-    "@tiptap/extension-collaboration-cursor": "^2.27.2",
-    "@tiptap/extension-placeholder": "2.27.2",
-    "@tiptap/pm": "^2.27.2",
-    "@tiptap/react": "^2.27.2",
-    "@tiptap/starter-kit": "^2.27.2",
-    "firebase": "12.14.0",
+    "@tiptap/extension-collaboration": "^2.27.3",
+    "@tiptap/extension-collaboration-cursor": "^2.27.3",
+    "@tiptap/pm": "^2.27.3",
+    "@tiptap/react": "^2.27.3",
+    "@tiptap/starter-kit": "^2.27.3",
+    "firebase": "12.19.0",
     "lucide-react": "1.18.0",
-    "next": "15.5.19",
+    "next": "16.3.8",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "y-indexeddb": "9.0.12",
@@ -41,8 +40,21 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.5.19",
+    "eslint-config-next": "16.3.8",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.14.5",
+    "browserslist": "^4.29.3",
+    "postcss": "^8.5.29",
+    "postcss-selector-parser": "^7.1.6",
+    "sharp": "^0.35.5"
+  },
+  "allowScripts": {
+    "@firebase/util": true,
+    "protobufjs": true,
+    "sharp": true,
+    "unrs-resolver": true
   }
 }
