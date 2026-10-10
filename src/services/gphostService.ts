@@ -131,7 +131,7 @@ export class GpHostService {
     // 1. Direct client-to-GPHost attempt (uses browser credentials/cookies if signed in)
     try {
       if (typeof window !== 'undefined' && cleanId) {
-        await fetch(`https://gphost.eu.cc/api/files/${cleanId}`, {
+        await fetch(`https://gphost.eu.cc/api/v1/files/${cleanId}`, {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${apiKey}`,

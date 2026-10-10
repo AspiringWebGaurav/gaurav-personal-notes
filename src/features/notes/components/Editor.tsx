@@ -88,16 +88,16 @@ export function Editor({ initialContent = "", onUpdate, editable = true }: Edito
 
     if (ed && !ed.isDestroyed) {
       if (isVideo) {
-        ed.commands.insertContent({
+        ed.chain().focus().insertContent({
           type: 'video',
           attrs: {
             src: localBlobUrl,
             title: file instanceof File ? file.name : 'Uploading video...',
             uploading: true,
           },
-        });
+        }).insertContent('<p></p>').run();
       } else {
-        ed.commands.insertContent({
+        ed.chain().focus().insertContent({
           type: 'image',
           attrs: {
             src: localBlobUrl,
@@ -105,35 +105,64 @@ export function Editor({ initialContent = "", onUpdate, editable = true }: Edito
             title: file instanceof File ? file.name : 'Uploading image...',
             uploading: true,
           },
-        });
+        }).insertContent('<p></p>').run();
       }
-      ed.commands.insertContent('<p></p>');
     }
 
     try {
       const res = await gphostService.uploadMedia(file);
       if (res.rawUrl && ed && !ed.isDestroyed) {
         // 2. Seamlessly update the node from temporary blob URL to permanent GPHost CDN URL
-        const tr = ed.state.tr;
         let updated = false;
 
-        ed.state.doc.descendants((node, pos) => {
-          if ((node.type.name === 'image' || node.type.name === 'video') && node.attrs.src === localBlobUrl) {
-            tr.setNodeMarkup(pos, undefined, {
-              ...node.attrs,
-              src: res.rawUrl,
-              fileId: res.fileId,
-              uploading: false,
-              alt: res.filename,
-              title: res.filename,
-            });
-            updated = true;
+        ed.commands.command(({ tr, state, dispatch }) => {
+          state.doc.descendants((node, pos) => {
+            if (
+              (node.type.name === 'image' || node.type.name === 'video') &&
+              (node.attrs.src === localBlobUrl || node.attrs.uploading)
+            ) {
+              tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                src: res.rawUrl,
+                fileId: res.fileId,
+                uploading: false,
+                alt: res.filename || node.attrs.alt,
+                title: res.filename || node.attrs.title,
+              });
+              updated = true;
+            }
+          });
+          if (dispatch && updated) {
+            dispatch(tr);
           }
+          return updated;
         });
 
-        if (updated) {
-          ed.view.dispatch(tr);
+        // 3. Fallback: if descendants didn't find the preview node, insert permanent image directly
+        if (!updated) {
+          if (isVideo) {
+            ed.chain().focus().insertContent({
+              type: 'video',
+              attrs: {
+                src: res.rawUrl,
+                fileId: res.fileId,
+                title: res.filename,
+                uploading: false,
+              },
+            }).insertContent('<p></p>').run();
+          } else {
+            ed.chain().focus().setImage({
+              src: res.rawUrl,
+              alt: res.filename,
+              title: res.filename,
+            }).insertContent('<p></p>').run();
+          }
         }
+
+        // 4. Force onUpdate notification so parent note page saves the permanent CDN URL to Firestore
+        const text = ed.getText();
+        const wordCount = text.trim().split(/\s+/).filter((w) => w.length > 0).length;
+        onUpdate?.(ed.getHTML(), wordCount);
 
         setMediaUploadStatus('Uploaded to GPHost CDN!');
         setTimeout(() => setMediaUploadStatus(null), 2500);
@@ -146,24 +175,33 @@ export function Editor({ initialContent = "", onUpdate, editable = true }: Edito
 
       // On error, remove the uploading overlay so user can inspect or remove
       if (ed && !ed.isDestroyed) {
-        const tr = ed.state.tr;
-        ed.state.doc.descendants((node, pos) => {
-          if ((node.type.name === 'image' || node.type.name === 'video') && node.attrs.src === localBlobUrl) {
-            tr.setNodeMarkup(pos, undefined, {
-              ...node.attrs,
-              uploading: false,
-            });
+        ed.commands.command(({ tr, state, dispatch }) => {
+          let cleaned = false;
+          state.doc.descendants((node, pos) => {
+            if ((node.type.name === 'image' || node.type.name === 'video') && node.attrs.src === localBlobUrl) {
+              tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                uploading: false,
+              });
+              cleaned = true;
+            }
+          });
+          if (dispatch && cleaned) {
+            dispatch(tr);
           }
+          return cleaned;
         });
-        ed.view.dispatch(tr);
       }
     } finally {
       setIsUploadingMedia(false);
-      try {
-        URL.revokeObjectURL(localBlobUrl);
-      } catch {}
+      // Keep blob valid briefly during transition so browser can complete image load
+      setTimeout(() => {
+        try {
+          URL.revokeObjectURL(localBlobUrl);
+        } catch {}
+      }, 6000);
     }
-  }, []);
+  }, [onUpdate]);
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;

@@ -42,10 +42,12 @@ const ImageNodeView: React.FC<NodeViewProps> = ({
     }
   };
 
+  const [imageError, setImageError] = useState(false);
+
   return (
     <NodeViewWrapper className="gpn-image-wrapper my-3 relative inline-block max-w-full group select-none">
       <div
-        className={`relative rounded-lg overflow-hidden border transition-all ${
+        className={`relative rounded-lg overflow-hidden border transition-all min-h-[50px] min-w-[120px] bg-zinc-50 dark:bg-zinc-900/60 ${
           isUploading
             ? 'border-sky-400 ring-2 ring-sky-400/40'
             : selected
@@ -55,15 +57,25 @@ const ImageNodeView: React.FC<NodeViewProps> = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <img
-          src={src}
-          alt={alt}
-          title={title}
-          className={`max-h-[640px] w-auto max-w-full rounded-lg object-contain block transition-opacity duration-200 ${
-            isUploading ? 'opacity-75 filter blur-[0.5px]' : 'opacity-100'
-          }`}
-          loading="lazy"
-        />
+        {imageError ? (
+          <div className="p-4 flex flex-col items-center justify-center text-center text-zinc-400 gap-1 text-xs">
+            <span className="font-semibold text-rose-500">Failed to display image</span>
+            <span className="text-[11px] font-mono truncate max-w-xs">{src}</span>
+          </div>
+        ) : (
+          <img
+            src={src}
+            alt={alt}
+            title={title}
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
+            onError={() => setImageError(true)}
+            className={`max-h-[640px] w-auto max-w-full rounded-lg object-contain block transition-opacity duration-200 min-h-[40px] ${
+              isUploading ? 'opacity-75 filter blur-[0.5px]' : 'opacity-100'
+            }`}
+            loading="eager"
+          />
+        )}
 
         {/* Instant Notion-style Uploading Shimmer/Badge */}
         {isUploading && (
@@ -130,6 +142,16 @@ export const GpnImage = Image.extend({
         },
       },
     };
+  },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'img',
+      {
+        ...HTMLAttributes,
+        class: 'gpn-image-attachment rounded-lg max-w-full max-h-[640px] object-contain my-3 border border-zinc-200 dark:border-zinc-800 shadow-sm block',
+        referrerpolicy: 'no-referrer',
+      },
+    ];
   },
   addNodeView() {
     return ReactNodeViewRenderer(ImageNodeView);
