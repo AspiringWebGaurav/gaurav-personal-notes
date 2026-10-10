@@ -38,6 +38,7 @@
   ],
   "exclude": [
     "node_modules",
+    "pc-app",
     "public/sw.js",
     "public/sw.js.map"
   ]

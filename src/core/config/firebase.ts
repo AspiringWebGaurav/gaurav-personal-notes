@@ -23,5 +23,6 @@ const db = typeof window !== "undefined"
   : initializeFirestore(app, {});
 const rtdb = getDatabase(app);
 const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 export { app, auth, db, rtdb, googleProvider };

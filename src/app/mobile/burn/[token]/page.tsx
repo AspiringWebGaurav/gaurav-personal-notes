@@ -5,6 +5,7 @@ import { BurnRepository } from "@/features/notes/BurnRepository";
 import { importKey, decryptText } from "@/features/notes/crypto";
 import { Flame, ShieldAlert, AlertTriangle, Lock, LockOpen, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { gphostService } from "@/services/gphostService";
 
 export default function MobileViewBurnNotePage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = use(params);
@@ -104,6 +105,12 @@ export default function MobileViewBurnNotePage({ params }: { params: Promise<{ t
   };
 
   const handleCloseAndDestroy = () => {
+    if (content) {
+      const media = gphostService.extractGphostMedia(content);
+      if (media.length > 0) {
+        gphostService.deleteMediaBatch(media).catch(console.warn);
+      }
+    }
     setContent(null);
     setIsRevealed(false);
     setStatus("not_found");

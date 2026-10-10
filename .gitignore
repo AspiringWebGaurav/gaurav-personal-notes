@@ -26,9 +26,10 @@
 Thumbs.db
 desktop.ini
 
-# IDEs
+# IDEs and Agent configurations
 .vscode/
 .idea/
+.agents/
 
 # Firebase
 .firebase/
@@ -43,6 +44,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -54,3 +56,7 @@ next-env.d.ts
 # Playwright
 playwright-report/
 test-results/
+
+# PC Desktop Application (pc-app) - Keep strictly local (do not push to git)
+pc-app/
+/pc-app/
