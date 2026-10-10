@@ -212,6 +212,7 @@ export function Editor({ initialContent = "", onUpdate, editable = true }: Edito
   };
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       GpnImage.configure({

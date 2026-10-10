@@ -59,38 +59,43 @@ export class GpHostService {
       (file instanceof File && file.name) ||
       `media_${Date.now()}.${this.getExtensionFromMime(mimeType)}`;
 
-    // 1. Direct CDN upload (Preserves 100% of free Vercel hobby quota)
-    try {
-      const formData = new FormData();
-      formData.append('file', file, filename);
+    const isBrowser = typeof window !== 'undefined';
 
-      const directResponse = await fetch('https://gphost.eu.cc/api/v1/upload', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: formData,
-      });
+    // 1. In web browsers, direct cross-origin upload is blocked by browser CORS because GPHost CDN
+    // does not provide Access-Control-Allow-Origin headers. Route directly to centralized backend proxy.
+    if (!isBrowser) {
+      try {
+        const formData = new FormData();
+        formData.append('file', file, filename);
 
-      if (directResponse.ok) {
-        const data = await directResponse.json();
-        const rawUrl = data.rawUrl || data.downloadUrl?.replace('/f/', '/raw/') || '';
+        const directResponse = await fetch('https://gphost.eu.cc/api/v1/upload', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: formData,
+        });
 
-        return {
-          success: true,
-          fileId: data.fileId,
-          filename: data.filename || filename,
-          rawUrl,
-          downloadUrl: data.downloadUrl || rawUrl,
-          mimeType: data.mimeType || mimeType,
-          byteSize: data.byteSize || file.size,
-        };
+        if (directResponse.ok) {
+          const data = await directResponse.json();
+          const rawUrl = data.rawUrl || data.downloadUrl?.replace('/f/', '/raw/') || '';
+
+          return {
+            success: true,
+            fileId: data.fileId,
+            filename: data.filename || filename,
+            rawUrl,
+            downloadUrl: data.downloadUrl || rawUrl,
+            mimeType: data.mimeType || mimeType,
+            byteSize: data.byteSize || file.size,
+          };
+        }
+      } catch (directErr) {
+        console.warn('Direct GPHost CDN upload failed, attempting centralized fallback:', directErr);
       }
-    } catch (directErr) {
-      console.warn('Direct GPHost CDN upload failed or blocked, attempting centralized fallback:', directErr);
     }
 
-    // 2. Centralized Next.js backend fallback (/api/gphost/upload)
+    // 2. Centralized Next.js backend (/api/gphost/upload) handles server-to-server upload to GPHost
     const fallbackFormData = new FormData();
     fallbackFormData.append('file', file, filename);
 

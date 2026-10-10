@@ -294,6 +294,7 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
   }, [provider, userName]);
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         history: false,
