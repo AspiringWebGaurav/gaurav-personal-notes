@@ -427,7 +427,9 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
     },
   });
 
-  editorRef.current = editor;
+  useEffect(() => {
+    editorRef.current = editor;
+  }, [editor]);
 
   if (!editor) {
     return <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded h-full w-full flex items-center justify-center text-gray-500">Initializing editor...</div>;
