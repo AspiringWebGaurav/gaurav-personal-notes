@@ -42,11 +42,13 @@ export default function MobileNoteEditorPage({ params }: { params: Promise<{ id:
   }, [user, id, router]);
 
   const handleUpdate = useCallback((content: string, newWordCount: number) => {
+    setNote((prev) => (prev ? { ...prev, content, wordCount: newWordCount } : null));
+
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       if (repoRef.current) {
-        repoRef.current.updateNote(id, { content, wordCount: newWordCount }).catch(err => {
-           console.error("Failed to save note:", err);
+        repoRef.current.updateNote(id, { content, wordCount: newWordCount }).catch((err) => {
+          console.error("Failed to save note:", err);
         });
       }
     }, 1000);

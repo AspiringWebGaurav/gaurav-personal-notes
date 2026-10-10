@@ -160,16 +160,16 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
 
     if (ed && !ed.isDestroyed) {
       if (isVideo) {
-        ed.commands.insertContent({
+        ed.chain().focus().insertContent({
           type: 'video',
           attrs: {
             src: localBlobUrl,
             title: file instanceof File ? file.name : 'Uploading video...',
             uploading: true,
           },
-        });
+        }).insertContent('<p></p>').run();
       } else {
-        ed.commands.insertContent({
+        ed.chain().focus().insertContent({
           type: 'image',
           attrs: {
             src: localBlobUrl,
@@ -177,34 +177,59 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
             title: file instanceof File ? file.name : 'Uploading image...',
             uploading: true,
           },
-        });
+        }).insertContent('<p></p>').run();
       }
-      ed.commands.insertContent('<p></p>');
     }
 
     try {
       const res = await gphostService.uploadMedia(file);
       if (res.rawUrl && ed && !ed.isDestroyed) {
-        const tr = ed.state.tr;
         let updated = false;
 
-        ed.state.doc.descendants((node, pos) => {
-          if ((node.type.name === 'image' || node.type.name === 'video') && node.attrs.src === localBlobUrl) {
-            tr.setNodeMarkup(pos, undefined, {
-              ...node.attrs,
-              src: res.rawUrl,
-              fileId: res.fileId,
-              uploading: false,
-              alt: res.filename,
-              title: res.filename,
-            });
-            updated = true;
+        ed.commands.command(({ tr, state, dispatch }) => {
+          state.doc.descendants((node, pos) => {
+            if (
+              (node.type.name === 'image' || node.type.name === 'video') &&
+              (node.attrs.src === localBlobUrl || node.attrs.uploading)
+            ) {
+              tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                src: res.rawUrl,
+                fileId: res.fileId,
+                uploading: false,
+                alt: res.filename || node.attrs.alt,
+                title: res.filename || node.attrs.title,
+              });
+              updated = true;
+            }
+          });
+          if (dispatch && updated) {
+            dispatch(tr);
           }
+          return updated;
         });
 
-        if (updated) {
-          ed.view.dispatch(tr);
+        // Fallback: if descendants didn't find the preview node, insert permanent image directly
+        if (!updated) {
+          if (isVideo) {
+            ed.chain().focus().insertContent({
+              type: 'video',
+              attrs: {
+                src: res.rawUrl,
+                fileId: res.fileId,
+                title: res.filename,
+                uploading: false,
+              },
+            }).insertContent('<p></p>').run();
+          } else {
+            ed.chain().focus().setImage({
+              src: res.rawUrl,
+              alt: res.filename,
+              title: res.filename,
+            }).insertContent('<p></p>').run();
+          }
         }
+
         setMediaUploadStatus('Uploaded!');
         setTimeout(() => setMediaUploadStatus(null), 2500);
       }
@@ -215,22 +240,30 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
       setTimeout(() => setMediaUploadStatus(null), 3500);
 
       if (ed && !ed.isDestroyed) {
-        const tr = ed.state.tr;
-        ed.state.doc.descendants((node, pos) => {
-          if ((node.type.name === 'image' || node.type.name === 'video') && node.attrs.src === localBlobUrl) {
-            tr.setNodeMarkup(pos, undefined, {
-              ...node.attrs,
-              uploading: false,
-            });
+        ed.commands.command(({ tr, state, dispatch }) => {
+          let cleaned = false;
+          state.doc.descendants((node, pos) => {
+            if ((node.type.name === 'image' || node.type.name === 'video') && node.attrs.src === localBlobUrl) {
+              tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                uploading: false,
+              });
+              cleaned = true;
+            }
+          });
+          if (dispatch && cleaned) {
+            dispatch(tr);
           }
+          return cleaned;
         });
-        ed.view.dispatch(tr);
       }
     } finally {
       setIsUploadingMedia(false);
-      try {
-        URL.revokeObjectURL(localBlobUrl);
-      } catch {}
+      setTimeout(() => {
+        try {
+          URL.revokeObjectURL(localBlobUrl);
+        } catch {}
+      }, 6000);
     }
   }, []);
 

@@ -31,12 +31,15 @@ export default function NoteEditorPage({ params }: { params: Promise<{ id: strin
   }, [user, id]);
 
   const handleUpdate = useCallback((content: string, newWordCount: number) => {
+    // Keep local note state synchronized with editor content
+    setNote((prev) => (prev ? { ...prev, content, wordCount: newWordCount } : null));
+
     // Debounce network save to prevent Firestore rate limits and lag
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       if (repoRef.current) {
-        repoRef.current.updateNote(id, { content, wordCount: newWordCount }).catch(err => {
-           console.error("Failed to save note:", err);
+        repoRef.current.updateNote(id, { content, wordCount: newWordCount }).catch((err) => {
+          console.error("Failed to save note:", err);
         });
       }
     }, 1000);
