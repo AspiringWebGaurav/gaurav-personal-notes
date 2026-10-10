@@ -1,62 +1,185 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# ==============================================================================
+# Gaurav Personal Notes (GPN) - Repository Root (.gitignore)
+# ==============================================================================
 
-# dependencies
-/node_modules
+# ------------------------------------------------------------------------------
+# 1. Desktop App Isolation (Keep pc-app strictly local)
+# ------------------------------------------------------------------------------
+pc-app/
+/pc-app/
+**/pc-app/
+
+# ------------------------------------------------------------------------------
+# 2. Secrets, Environment Files & Credentials (CRITICAL - ZERO SECRETS)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.env
+*.env.*
+*.local
+
+# Certificates, private keys & keystores
+*.key
+*.pem
+*.crt
+*.cer
+*.der
+*.pfx
+*.p12
+*.keystore
+*.jks
+private.key
+signing.key
+
+# Cloud tokens, credentials & service account keys
+token.json
+tokens.json
+credentials.json
+client_secret*.json
+service-account*.json
+google-services.json
+firebase-admin*.json
+auth-state.json
+
+# ------------------------------------------------------------------------------
+# 3. Dependencies & Package Managers
+# ------------------------------------------------------------------------------
+/node_modules/
+node_modules/
 /.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-Thumbs.db
-desktop.ini
-
-# IDEs and Agent configurations
-.vscode/
-.idea/
-.agents/
-
-# Firebase
-.firebase/
-firebase-debug.log
-firebase-debug.*.log
-
-# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+.eslintcache
+.stylelintcache
+.turbo/
+.parcel-cache/
+.cache/
 
-# env files (can opt-in for committing if needed)
-.env*
-!.env.example
+# ------------------------------------------------------------------------------
+# 4. Next.js & Frontend Build Outputs
+# ------------------------------------------------------------------------------
+/.next/
+.next/
+/out/
+out/
+/build/
+build/
+/dist/
+dist/
 
-# vercel
-.vercel
-
-# typescript
+# ------------------------------------------------------------------------------
+# 5. TypeScript & Type Generation
+# ------------------------------------------------------------------------------
 *.tsbuildinfo
+tsconfig.tsbuildinfo
 next-env.d.ts
 
-# Playwright
-playwright-report/
-test-results/
+# ------------------------------------------------------------------------------
+# 6. Vercel & Deployment
+# ------------------------------------------------------------------------------
+.vercel
+.vercel/
 
-# PC Desktop Application (pc-app) - Keep strictly local (do not push to git)
-pc-app/
-/pc-app/
+# ------------------------------------------------------------------------------
+# 7. Firebase Emulator & Runtime
+# ------------------------------------------------------------------------------
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log*
+ui-debug.log*
+
+# ------------------------------------------------------------------------------
+# 8. Testing & Quality Assurance (Playwright, Coverage)
+# ------------------------------------------------------------------------------
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+.last-run.json
+/coverage/
+coverage/
+.nyc_output/
+
+# ------------------------------------------------------------------------------
+# 9. Local Databases & Storage
+# ------------------------------------------------------------------------------
+*.db
+*.db-*
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sqlite-*
+storage/
+data/
+user_data/
+indexeddb/
+localstorage/
+
+# ------------------------------------------------------------------------------
+# 10. Application Logs & Crash Dumps
+# ------------------------------------------------------------------------------
+logs/
+*.log
+crash-reports/
+minidumps/
+*.dmp
+*.dump
+*.stackdump
+
+# ------------------------------------------------------------------------------
+# 11. IDE, Editor & Agent Configurations
+# ------------------------------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.iml
+.agents/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.user
+*.userosv
+*.sln.docstates
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.bak
+*~
+.#*
+#*#
+
+# ------------------------------------------------------------------------------
+# 12. Operating System Metadata
+# ------------------------------------------------------------------------------
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Linux
+.fuse_hidden*
+.directory
