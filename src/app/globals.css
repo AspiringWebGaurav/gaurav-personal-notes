@@ -97,4 +97,31 @@ body {
   border-color: #27272a;
 }
 
+/* Selected Node (Image & Video) outline & focus styling */
+.ProseMirror img,
+.ProseMirror video,
+.ProseMirror .gpn-image-attachment,
+.ProseMirror .gpn-video-attachment {
+  cursor: pointer;
+  transition: outline 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ProseMirror img:hover,
+.ProseMirror video:hover,
+.ProseMirror .gpn-image-attachment:hover {
+  outline: 2px dashed #60a5fa;
+  outline-offset: 2px;
+}
+
+.ProseMirror img.ProseMirror-selectednode,
+.ProseMirror video.ProseMirror-selectednode,
+.ProseMirror .gpn-image-attachment.ProseMirror-selectednode,
+.ProseMirror .gpn-video-attachment.ProseMirror-selectednode {
+  outline: 3px solid #2563eb !important;
+  outline-offset: 3px !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.25) !important;
+}
+
+
 
