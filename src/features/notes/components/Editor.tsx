@@ -88,24 +88,16 @@ export function Editor({ initialContent = "", onUpdate, editable = true }: Edito
 
     if (ed && !ed.isDestroyed) {
       if (isVideo) {
-        ed.chain().focus().insertContent({
-          type: 'video',
-          attrs: {
-            src: localBlobUrl,
-            title: file instanceof File ? file.name : 'Uploading video...',
-            uploading: true,
-          },
-        }).insertContent('<p></p>').run();
+        ed.chain().focus().setVideo({
+          src: localBlobUrl,
+          title: file instanceof File ? file.name : 'Uploading video...',
+        }).run();
       } else {
-        ed.chain().focus().insertContent({
-          type: 'image',
-          attrs: {
-            src: localBlobUrl,
-            alt: file instanceof File ? file.name : 'Uploading image...',
-            title: file instanceof File ? file.name : 'Uploading image...',
-            uploading: true,
-          },
-        }).insertContent('<p></p>').run();
+        ed.chain().focus().setImage({
+          src: localBlobUrl,
+          alt: file instanceof File ? file.name : 'Uploading image...',
+          title: file instanceof File ? file.name : 'Uploading image...',
+        }).run();
       }
     }
 
@@ -119,13 +111,12 @@ export function Editor({ initialContent = "", onUpdate, editable = true }: Edito
           state.doc.descendants((node, pos) => {
             if (
               (node.type.name === 'image' || node.type.name === 'video') &&
-              (node.attrs.src === localBlobUrl || node.attrs.uploading)
+              node.attrs.src === localBlobUrl
             ) {
               tr.setNodeMarkup(pos, undefined, {
                 ...node.attrs,
                 src: res.rawUrl,
                 fileId: res.fileId,
-                uploading: false,
                 alt: res.filename || node.attrs.alt,
                 title: res.filename || node.attrs.title,
               });
@@ -141,21 +132,17 @@ export function Editor({ initialContent = "", onUpdate, editable = true }: Edito
         // 3. Fallback: if descendants didn't find the preview node, insert permanent image directly
         if (!updated) {
           if (isVideo) {
-            ed.chain().focus().insertContent({
-              type: 'video',
-              attrs: {
-                src: res.rawUrl,
-                fileId: res.fileId,
-                title: res.filename,
-                uploading: false,
-              },
-            }).insertContent('<p></p>').run();
+            ed.chain().focus().setVideo({
+              src: res.rawUrl,
+              fileId: res.fileId,
+              title: res.filename,
+            }).run();
           } else {
             ed.chain().focus().setImage({
               src: res.rawUrl,
               alt: res.filename,
               title: res.filename,
-            }).insertContent('<p></p>').run();
+            }).run();
           }
         }
 
