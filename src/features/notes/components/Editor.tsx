@@ -363,7 +363,9 @@ export function Editor({ initialContent = "", onUpdate, editable = true }: Edito
     },
   });
 
-  editorRef.current = editor;
+  useEffect(() => {
+    editorRef.current = editor;
+  }, [editor]);
 
   // Sync content if initialContent changes externally
   useEffect(() => {

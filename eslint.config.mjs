@@ -17,6 +17,7 @@ const eslintConfig = [
       "build/**",
       "public/**",
       "next-env.d.ts",
+      "pc-app/**",
     ],
   },
 ];

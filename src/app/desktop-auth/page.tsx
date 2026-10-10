@@ -49,6 +49,7 @@ function DesktopAuthContent() {
     if (!loading && user && port && !isConnecting && !status && promptParam !== "select_account") {
       handleConnect();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, user, port, promptParam]);
 
   return (

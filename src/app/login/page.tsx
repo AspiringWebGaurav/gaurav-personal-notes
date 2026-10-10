@@ -80,6 +80,7 @@ function LoginContent() {
         router.push("/dashboard");
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, user, port, promptParam]);
 
   const handleSignIn = async () => {
@@ -196,6 +197,7 @@ function LoginContent() {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full overflow-hidden bg-zinc-800 shrink-0 flex items-center justify-center font-bold text-white text-xs border border-zinc-700">
                   {user.photoURL ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={user.photoURL}
                       alt={user.displayName || user.email || ""}
