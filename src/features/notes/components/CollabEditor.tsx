@@ -1,9 +1,10 @@
 "use client";
 
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
+import { NodeSelection } from '@tiptap/pm/state';
 import * as Y from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
 import { IndexeddbPersistence } from 'y-indexeddb';
@@ -11,7 +12,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { 
   Bold, Italic, Strikethrough, Heading1, Heading2, 
   List, ListOrdered, Quote, Code, Users, Wifi, WifiOff, Trash2,
-  Image as ImageIcon, Loader2, CloudUpload
+  Image as ImageIcon, Loader2, CloudUpload, ExternalLink
 } from 'lucide-react';
 import { CollabRepository, uint8ArrayToBase64, base64ToUint8Array } from '@/features/notes/CollabRepository';
 import { GpnImage } from './extensions/GpnImageExtension';
@@ -254,6 +255,29 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
     }
   }, []);
 
+  const previousMediaRef = useRef<Array<{ fileId?: string; url?: string }>>([]);
+
+  const handleDeleteSelectedMedia = useCallback(() => {
+    const ed = editorRef.current;
+    if (!ed || ed.isDestroyed) return;
+
+    const imgAttrs = ed.getAttributes('image');
+    const videoAttrs = ed.getAttributes('video');
+    const src = imgAttrs.src || videoAttrs.src;
+    const fileId = imgAttrs.fileId || videoAttrs.fileId;
+
+    ed.chain().focus().deleteSelection().run();
+
+    const target = fileId || src;
+    if (target) {
+      gphostService.deleteMedia(target, src).catch((err) => {
+        console.warn('GPHost media delete error:', err);
+      });
+      setMediaUploadStatus('Deleted from GPHost CDN');
+      setTimeout(() => setMediaUploadStatus(null), 3000);
+    }
+  }, []);
+
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
@@ -299,9 +323,41 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
       }),
       Video,
     ],
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      const currentMedia = gphostService.extractGphostMedia(html);
+      const currentKeys = new Set(
+        currentMedia.map((m) => m.fileId || m.url).filter((k): k is string => Boolean(k))
+      );
+      const removedMedia = previousMediaRef.current.filter((prev) => {
+        const key = prev.fileId || prev.url;
+        return Boolean(key && !currentKeys.has(key));
+      });
+
+      if (removedMedia.length > 0) {
+        removedMedia.forEach((item) => {
+          const target = item.fileId || item.url;
+          if (target) {
+            gphostService.deleteMedia(target, item.url).catch((err) => {
+              console.warn('Auto GPHost media cleanup failed:', err);
+            });
+          }
+        });
+        setMediaUploadStatus('Deleted from GPHost CDN');
+        setTimeout(() => setMediaUploadStatus(null), 3000);
+      }
+      previousMediaRef.current = currentMedia;
+    },
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose-base mx-auto focus:outline-none dark:prose-invert max-w-none w-full min-h-full p-4',
+      },
+      handleClickOn: (view, _pos, node, nodePos) => {
+        if (node.type.name === 'image' || node.type.name === 'video') {
+          view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)));
+          return true;
+        }
+        return false;
       },
       handleDrop: (_view, event) => {
         const files = Array.from(event.dataTransfer?.files || []);
@@ -445,6 +501,19 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
           {isUploadingMedia ? <Loader2 size={16} className="animate-spin text-indigo-600" /> : <ImageIcon size={16} />}
         </ToolbarButton>
 
+        {/* Remove Media Button if Image or Video is selected */}
+        {(editor.isActive('image') || editor.isActive('video')) && (
+          <button
+            type="button"
+            onClick={handleDeleteSelectedMedia}
+            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/50 rounded border border-red-200 dark:border-red-900/50 transition cursor-pointer shadow-xs"
+            title="Remove selected media & delete from GPHost CDN"
+          >
+            <Trash2 size={14} className="text-red-500" />
+            <span>Remove {editor.isActive('video') ? 'Video' : 'Image'}</span>
+          </button>
+        )}
+
         {mediaUploadStatus && (
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-[11px] font-mono font-medium text-indigo-700 dark:text-indigo-300 select-none whitespace-nowrap">
             {isUploadingMedia ? (
@@ -467,6 +536,38 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
       </div>
 
       <div className="flex-1 overflow-y-auto relative collab-editor">
+        <BubbleMenu
+          editor={editor}
+          tippyOptions={{ duration: 150, placement: 'top' }}
+          shouldShow={({ editor }) => editor.isActive('image') || editor.isActive('video')}
+        >
+          <div className="flex items-center gap-2 px-2.5 py-1.5 bg-white/95 dark:bg-gray-900/95 border border-gray-200 dark:border-gray-800 rounded-lg shadow-xl backdrop-blur-md">
+            <span className="text-[11px] font-mono font-semibold text-gray-500 dark:text-gray-400 px-1">
+              {editor.isActive('video') ? 'Video' : 'Image'}
+            </span>
+            {(editor.getAttributes('image').src || editor.getAttributes('video').src) && (
+              <a
+                href={editor.getAttributes('image').src || editor.getAttributes('video').src}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 font-medium px-2 py-0.5 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                title="View full size"
+              >
+                <ExternalLink size={12} />
+                <span>View</span>
+              </a>
+            )}
+            <button
+              type="button"
+              onClick={handleDeleteSelectedMedia}
+              className="flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 px-2.5 py-1 rounded bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/50 border border-red-200 dark:border-red-900/60 transition cursor-pointer"
+              title="Remove from note & permanently delete from GPHost CDN"
+            >
+              <Trash2 size={12} />
+              <span>Remove & Delete</span>
+            </button>
+          </div>
+        </BubbleMenu>
         <EditorContent editor={editor} className="w-full h-full" />
       </div>
 
