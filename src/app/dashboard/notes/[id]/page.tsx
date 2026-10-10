@@ -3,6 +3,8 @@
 import { use, useEffect, useState, useRef, useCallback } from "react";
 import { useAuthStore } from "@/features/auth/useAuthStore";
 import { NotesRepository, Note } from "@/features/notes/NotesRepository";
+import { db } from "@/core/config/firebase";
+import { doc, onSnapshot } from "firebase/firestore";
 import { Editor } from "@/features/notes/components/Editor";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Trash2 } from "lucide-react";
@@ -16,19 +18,39 @@ export default function NoteEditorPage({ params }: { params: Promise<{ id: strin
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const repoRef = useRef<NotesRepository | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const titleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    if (user?.uid) {
-      const repo = new NotesRepository(user.uid);
-      repoRef.current = repo;
-      
-      repo.getNote(id).then(fetchedNote => {
-        setNote(fetchedNote);
-        setLoading(false);
-      });
-    }
-  }, [user, id]);
+    if (!user?.uid) return;
+    const repo = new NotesRepository(user.uid);
+    repoRef.current = repo;
+
+    const unsubscribe = onSnapshot(doc(db, "users", user.uid, "notes", id), (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        setNote((prev) => ({
+          id: snap.id,
+          title: data.title ?? (prev?.title || "Untitled Note"),
+          content: data.content ?? (prev?.content || ""),
+          wordCount: typeof data.wordCount === "number" ? data.wordCount : (prev?.wordCount || 0),
+          isArchived: Boolean(data.isArchived),
+          createdAt: data.createdAt || Date.now(),
+          updatedAt: data.updatedAt || Date.now(),
+        }));
+      }
+      setLoading(false);
+    }, (err) => {
+      console.warn("Real-time note listener error:", err);
+      setLoading(false);
+    });
+
+    return () => {
+      unsubscribe();
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (titleTimeoutRef.current) clearTimeout(titleTimeoutRef.current);
+    };
+  }, [user?.uid, id]);
 
   const handleUpdate = useCallback((content: string, newWordCount: number) => {
     // Keep local note state synchronized with editor content
@@ -47,11 +69,16 @@ export default function NoteEditorPage({ params }: { params: Promise<{ id: strin
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
-    if (note) setNote({ ...note, title: newTitle });
-    
-    if (repoRef.current) {
-       repoRef.current.updateNote(id, { title: newTitle });
-    }
+    setNote((prev) => (prev ? { ...prev, title: newTitle } : null));
+
+    if (titleTimeoutRef.current) clearTimeout(titleTimeoutRef.current);
+    titleTimeoutRef.current = setTimeout(() => {
+      if (repoRef.current) {
+        repoRef.current.updateNote(id, { title: newTitle.trim() || "Untitled Note" }).catch((err) => {
+          console.error("Failed to save note title:", err);
+        });
+      }
+    }, 350);
   };
 
   const handleDelete = async () => {
