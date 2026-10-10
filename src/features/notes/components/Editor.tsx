@@ -2,7 +2,7 @@
 
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useMemo } from 'react';
+import { useMemo, useRef, useState, useEffect, useCallback } from 'react';
 import { 
   Bold, 
   Italic, 
@@ -12,8 +12,14 @@ import {
   List, 
   ListOrdered, 
   Quote, 
-  Code 
+  Code,
+  Image as ImageIcon,
+  Loader2,
+  CloudUpload
 } from 'lucide-react';
+import { GpnImage } from './extensions/GpnImageExtension';
+import { Video } from './extensions/VideoExtension';
+import { gphostService } from '@/services/gphostService';
 
 interface EditorProps {
   initialContent?: string;
@@ -25,16 +31,20 @@ const ToolbarButton = ({
   onClick, 
   isActive, 
   title, 
+  disabled = false,
   children 
 }: { 
   onClick: () => void, 
   isActive: boolean, 
   title: string, 
+  disabled?: boolean,
   children: React.ReactNode 
 }) => (
   <button
+    type="button"
     onClick={onClick}
-    className={`w-8 h-8 flex items-center justify-center rounded transition ${
+    disabled={disabled}
+    className={`w-8 h-8 flex items-center justify-center rounded transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
       isActive 
         ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400 shadow-sm' 
         : 'text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800'
@@ -48,23 +58,129 @@ const ToolbarButton = ({
 const Divider = () => <div className="w-px h-5 bg-gray-300 dark:bg-gray-700 mx-1 self-center" />;
 
 export function Editor({ initialContent = "", onUpdate, editable = true }: EditorProps) {
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
+  const [mediaUploadStatus, setMediaUploadStatus] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const editorRef = useRef<ReturnType<typeof useEditor>>(null);
+
   const formattedContent = useMemo(() => {
     if (!initialContent) return "";
     
-    // Check if the content already contains HTML tags. If not, it's likely a legacy plain text note.
+    // Check if the content already contains HTML tags. If not, it's likely legacy plain text.
     const hasHTML = /<[a-z][\s\S]*>/i.test(initialContent);
     
     if (!hasHTML && initialContent.includes('\n')) {
-      // Convert plain text with newlines to HTML breaks to preserve tight line spacing
       return `<p>${initialContent.replace(/\n/g, '<br>')}</p>`;
     }
     
     return initialContent;
   }, [initialContent]);
 
+  // Notion-style Instant Upload: Renders local blob immediately, then swaps with CDN URL
+  const uploadAndInsertMedia = useCallback(async (file: File | Blob) => {
+    setIsUploadingMedia(true);
+    const isVideo = file.type.startsWith('video/');
+    setMediaUploadStatus(isVideo ? 'Uploading video to GPHost CDN...' : 'Uploading image to GPHost CDN...');
+
+    // 1. Instant local object URL preview (0ms latency, Notion feel)
+    const localBlobUrl = URL.createObjectURL(file);
+    const ed = editorRef.current;
+
+    if (ed && !ed.isDestroyed) {
+      if (isVideo) {
+        ed.commands.insertContent({
+          type: 'video',
+          attrs: {
+            src: localBlobUrl,
+            title: file instanceof File ? file.name : 'Uploading video...',
+            uploading: true,
+          },
+        });
+      } else {
+        ed.commands.insertContent({
+          type: 'image',
+          attrs: {
+            src: localBlobUrl,
+            alt: file instanceof File ? file.name : 'Uploading image...',
+            title: file instanceof File ? file.name : 'Uploading image...',
+            uploading: true,
+          },
+        });
+      }
+      ed.commands.insertContent('<p></p>');
+    }
+
+    try {
+      const res = await gphostService.uploadMedia(file);
+      if (res.rawUrl && ed && !ed.isDestroyed) {
+        // 2. Seamlessly update the node from temporary blob URL to permanent GPHost CDN URL
+        const tr = ed.state.tr;
+        let updated = false;
+
+        ed.state.doc.descendants((node, pos) => {
+          if ((node.type.name === 'image' || node.type.name === 'video') && node.attrs.src === localBlobUrl) {
+            tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              src: res.rawUrl,
+              fileId: res.fileId,
+              uploading: false,
+              alt: res.filename,
+              title: res.filename,
+            });
+            updated = true;
+          }
+        });
+
+        if (updated) {
+          ed.view.dispatch(tr);
+        }
+
+        setMediaUploadStatus('Uploaded to GPHost CDN!');
+        setTimeout(() => setMediaUploadStatus(null), 2500);
+      }
+    } catch (err: unknown) {
+      console.error('Failed to upload media to GPHost:', err);
+      const msg = err instanceof Error ? err.message : 'Media upload failed';
+      setMediaUploadStatus(msg);
+      setTimeout(() => setMediaUploadStatus(null), 4000);
+
+      // On error, remove the uploading overlay so user can inspect or remove
+      if (ed && !ed.isDestroyed) {
+        const tr = ed.state.tr;
+        ed.state.doc.descendants((node, pos) => {
+          if ((node.type.name === 'image' || node.type.name === 'video') && node.attrs.src === localBlobUrl) {
+            tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              uploading: false,
+            });
+          }
+        });
+        ed.view.dispatch(tr);
+      }
+    } finally {
+      setIsUploadingMedia(false);
+      try {
+        URL.revokeObjectURL(localBlobUrl);
+      } catch {}
+    }
+  }, []);
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      uploadAndInsertMedia(files[0]);
+    }
+    e.target.value = '';
+  };
+
   const editor = useEditor({
     extensions: [
       StarterKit,
+      GpnImage.configure({
+        inline: false,
+        allowBase64: true,
+      }),
+      Video,
     ],
     content: formattedContent,
     editable,
@@ -77,8 +193,87 @@ export function Editor({ initialContent = "", onUpdate, editable = true }: Edito
       attributes: {
         class: 'prose prose-sm sm:prose-base mx-auto focus:outline-none dark:prose-invert max-w-none w-full min-h-full p-4',
       },
+      handleDrop: (_view, event) => {
+        const files = Array.from(event.dataTransfer?.files || []);
+        const mediaFile = files.find(
+          (f) => f.type.startsWith('image/') || f.type.startsWith('video/')
+        );
+        if (mediaFile) {
+          event.preventDefault();
+          uploadAndInsertMedia(mediaFile);
+          return true;
+        }
+        return false;
+      },
+      handlePaste: (_view, event) => {
+        const clipboardData = event.clipboardData;
+        if (!clipboardData) return false;
+
+        // 1. Direct file attachment from clipboard
+        const files = Array.from(clipboardData.files || []);
+        const mediaFile = files.find(
+          (f) => f.type.startsWith('image/') || f.type.startsWith('video/')
+        );
+        if (mediaFile) {
+          event.preventDefault();
+          uploadAndInsertMedia(mediaFile);
+          return true;
+        }
+
+        // 2. Clipboard screenshot items (PrintScreen, Win+Shift+S, copied browser images)
+        const items = Array.from(clipboardData.items || []);
+        for (const item of items) {
+          if (item.type.startsWith('image/') || item.type.startsWith('video/')) {
+            const blob = item.getAsFile();
+            if (blob) {
+              event.preventDefault();
+              uploadAndInsertMedia(blob);
+              return true;
+            }
+          }
+        }
+
+        // 3. Notion-style smart URL paste: if user pastes an image or video direct URL, embed it
+        const pastedText = clipboardData.getData('text/plain')?.trim();
+        if (pastedText) {
+          if (/^https?:\/\/[^\s]+?\.(png|jpe?g|webp|gif|svg)(\?.*)?$/i.test(pastedText)) {
+            event.preventDefault();
+            editorRef.current?.commands.setImage({ src: pastedText, alt: 'Pasted Image' });
+            editorRef.current?.commands.insertContent('<p></p>');
+            return true;
+          }
+          if (/^https?:\/\/[^\s]+?\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(pastedText)) {
+            event.preventDefault();
+            editorRef.current?.commands.setVideo({ src: pastedText });
+            editorRef.current?.commands.insertContent('<p></p>');
+            return true;
+          }
+          const gphostMatch = pastedText.match(/^https:\/\/gphost\.eu\.cc\/(raw|f)\/([^\s\/?#]+)/i);
+          if (gphostMatch) {
+            event.preventDefault();
+            const raw = pastedText.replace('/f/', '/raw/');
+            const shortcode = gphostMatch[2];
+            editorRef.current?.commands.setImage({ src: raw, fileId: shortcode, alt: 'GPHost Media' } as any);
+            editorRef.current?.commands.insertContent('<p></p>');
+            return true;
+          }
+        }
+
+        return false;
+      },
     },
   });
+
+  editorRef.current = editor;
+
+  // Sync content if initialContent changes externally
+  useEffect(() => {
+    if (editor && !editor.isDestroyed && formattedContent) {
+      if (editor.getHTML() !== formattedContent && editor.isEmpty) {
+        editor.commands.setContent(formattedContent);
+      }
+    }
+  }, [editor, formattedContent]);
 
   if (!editor) {
     return <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded h-[500px] w-full" />;
@@ -86,7 +281,16 @@ export function Editor({ initialContent = "", onUpdate, editable = true }: Edito
 
   return (
     <div className="w-full h-full flex flex-col border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden bg-white dark:bg-gray-950">
-      <div className="border-b border-gray-200 dark:border-gray-800 p-2 flex flex-wrap gap-1 bg-gray-50 dark:bg-gray-900 shrink-0">
+      {/* Hidden file input for GPHost uploads */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileInputChange}
+        accept="image/*,video/*"
+        className="hidden"
+      />
+
+      <div className="border-b border-gray-200 dark:border-gray-800 p-2 flex flex-wrap items-center gap-1 bg-gray-50 dark:bg-gray-900 shrink-0">
         <ToolbarButton 
           onClick={() => editor.chain().focus().toggleBold().run()} 
           isActive={editor.isActive('bold')} 
@@ -141,6 +345,30 @@ export function Editor({ initialContent = "", onUpdate, editable = true }: Edito
           isActive={editor.isActive('code')} 
           title="Code"
         ><Code size={16} /></ToolbarButton>
+
+        <Divider />
+
+        {/* GPHost Media Attach Button */}
+        <ToolbarButton
+          onClick={() => fileInputRef.current?.click()}
+          isActive={isUploadingMedia}
+          disabled={isUploadingMedia}
+          title="Attach Image or Video (GPHost CDN)"
+        >
+          {isUploadingMedia ? <Loader2 size={16} className="animate-spin text-blue-600" /> : <ImageIcon size={16} />}
+        </ToolbarButton>
+
+        {/* GPHost Upload Status Banner */}
+        {mediaUploadStatus && (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-[11px] font-mono font-medium text-sky-700 dark:text-sky-300 select-none whitespace-nowrap ml-auto">
+            {isUploadingMedia ? (
+              <Loader2 className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 animate-spin" />
+            ) : (
+              <CloudUpload className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+            )}
+            <span>{mediaUploadStatus}</span>
+          </div>
+        )}
       </div>
       <div className="flex-1 overflow-y-auto">
         <EditorContent editor={editor} className="w-full h-full" />

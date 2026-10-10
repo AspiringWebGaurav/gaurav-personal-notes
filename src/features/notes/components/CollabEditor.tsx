@@ -7,12 +7,16 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import * as Y from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
 import { IndexeddbPersistence } from 'y-indexeddb';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { 
   Bold, Italic, Strikethrough, Heading1, Heading2, 
-  List, ListOrdered, Quote, Code, Users, Wifi, WifiOff, Trash2
+  List, ListOrdered, Quote, Code, Users, Wifi, WifiOff, Trash2,
+  Image as ImageIcon, Loader2, CloudUpload
 } from 'lucide-react';
 import { CollabRepository, uint8ArrayToBase64, base64ToUint8Array } from '@/features/notes/CollabRepository';
+import { GpnImage } from './extensions/GpnImageExtension';
+import { Video } from './extensions/VideoExtension';
+import { gphostService } from '@/services/gphostService';
 
 const colors = ['#f56565', '#ed8936', '#ecc94b', '#48bb78', '#38b2ac', '#4299e1', '#667eea', '#9f7aea', '#ed64a6'];
 const randomColor = colors[Math.floor(Math.random() * colors.length)];
@@ -22,10 +26,12 @@ interface CollabEditorProps {
   userName: string;
 }
 
-const ToolbarButton = ({ onClick, isActive, title, children }: { onClick: () => void, isActive?: boolean, title: string, children: React.ReactNode }) => (
+const ToolbarButton = ({ onClick, isActive, title, disabled, children }: { onClick: () => void, isActive?: boolean, title: string, disabled?: boolean, children: React.ReactNode }) => (
   <button
+    type="button"
     onClick={onClick}
-    className={`w-8 h-8 flex items-center justify-center rounded transition ${
+    disabled={disabled}
+    className={`w-8 h-8 flex items-center justify-center rounded transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
       isActive 
         ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-400 shadow-sm' 
         : 'text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800'
@@ -48,7 +54,6 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
     const repo = new CollabRepository();
     let saveTimeout: ReturnType<typeof setTimeout>;
 
-    // 1. Synchronously initialize providers to guarantee cleanup
     const indexeddbProvider = new IndexeddbPersistence(`gpn-collab-room-${roomId}`, ydoc);
     const provider = new WebrtcProvider(`gpn-collab-room-${roomId}`, ydoc, {
       signaling: ['wss://signaling.yjs.dev', 'wss://y-webrtc-signaling-eu.herokuapp.com']
@@ -56,7 +61,6 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
 
     setProviderDetails({ ydoc, provider });
 
-    // 2. Asynchronously fetch initial data and apply it
     repo.getRoom(roomId).then(roomData => {
       if (!isMounted) return;
       if (roomData?.deleted) {
@@ -68,7 +72,6 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
         const now = Date.now();
         const THREE_HOURS = 3 * 60 * 60 * 1000;
         if (now - roomData.updatedAt > THREE_HOURS) {
-          // Room expired
           setIsDeleted(true);
           repo.deleteRoom(roomId).catch(console.error);
           return;
@@ -79,11 +82,10 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
         const update = base64ToUint8Array(roomData.stateUpdate);
         Y.applyUpdate(ydoc, update);
       } else if (!roomData) {
-        setIsDeleted(true); // Room doesn't exist, treat as invalid
+        setIsDeleted(true);
       }
     }).catch(console.error);
 
-    // 3. Listen for local changes to save to Firebase
     ydoc.on('update', () => {
       if (saveTimeout) clearTimeout(saveTimeout);
       saveTimeout = setTimeout(() => {
@@ -92,7 +94,6 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
       }, 2000);
     });
 
-    // 4. Listen for room deletion
     const unsubscribe = repo.listenToRoom(roomId, () => {
       if (isMounted) setIsDeleted(true);
     });
@@ -133,6 +134,10 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
   const [usersCount, setUsersCount] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
+  const [mediaUploadStatus, setMediaUploadStatus] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const editorRef = useRef<ReturnType<typeof useEditor>>(null);
 
   const confirmDeleteRoom = async () => {
     try {
@@ -143,6 +148,98 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
       console.error(err);
       setIsDeleting(false);
     }
+  };
+
+  const uploadAndInsertMedia = useCallback(async (file: File | Blob) => {
+    setIsUploadingMedia(true);
+    const isVideo = file.type.startsWith('video/');
+    setMediaUploadStatus(isVideo ? 'Uploading video to GPHost...' : 'Uploading image to GPHost...');
+
+    const localBlobUrl = URL.createObjectURL(file);
+    const ed = editorRef.current;
+
+    if (ed && !ed.isDestroyed) {
+      if (isVideo) {
+        ed.commands.insertContent({
+          type: 'video',
+          attrs: {
+            src: localBlobUrl,
+            title: file instanceof File ? file.name : 'Uploading video...',
+            uploading: true,
+          },
+        });
+      } else {
+        ed.commands.insertContent({
+          type: 'image',
+          attrs: {
+            src: localBlobUrl,
+            alt: file instanceof File ? file.name : 'Uploading image...',
+            title: file instanceof File ? file.name : 'Uploading image...',
+            uploading: true,
+          },
+        });
+      }
+      ed.commands.insertContent('<p></p>');
+    }
+
+    try {
+      const res = await gphostService.uploadMedia(file);
+      if (res.rawUrl && ed && !ed.isDestroyed) {
+        const tr = ed.state.tr;
+        let updated = false;
+
+        ed.state.doc.descendants((node, pos) => {
+          if ((node.type.name === 'image' || node.type.name === 'video') && node.attrs.src === localBlobUrl) {
+            tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              src: res.rawUrl,
+              fileId: res.fileId,
+              uploading: false,
+              alt: res.filename,
+              title: res.filename,
+            });
+            updated = true;
+          }
+        });
+
+        if (updated) {
+          ed.view.dispatch(tr);
+        }
+        setMediaUploadStatus('Uploaded!');
+        setTimeout(() => setMediaUploadStatus(null), 2500);
+      }
+    } catch (err: unknown) {
+      console.error('Failed to upload media:', err);
+      const msg = err instanceof Error ? err.message : 'Upload failed';
+      setMediaUploadStatus(msg);
+      setTimeout(() => setMediaUploadStatus(null), 3500);
+
+      if (ed && !ed.isDestroyed) {
+        const tr = ed.state.tr;
+        ed.state.doc.descendants((node, pos) => {
+          if ((node.type.name === 'image' || node.type.name === 'video') && node.attrs.src === localBlobUrl) {
+            tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              uploading: false,
+            });
+          }
+        });
+        ed.view.dispatch(tr);
+      }
+    } finally {
+      setIsUploadingMedia(false);
+      try {
+        URL.revokeObjectURL(localBlobUrl);
+      } catch {}
+    }
+  }, []);
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      uploadAndInsertMedia(files[0]);
+    }
+    e.target.value = '';
   };
 
   useEffect(() => {
@@ -161,14 +258,12 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
 
     provider.awareness.on('change', updateAwareness);
     updateAwareness();
-
-    // No need to destroy provider/ydoc here, it's handled by the parent
   }, [provider, userName]);
 
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        history: false, // REQUIRED for Yjs collaboration
+        history: false,
       }),
       Collaboration.configure({
         document: ydoc,
@@ -177,13 +272,85 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
         provider: provider,
         user: { name: userName, color: randomColor },
       }),
+      GpnImage.configure({
+        inline: false,
+        allowBase64: true,
+      }),
+      Video,
     ],
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose-base mx-auto focus:outline-none dark:prose-invert max-w-none w-full min-h-full p-4',
       },
+      handleDrop: (_view, event) => {
+        const files = Array.from(event.dataTransfer?.files || []);
+        const mediaFile = files.find(
+          (f) => f.type.startsWith('image/') || f.type.startsWith('video/')
+        );
+        if (mediaFile) {
+          event.preventDefault();
+          uploadAndInsertMedia(mediaFile);
+          return true;
+        }
+        return false;
+      },
+      handlePaste: (_view, event) => {
+        const clipboardData = event.clipboardData;
+        if (!clipboardData) return false;
+
+        const files = Array.from(clipboardData.files || []);
+        const mediaFile = files.find(
+          (f) => f.type.startsWith('image/') || f.type.startsWith('video/')
+        );
+        if (mediaFile) {
+          event.preventDefault();
+          uploadAndInsertMedia(mediaFile);
+          return true;
+        }
+
+        const items = Array.from(clipboardData.items || []);
+        for (const item of items) {
+          if (item.type.startsWith('image/') || item.type.startsWith('video/')) {
+            const blob = item.getAsFile();
+            if (blob) {
+              event.preventDefault();
+              uploadAndInsertMedia(blob);
+              return true;
+            }
+          }
+        }
+
+        const pastedText = clipboardData.getData('text/plain')?.trim();
+        if (pastedText) {
+          if (/^https?:\/\/[^\s]+?\.(png|jpe?g|webp|gif|svg)(\?.*)?$/i.test(pastedText)) {
+            event.preventDefault();
+            editorRef.current?.commands.setImage({ src: pastedText, alt: 'Pasted Image' });
+            editorRef.current?.commands.insertContent('<p></p>');
+            return true;
+          }
+          if (/^https?:\/\/[^\s]+?\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(pastedText)) {
+            event.preventDefault();
+            editorRef.current?.commands.setVideo({ src: pastedText });
+            editorRef.current?.commands.insertContent('<p></p>');
+            return true;
+          }
+          const gphostMatch = pastedText.match(/^https:\/\/gphost\.eu\.cc\/(raw|f)\/([^\s\/?#]+)/i);
+          if (gphostMatch) {
+            event.preventDefault();
+            const raw = pastedText.replace('/f/', '/raw/');
+            const shortcode = gphostMatch[2];
+            editorRef.current?.commands.setImage({ src: raw, fileId: shortcode, alt: 'GPHost Media' } as any);
+            editorRef.current?.commands.insertContent('<p></p>');
+            return true;
+          }
+        }
+
+        return false;
+      },
     },
   });
+
+  editorRef.current = editor;
 
   if (!editor) {
     return <div className="animate-pulse bg-gray-200 dark:bg-gray-800 rounded h-full w-full flex items-center justify-center text-gray-500">Initializing editor...</div>;
@@ -191,8 +358,14 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
 
   return (
     <div className="w-full h-full flex flex-col border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden bg-white dark:bg-gray-950 shadow-lg">
-      
-      {/* Collab Status Bar */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileInputChange}
+        accept="image/*,video/*"
+        className="hidden"
+      />
+
       <div className="bg-indigo-600 text-white px-4 py-2 flex items-center justify-between text-sm">
         <div className="flex items-center gap-2 font-medium">
           <span className="bg-indigo-800 px-2 py-0.5 rounded font-mono text-xs">ROOM: {roomId}</span>
@@ -210,7 +383,7 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
         </div>
       </div>
 
-      <div className="border-b border-gray-200 dark:border-gray-800 p-2 flex flex-wrap gap-1 bg-gray-50 dark:bg-gray-900 shrink-0">
+      <div className="border-b border-gray-200 dark:border-gray-800 p-2 flex flex-wrap items-center gap-1 bg-gray-50 dark:bg-gray-900 shrink-0">
         <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} title="Bold">
           <Bold size={16} />
         </ToolbarButton>
@@ -241,22 +414,41 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
         <ToolbarButton onClick={() => editor.chain().focus().toggleCode().run()} isActive={editor.isActive('code')} title="Code">
           <Code size={16} />
         </ToolbarButton>
+        <Divider />
+        <ToolbarButton
+          onClick={() => fileInputRef.current?.click()}
+          isActive={isUploadingMedia}
+          disabled={isUploadingMedia}
+          title="Attach Image or Video (GPHost CDN)"
+        >
+          {isUploadingMedia ? <Loader2 size={16} className="animate-spin text-indigo-600" /> : <ImageIcon size={16} />}
+        </ToolbarButton>
+
+        {mediaUploadStatus && (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-[11px] font-mono font-medium text-indigo-700 dark:text-indigo-300 select-none whitespace-nowrap">
+            {isUploadingMedia ? (
+              <Loader2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 animate-spin" />
+            ) : (
+              <CloudUpload className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+            )}
+            <span>{mediaUploadStatus}</span>
+          </div>
+        )}
+
         <div className="flex-1" />
         <button 
           onClick={() => setShowDeleteModal(true)}
-          className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-red-600 dark:text-red-400 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 rounded transition ml-auto border border-red-200 dark:border-red-900/50"
+          className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-red-600 dark:text-red-400 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 rounded transition ml-auto border border-red-200 dark:border-red-900/50 cursor-pointer"
           title="Permanently Delete Room"
         >
           <Trash2 size={14} /> Delete Room
         </button>
       </div>
 
-      {/* Editor Content Area */}
       <div className="flex-1 overflow-y-auto relative collab-editor">
         <EditorContent editor={editor} className="w-full h-full" />
       </div>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-3xl shadow-2xl shadow-red-500/10 p-8 max-w-sm w-full animate-in zoom-in-95 duration-200">
@@ -272,14 +464,14 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
                 <button
                   onClick={() => setShowDeleteModal(false)}
                   disabled={isDeleting}
-                  className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors disabled:opacity-50"
+                  className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={confirmDeleteRoom}
                   disabled={isDeleting}
-                  className="flex-1 py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-red-500/20"
+                  className="flex-1 py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-red-500/20 cursor-pointer"
                 >
                   {isDeleting ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { db } from "@/core/config/firebase";
 import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, query, where, onSnapshot } from "firebase/firestore";
+import { gphostService } from "@/services/gphostService";
 
 const parseTimestamp = (val: unknown) => {
   if (val && typeof (val as { toMillis?: () => number }).toMillis === 'function') return (val as { toMillis: () => number }).toMillis();
@@ -77,6 +78,20 @@ export class NotesRepository {
   }
 
   async deleteNote(noteId: string): Promise<void> {
+    try {
+      const docSnap = await getDoc(this.getDocRef(noteId));
+      if (docSnap.exists()) {
+        const content = docSnap.data()?.content;
+        if (content) {
+          const media = gphostService.extractGphostMedia(content);
+          if (media.length > 0) {
+            gphostService.deleteMediaBatch(media).catch(console.warn);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to pre-clean GPHost media for deleted note:', err);
+    }
     await deleteDoc(this.getDocRef(noteId));
   }
 
@@ -104,6 +119,19 @@ export class NotesRepository {
   async emptyTrash(): Promise<void> {
     const q = query(this.getCollectionRef(), where("isArchived", "==", true));
     const snapshot = await getDocs(q);
+    for (const docSnap of snapshot.docs) {
+      try {
+        const content = docSnap.data()?.content;
+        if (content) {
+          const media = gphostService.extractGphostMedia(content);
+          if (media.length > 0) {
+            gphostService.deleteMediaBatch(media).catch(console.warn);
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to pre-clean GPHost media in emptyTrash:', err);
+      }
+    }
     const deletePromises = snapshot.docs.map(docSnap => deleteDoc(docSnap.ref));
     await Promise.all(deletePromises);
   }
