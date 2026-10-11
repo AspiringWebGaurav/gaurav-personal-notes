@@ -8,6 +8,8 @@
 pc-app/
 /pc-app/
 **/pc-app/
+pc-app/**
+**/pc-app/**
 
 # ------------------------------------------------------------------------------
 # 2. Secrets, Environment Files & Credentials (CRITICAL - ZERO SECRETS)
@@ -75,6 +77,18 @@ out/
 build/
 /dist/
 dist/
+target/
+**/target/
+*.exe
+*.dll
+*.so
+*.dylib
+*.msi
+*.app
+*.dmg
+*.deb
+*.rpm
+*.AppImage
 
 # ------------------------------------------------------------------------------
 # 5. TypeScript & Type Generation
