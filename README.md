@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gaurav Personal Notes (GPN)
 
-## Getting Started
+A clean, fast personal notes workspace with real-time sync, local-first offline support, and collaboration tools.
 
-First, run the development server:
+---
+
+## 🖥️ Download Desktop App for Windows
+
+Gaurav Personal Notes is available as a native Windows desktop app for Windows 10 and Windows 11.
+
+- **Operating System**: Windows 10 (1809+) & Windows 11 (64-bit)
+- **Download**: [Download for Windows (.exe)](https://gphost.eu.cc/raw/gpn-app) *(Mirror: [gphost.eu.cc/f/gpn-app](https://gphost.eu.cc/f/gpn-app) or visit `/download` on website)*
+- **Offline Support**: Write and search notes without an active internet connection. Notes sync automatically when back online.
+- **Background Mode**: Closing the window keeps the lightweight tray service running in the background for quick capture.
+
+### How to Install on Windows
+1. Download the `.exe` installer.
+2. Double-click the file to install (takes ~5 seconds, no administrator privileges required).
+3. Launch **Gaurav Personal Notes** from your Start Menu or Desktop and sign in with your Google account.
+
+---
+
+## 🌐 Web Application
+
+Access your notes from any modern web browser or mobile device:
+
+- **Web Workspace**: [https://gpnotes.eu.cc](https://gpnotes.eu.cc) *(or install as a Progressive Web App)*
+- **Mobile Friendly**: Responsive mobile interface with offline caching.
+
+---
+
+## 🚀 Development Setup (Website)
+
+### Prerequisites
+- Node.js (v18 or higher)
+- npm / yarn / pnpm
+
+### Getting Started
 
 ```bash
+# Install dependencies
+npm install
+
+# Start the local development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Building for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📋 System Requirements (Windows Desktop)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Requirement | Specification |
+| :--- | :--- |
+| **Operating System** | Windows 10 (64-bit, 1809+) or Windows 11 |
+| **Processor** | 64-bit processor (x64) |
+| **Memory** | 50 MB RAM (idle) |
+| **Storage** | 50 MB available disk space |
+| **Runtime** | Microsoft Edge WebView2 (bundled / installed automatically) |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📄 License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Personal project by Gaurav Patil. All rights reserved.
