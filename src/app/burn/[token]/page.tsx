@@ -169,7 +169,7 @@ export default function ViewBurnNotePage({ params }: { params: Promise<{ token: 
           </div>
           <div className="pt-8">
             <Link href="/" className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 hover:bg-black dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black font-semibold rounded-full transition-all hover:scale-105 shadow-md">
-              Return to GPN Enterprise
+              Return to GPN
             </Link>
           </div>
         </div>

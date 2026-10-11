@@ -1,10 +1,12 @@
-import { MetadataRoute } from 'next'
+import type { MetadataRoute } from 'next';
+
+export const dynamic = 'force-static';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Gaurav Personal Notes',
     short_name: 'GPN',
-    description: 'Enterprise-grade personal knowledge base and real-time collaboration workspace.',
+    description: 'Fast, secure personal notes and shared workspace.',
     start_url: '/mobile',
     display: 'standalone',
     background_color: '#09090b', // zinc-950

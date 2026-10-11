@@ -125,7 +125,7 @@ export default function MobileLoginPage() {
             {isMounted ? <Typewriter text="Welcome to GPN" delay={200} speed={40} cursor={false} /> : ""}
           </h1>
           <p className="text-zinc-500 dark:text-zinc-400 text-base sm:text-lg text-center mb-12 font-medium select-none outline-none min-h-[28px]">
-            {isMounted ? <Typewriter text="Your enterprise workspace, optimized for the go." delay={800} speed={30} cursor={false} /> : ""}
+            {isMounted ? <Typewriter text="Your workspace, ready on the go." delay={800} speed={30} cursor={false} /> : ""}
           </p>
         </div>
 

@@ -159,10 +159,10 @@ export default function LoginPage() {
             </h1>
           </div>
           <h2 className="text-[3.25rem] font-bold mb-6 leading-[1.1] text-zinc-50 min-h-[110px] tracking-tight">
-            {isMounted ? <Typewriter text="Enterprise knowledge, unified." delay={800} speed={40} cursor={true} /> : ""}
+            {isMounted ? <Typewriter text="All your notes, unified." delay={800} speed={40} cursor={true} /> : ""}
           </h2>
           <p className="text-zinc-400 text-lg leading-relaxed mb-12 max-w-md font-normal transition-all duration-1000 delay-1000 opacity-0" style={{ opacity: isMounted ? 1 : 0 }}>
-            The secure, collaborative workspace for high-performing teams. Organize thoughts, build documentation, and unlock collective productivity.
+            A fast, secure space to organize your thoughts, write down ideas, and collaborate with ease.
           </p>
           
           {/* Feature list / Social proof */}
@@ -173,7 +173,7 @@ export default function LoginPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <span className="text-zinc-200 font-medium text-lg group-hover:text-white transition-colors duration-300">End-to-end encryption</span>
+              <span className="text-zinc-200 font-medium text-lg group-hover:text-white transition-colors duration-300">Private and encrypted</span>
             </div>
             <div className="flex items-center gap-4 group cursor-default">
               <div className="w-10 h-10 rounded-full bg-fuchsia-500/10 flex items-center justify-center backdrop-blur-md border border-fuchsia-500/20 group-hover:bg-fuchsia-500/20 group-hover:scale-110 transition-all duration-300">
@@ -181,7 +181,7 @@ export default function LoginPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <span className="text-zinc-200 font-medium text-lg group-hover:text-white transition-colors duration-300">Real-time collaboration</span>
+              <span className="text-zinc-200 font-medium text-lg group-hover:text-white transition-colors duration-300">Fast shared notes</span>
             </div>
           </div>
         </div>
@@ -203,7 +203,7 @@ export default function LoginPage() {
               {isMounted ? <Typewriter text={isReturningUser ? "Welcome back" : "Welcome to GPN"} delay={200} speed={40} cursor={false} /> : ""}
             </h1>
             <p className="text-zinc-500 dark:text-zinc-400 text-center font-medium select-none outline-none min-h-[28px] pointer-events-none">
-              {isMounted ? <Typewriter text={isReturningUser ? "Sign in to your account to access your workspace." : "Hi there! Let's explore your new enterprise workspace."} delay={isReturningUser ? 800 : 900} speed={30} cursor={false} /> : ""}
+              {isMounted ? <Typewriter text={isReturningUser ? "Sign in to your account to access your workspace." : "Hi there! Let's explore your new workspace."} delay={isReturningUser ? 800 : 900} speed={30} cursor={false} /> : ""}
             </p>
           </div>
 

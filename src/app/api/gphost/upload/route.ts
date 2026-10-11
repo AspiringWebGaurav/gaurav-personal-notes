@@ -33,7 +33,12 @@ export async function GET() {
       message:
         "Direct client-to-GPHost upload is recommended to preserve free Vercel Hobby limits.",
     },
-    { headers: corsHeaders }
+    {
+      headers: {
+        ...corsHeaders,
+        "Cache-Control": "public, max-age=86400, s-maxage=86400, immutable",
+      },
+    }
   );
 }
 
