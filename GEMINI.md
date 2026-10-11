@@ -6,10 +6,9 @@
 - Never use real secret strings as fallbacks (e.g. `process.env.KEY || "real_key"`). Use `process.env.KEY || ""` instead.
 - All secrets must reside exclusively in `.env.local` (kept in `.gitignore`) and pushed to Vercel via Vercel CLI (`vercel env add`).
 
-## 2. Desktop App Isolation & Local-Only Workflow (STRICT)
-- **Keep `pc-app` completely local**: Never push `pc-app` to GitHub. Enforced strictly in `.gitignore`.
-- **No Unsolicited Git Pushes**: All development, testing, and debugging must remain strictly local. Never push to GitHub without direct, explicit instructions from the user.
-- **Git History Hygiene**: If `pc-app` or any local-only file is ever detected in Git staging, untracked index, or commits, immediately unstage, untrack, and purge it from Git history.
+## 2. Desktop App Source Tracking & Build Hygiene
+- **Track `pc-app` Clean Source Code**: The `pc-app` desktop source code is tracked in the repository. All build artifacts (`target/`, `dist/`), dependencies (`node_modules/`), binaries (`*.exe`, `*.dll`), local databases (`*.db`, `*.sqlite`), and environment secret files (`.env.local`) MUST remain strictly ignored via `.gitignore`.
+- **Git History Hygiene**: Never stage, commit, or push build binaries (`.exe`, `.dll`), target folders, or local secrets.
 
 ## 3. No Nested Card-Type Layouts (UI/UX Design Rule)
 - **Do not create nested card/box-in-card layouts**: Avoid wrapping statistics, items, or info blocks inside separate rounded bordered cards.

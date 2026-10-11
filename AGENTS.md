@@ -7,10 +7,9 @@
 - Store local development secrets exclusively in `.env.local` (which must remain in `.gitignore`).
 - For production/preview environments, configure secrets via Vercel CLI (`vercel env add ...`) or provider secret managers.
 
-## Desktop App Isolation & Local-Only Workflow (STRICT)
-- **Keep `pc-app` completely local**: Never stage, commit, or push `pc-app` to Git repositories under any circumstances.
-- **No Unsolicited Git Pushes**: All development, testing, and debugging must remain strictly local. Never push to GitHub unless the user explicitly and directly instructs you to push in their prompt.
-- **Git History Hygiene**: If `pc-app` or any local-only file is ever detected in Git staging, untracked index, or commits, immediately unstage, untrack, and purge it from Git history.
+## Desktop App Source Tracking & Build Hygiene
+- **Track `pc-app` Clean Source Code**: The `pc-app` desktop source code is tracked in the repository. All build artifacts (`target/`, `dist/`), dependencies (`node_modules/`), binaries (`*.exe`, `*.dll`), local databases (`*.db`, `*.sqlite`), and environment secret files (`.env.local`) MUST remain strictly ignored via `.gitignore`.
+- **Git History Hygiene**: Never stage, commit, or push build binaries (`.exe`, `.dll`), target folders, or local secrets.
 
 ## No Nested Card-Type Layouts (UI/UX Design Rule)
 - **Do not create nested card/box-in-card layouts**: Avoid wrapping every statistic, list item, or info box inside separate rounded bordered card containers.

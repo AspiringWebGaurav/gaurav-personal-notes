@@ -5,7 +5,7 @@ import { NotesRepository, Note } from "@/features/notes/NotesRepository";
 import { CollabRepository } from "@/features/notes/CollabRepository";
 import Link from "next/link";
 import { useEffect, useState, useMemo } from "react";
-import { Book, Users, Flame, ChevronRight, Clock, Plus, LayoutGrid } from "lucide-react";
+import { Book, Users, Flame, ChevronRight, Clock, Plus, LayoutGrid, Download } from "lucide-react";
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
@@ -47,11 +47,23 @@ export default function DashboardPage() {
       <div className="max-w-6xl mx-auto w-full h-full flex flex-col gap-5 lg:gap-6 relative z-10">
         
         {/* Header Section */}
-        <div className="flex flex-col gap-1 animate-[fade-in_0.4s_ease-out]">
-          <h1 className="text-2xl font-bold tracking-tight">
-            Welcome back, <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-violet-600 to-fuchsia-600 dark:from-cyan-400 dark:via-violet-400 dark:to-fuchsia-400">{user?.displayName?.split(' ')[0] || 'User'}</span>
-          </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">Here&apos;s what is happening with your workspace today.</p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-[fade-in_0.4s_ease-out]">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-2xl font-bold tracking-tight">
+              Welcome back, <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-violet-600 to-fuchsia-600 dark:from-cyan-400 dark:via-violet-400 dark:to-fuchsia-400">{user?.displayName?.split(' ')[0] || 'User'}</span>
+            </h1>
+            <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">Here&apos;s what is happening with your workspace today.</p>
+          </div>
+          <Link
+            href="/download"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all shadow-xs shrink-0 group w-fit"
+          >
+            <Download size={14} className="text-violet-500 group-hover:translate-y-0.5 transition-transform" />
+            <span>Get Desktop App</span>
+            <span className="px-1.5 py-0.5 rounded bg-violet-50 dark:bg-violet-950/50 text-[10px] font-mono text-violet-600 dark:text-violet-400">.exe</span>
+          </Link>
         </div>
 
         {/* Stats Grid */}

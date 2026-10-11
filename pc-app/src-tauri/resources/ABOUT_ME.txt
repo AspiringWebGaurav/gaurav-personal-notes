@@ -1,0 +1,44 @@
+================================================================================
+                             ABOUT THE DEVELOPER
+================================================================================
+
+Hello! I'm Gaurav Patil.
+
+I am a software developer passionate about building fast, clean, and helpful
+tools that make computer workflows smoother, simpler, and more productive.
+
+
+WHY GAURAV PERSONAL NOTES?
+--------------------------------------------------------------------------------
+I built Gaurav Personal Notes because I wanted a notes app that:
+- Starts up in milliseconds without heavy memory usage
+- Always works 100% offline so your thoughts are never blocked by internet
+- Stores your data locally on your computer with complete privacy
+- Seamlessly syncs to the cloud when you are connected
+- Keeps interfaces clean with simple words and zero unnecessary jargon
+
+
+PORTFOLIO & LINKS
+--------------------------------------------------------------------------------
+* Web App          : https://gpnotes.eu.cc
+* GitHub Profile   : https://github.com/AspiringWebGaurav
+* Project Repo     : https://github.com/AspiringWebGaurav/gaurav-personal-notes
+* Cloud Hosting    : GPHost (https://gphost.eu.cc)
+
+
+TECH STACK
+--------------------------------------------------------------------------------
+* Windows Desktop : Rust + Tauri v2 (Fast native speed, tiny RAM footprint)
+* Web Application : Next.js, React, TypeScript, Tailwind CSS
+* Local Storage   : Native SQLite on Windows
+* Cloud Sync      : Firebase Firestore + GPHost CDN Storage
+
+
+GET IN TOUCH / FEEDBACK
+--------------------------------------------------------------------------------
+If you have any suggestions, feedback, or found an issue, please feel free
+to connect or open an issue on GitHub:
+https://github.com/AspiringWebGaurav/gaurav-personal-notes/issues
+
+Thank you for using Gaurav Personal Notes!
+================================================================================

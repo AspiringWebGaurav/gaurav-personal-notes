@@ -5,6 +5,7 @@ import { loginWithGoogle } from "@/features/auth/AuthProvider";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 // Custom Typewriter component for the dynamic text effects
 const Typewriter = ({ text, delay = 0, speed = 40, cursor = true }: { text: string, delay?: number, speed?: number, cursor?: boolean }) => {
@@ -155,14 +156,14 @@ export default function LoginPage() {
               G
             </div>
             <h1 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 to-zinc-400">
-              {isMounted ? <Typewriter text="GPN Workspace" delay={300} speed={60} cursor={false} /> : ""}
+              {isMounted ? <Typewriter text="Gaurav Personal Notes" delay={300} speed={50} cursor={false} /> : ""}
             </h1>
           </div>
           <h2 className="text-[3.25rem] font-bold mb-6 leading-[1.1] text-zinc-50 min-h-[110px] tracking-tight">
-            {isMounted ? <Typewriter text="All your notes, unified." delay={800} speed={40} cursor={true} /> : ""}
+            {isMounted ? <Typewriter text="All your notes in one place." delay={800} speed={40} cursor={true} /> : ""}
           </h2>
           <p className="text-zinc-400 text-lg leading-relaxed mb-12 max-w-md font-normal transition-all duration-1000 delay-1000 opacity-0" style={{ opacity: isMounted ? 1 : 0 }}>
-            A fast, secure space to organize your thoughts, write down ideas, and collaborate with ease.
+            A simple, fast place to write your notes, save your ideas, and stay organized.
           </p>
           
           {/* Feature list / Social proof */}
@@ -203,7 +204,7 @@ export default function LoginPage() {
               {isMounted ? <Typewriter text={isReturningUser ? "Welcome back" : "Welcome to GPN"} delay={200} speed={40} cursor={false} /> : ""}
             </h1>
             <p className="text-zinc-500 dark:text-zinc-400 text-center font-medium select-none outline-none min-h-[28px] pointer-events-none">
-              {isMounted ? <Typewriter text={isReturningUser ? "Sign in to your account to access your workspace." : "Hi there! Let's explore your new workspace."} delay={isReturningUser ? 800 : 900} speed={30} cursor={false} /> : ""}
+              {isMounted ? <Typewriter text={isReturningUser ? "Sign in to open your notes." : "Hi there! Let's get started with your notes."} delay={isReturningUser ? 800 : 900} speed={30} cursor={false} /> : ""}
             </p>
           </div>
 
@@ -236,7 +237,19 @@ export default function LoginPage() {
             )}
           </button>
           
-          <div className="mt-10 flex items-center justify-center opacity-70">
+          <div className="mt-5 text-center">
+            <Link
+              href="/download"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors"
+            >
+              <span>Download for Windows 10 &amp; 11</span>
+              <span className="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-[10px] font-mono text-zinc-600 dark:text-zinc-300">.exe</span>
+            </Link>
+          </div>
+
+          <div className="mt-8 flex items-center justify-center opacity-70">
             <div className="h-px bg-gradient-to-r from-transparent via-zinc-300 dark:via-zinc-700 to-transparent flex-1"></div>
             <span className="px-4 text-sm font-medium text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">Secure SSO</span>
             <div className="h-px bg-gradient-to-r from-transparent via-zinc-300 dark:via-zinc-700 to-transparent flex-1"></div>

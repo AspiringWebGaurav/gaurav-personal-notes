@@ -6,7 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { NotesRepository } from "@/features/notes/NotesRepository";
-import { Book, LayoutDashboard, LogOut, Settings, Trash2, Flame, Users } from "lucide-react";
+import { Book, LayoutDashboard, LogOut, Settings, Trash2, Flame, Users, Download } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -107,6 +107,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
 
         <div className="p-3 border-t border-slate-200/60 dark:border-gray-800/60 w-full flex flex-col gap-1.5 bg-slate-50/50 dark:bg-gray-950/50">
+          <Link 
+            href="/download"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 font-medium w-full text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10"
+            title="Get the App for Windows"
+          >
+             <Download size={20} className="shrink-0" />
+             <span className="hidden md:block">Get the App</span>
+          </Link>
           <Link 
             href="/dashboard/settings"
             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 font-medium w-full ${pathname?.startsWith('/dashboard/settings') ? 'bg-slate-200/50 dark:bg-gray-800 text-slate-900 dark:text-white shadow-sm' : 'hover:bg-slate-200/50 dark:hover:bg-gray-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}

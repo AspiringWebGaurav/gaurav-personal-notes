@@ -3,13 +3,22 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# 1. Desktop App Isolation (Keep pc-app strictly local)
+# 1. Desktop Application Build Artifacts (Keep pc-app clean - No junk/binaries)
 # ------------------------------------------------------------------------------
-pc-app/
-/pc-app/
-**/pc-app/
-pc-app/**
-**/pc-app/**
+pc-app/node_modules/
+pc-app/dist/
+pc-app/dist-ssr/
+pc-app/build/
+pc-app/out/
+pc-app/.vite/
+pc-app/.vite-temp/
+pc-app/*.tsbuildinfo
+pc-app/src-tauri/target/
+pc-app/src-tauri/gen/
+pc-app/src-tauri/Wix*
+pc-app/src-tauri/icons/uninstall.ico
+**/target/
+target/
 
 # ------------------------------------------------------------------------------
 # 2. Secrets, Environment Files & Credentials (CRITICAL - ZERO SECRETS)
@@ -197,3 +206,8 @@ $RECYCLE.BIN/
 # Linux
 .fuse_hidden*
 .directory
+
+# Binaries & Executables
+*.exe
+*.msi
+*.dll
