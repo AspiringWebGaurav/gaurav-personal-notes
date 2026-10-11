@@ -26,11 +26,11 @@ impl OAuthServer {
 
         let theme_str = theme.unwrap_or_else(|| "light".to_string());
 
-        // Local development: target http://localhost:3000 (overrideable via GPN_LOGIN_URL)
+        // Production custom domain by default, overrideable in local dev via GPN_LOGIN_URL
         let base_url = if let Ok(custom) = std::env::var("GPN_LOGIN_URL") {
             custom
         } else {
-            "http://localhost:3000".to_string()
+            "https://gpnotes.eu.cc".to_string()
         };
 
         let auth_url = format!("{}/login?port={}&theme={}&prompt=select_account", base_url, port, theme_str);
@@ -632,7 +632,7 @@ impl OAuthServer {
             <div class="email-pill" id="valEmail">{{EMAIL}}</div>
 
             <div class="action-area">
-                <a href="http://localhost:3000" class="btn-primary" id="homeBtn">
+                <a href="https://gpnotes.eu.cc" class="btn-primary" id="homeBtn">
                     <span>Go to Website</span>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M5 12h14"></path>
@@ -1004,7 +1004,7 @@ impl OAuthServer {
             </p>
 
             <div class="action-area">
-                <a href="http://localhost:3000" class="btn-primary" id="homeBtn">
+                <a href="https://gpnotes.eu.cc" class="btn-primary" id="homeBtn">
                     <span>Go to Website</span>
                 </a>
                 <p class="hint-text">

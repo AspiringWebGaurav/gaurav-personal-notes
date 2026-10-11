@@ -270,7 +270,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       const modeParam = isKeep ? 'keep_notes' : 'purge_all';
       const emailParam = userEmail ? `&email=${encodeURIComponent(userEmail)}` : '';
       const baseUrl =
-        (import.meta as any).env?.VITE_WEBSITE_URL || 'http://localhost:3000';
+        (import.meta as any).env?.VITE_WEBSITE_URL || 'https://gpnotes.eu.cc';
 
       await openExternalUrl(
         `${baseUrl}/logged-out?mode=${modeParam}&theme=${themeParam}${emailParam}`
