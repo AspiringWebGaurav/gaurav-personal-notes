@@ -22,7 +22,8 @@ import {
   ArrowUpRight,
   GitBranch,
   ArrowLeft,
-  Terminal,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 interface DocSection {
@@ -38,15 +39,49 @@ export default function DocsPage() {
   const [copiedCodeId, setCopiedCodeId] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
+  // Default in Light Theme as requested
+  const [mounted, setMounted] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    setMounted(true);
+    try {
+      const saved = localStorage.getItem("app-theme");
+      if (saved === "dark" || saved === "light") {
+        setTheme(saved);
+        if (saved === "dark") document.documentElement.classList.add("dark");
+        else document.documentElement.classList.remove("dark");
+      }
+    } catch {}
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      if (next === "dark") {
+        document.documentElement.classList.add("dark");
+        try {
+          localStorage.setItem("app-theme", "dark");
+        } catch {}
+      } else {
+        document.documentElement.classList.remove("dark");
+        try {
+          localStorage.setItem("app-theme", "light");
+        } catch {}
+      }
+      return next;
+    });
+  };
+
   const sections: DocSection[] = [
     { id: "overview", title: "Overview & Philosophy", category: "Getting Started", icon: <BookOpen className="w-3.5 h-3.5" /> },
-    { id: "sync-engine", title: "Sync & Cloud Mirror Engine", category: "Core Architecture", icon: <Cloud className="w-3.5 h-3.5" /> },
-    { id: "account-lifecycle", title: "Account & Multi-User Separation", category: "Core Architecture", icon: <Shield className="w-3.5 h-3.5" /> },
-    { id: "database-sqlite", title: "Local SQLite & Zero-Stale DB", category: "Storage", icon: <Database className="w-3.5 h-3.5" /> },
-    { id: "gphost-media", title: "GPHost Image & Video Storage", category: "Integrations", icon: <ImageIcon className="w-3.5 h-3.5" /> },
-    { id: "formatting-chatgpt", title: "Rich Formatting & ChatGPT Engine", category: "Editor", icon: <Sparkles className="w-3.5 h-3.5" /> },
-    { id: "desktop-shortcuts", title: "System Tray & Desktop Hotkeys", category: "Desktop", icon: <Keyboard className="w-3.5 h-3.5" /> },
-    { id: "external-links", title: "Official Links & Web Portals", category: "Resources", icon: <ExternalLink className="w-3.5 h-3.5" /> },
+    { id: "sync-engine", title: "Sync & Cloud Engine", category: "Core Features", icon: <Cloud className="w-3.5 h-3.5" /> },
+    { id: "account-lifecycle", title: "Account & Logout Options", category: "Core Features", icon: <Shield className="w-3.5 h-3.5" /> },
+    { id: "database-sqlite", title: "Local Database & Storage", category: "Storage", icon: <Database className="w-3.5 h-3.5" /> },
+    { id: "gphost-media", title: "Image & Video Storage", category: "Integrations", icon: <ImageIcon className="w-3.5 h-3.5" /> },
+    { id: "formatting-chatgpt", title: "Editor & Formatting", category: "Editor", icon: <Sparkles className="w-3.5 h-3.5" /> },
+    { id: "desktop-shortcuts", title: "Desktop Hotkeys", category: "Desktop", icon: <Keyboard className="w-3.5 h-3.5" /> },
+    { id: "external-links", title: "Official Links & Portals", category: "Resources", icon: <ExternalLink className="w-3.5 h-3.5" /> },
   ];
 
   const filteredSections = sections.filter(
@@ -91,58 +126,76 @@ export default function DocsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans selection:bg-zinc-800 selection:text-zinc-100 flex flex-col">
-      {/* GitHub Repository-style Top Bar */}
-      <header className="sticky top-0 z-40 h-14 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md px-6 flex items-center justify-between">
+    <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-sans selection:bg-zinc-200 dark:selection:bg-zinc-800 flex flex-col transition-colors">
+      {/* Top Bar */}
+      <header className="sticky top-0 z-40 h-14 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md px-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-100 transition-colors mr-2"
+            className="flex items-center gap-1.5 text-xs text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors mr-2"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>App</span>
           </Link>
-          <div className="h-4 w-[1px] bg-zinc-800" />
+          <div className="h-4 w-[1px] bg-zinc-200 dark:bg-zinc-800" />
           <div className="flex items-center gap-2 text-xs font-mono">
-            <BookOpen className="w-4 h-4 text-zinc-400" />
-            <span className="text-zinc-400">gpn</span>
-            <span className="text-zinc-700">/</span>
-            <span className="text-zinc-400">docs</span>
-            <span className="text-zinc-700">/</span>
-            <span className="font-semibold text-zinc-100 flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5 text-zinc-400" />
+            <BookOpen className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+            <span className="text-zinc-600 dark:text-zinc-400">gpn</span>
+            <span className="text-zinc-400 dark:text-zinc-600">/</span>
+            <span className="text-zinc-600 dark:text-zinc-400">docs</span>
+            <span className="text-zinc-400 dark:text-zinc-600">/</span>
+            <span className="font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+              <FileText className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
               README.md
             </span>
-            <span className="ml-2 px-1.5 py-0.5 rounded-[2px] bg-zinc-800 text-[10px] text-zinc-300">
+            <span className="ml-2 px-1.5 py-0.5 rounded-[2px] bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-[10px] text-zinc-700 dark:text-zinc-300">
               v0.0.1
             </span>
-            <span className="hidden sm:flex items-center gap-1 text-[11px] text-zinc-400">
-              <GitBranch className="w-3 h-3 text-zinc-500" />
+            <span className="hidden sm:flex items-center gap-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+              <GitBranch className="w-3 h-3 text-zinc-400 dark:text-zinc-500" />
               main
             </span>
           </div>
         </div>
 
-        {/* Action Redirect Links */}
+        {/* Action Redirect Links & Live Theme Toggle */}
         <div className="flex items-center gap-2">
           <a
             href="https://gphost.eu.cc/docs"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden md:flex items-center gap-1 px-2.5 py-1 text-xs rounded-[2px] bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 font-medium transition-colors"
+            className="hidden md:flex items-center gap-1 px-2.5 py-1 text-xs rounded-[4px] bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium transition-colors"
           >
             <span>GPHost Docs</span>
-            <ArrowUpRight className="w-3.5 h-3.5 text-zinc-500" />
+            <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400" />
           </a>
           <a
             href="https://github.com/AspiringWebGaurav/gaurav-personal-notes"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-[2px] bg-zinc-100 text-zinc-950 hover:bg-white font-medium transition-colors shadow-2xs"
+            className="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-[4px] bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-white font-medium transition-colors shadow-2xs"
           >
             <span>GitHub</span>
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            title={mounted ? (theme === "dark" ? "Light theme" : "Dark theme") : "Toggle theme"}
+            suppressHydrationWarning
+            className="w-8 h-8 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-850 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors cursor-pointer flex items-center justify-center ml-1"
+          >
+            {mounted ? (
+              theme === "dark" ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-zinc-700" />
+              )
+            ) : (
+              <span className="w-4 h-4 block" />
+            )}
+          </button>
         </div>
       </header>
 
@@ -151,65 +204,63 @@ export default function DocsPage() {
         {/* Main Markdown Content */}
         <main ref={contentRef} className="flex-1 max-w-3xl flex flex-col gap-10 pb-24">
           {/* Title Header */}
-          <div className="border-b border-zinc-800 pb-6">
+          <div className="border-b border-zinc-200 dark:border-zinc-800 pb-6">
             <div className="flex items-center gap-2 mb-2">
-              <span className="px-2 py-0.5 rounded-[2px] bg-emerald-950/60 border border-emerald-800 text-[11px] font-mono text-emerald-300 font-semibold">
-                CENTRALIZED DOCUMENTATION
+              <span className="px-2 py-0.5 rounded-[2px] bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-[11px] font-mono text-emerald-800 dark:text-emerald-300 font-semibold">
+                DOCUMENTATION
               </span>
               <span className="text-xs text-zinc-500 font-mono">Updated for GPN v0.0.1</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-50">
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
               Gaurav Personal Notes (GPN) Documentation
             </h1>
-            <p className="text-sm text-zinc-400 mt-2.5 leading-relaxed">
-              Official centralized documentation for the Gaurav Personal Notes workspace engine.
-              Covers local-first SQLite offline caching, cloud Firestore mirror syncing, GPHost media integration,
-              ChatGPT clipboard parsing, and desktop tray hotkeys.
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2.5 leading-relaxed">
+              Official documentation for the Gaurav Personal Notes workspace.
+              Covers offline storage on your device, cloud account sync, image hosting,
+              editor formatting, and desktop shortcuts.
             </p>
           </div>
 
           {/* Section 1: Overview */}
           <section id="overview" className="scroll-mt-20 flex flex-col gap-4">
-            <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
-              <Hash className="w-5 h-5 text-zinc-500" />
-              <h2 className="text-xl font-bold tracking-tight text-zinc-100">
+            <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-2">
+              <Hash className="w-5 h-5 text-zinc-400 dark:text-zinc-500" />
+              <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
                 Overview & Philosophy
               </h2>
             </div>
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              Gaurav Personal Notes is built on the <strong>Local-First Principle</strong>. Your notes exist directly in a
-              native SQLite database on your device first. The app is completely operational offline with 0ms local latency.
+            <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+              Gaurav Personal Notes is built for speed and privacy. Your notes exist directly on your computer first.
+              The application is fully operational offline without any delay.
             </p>
 
-            {/* GitHub Note Alert */}
-            <div className="rounded-[4px] border-l-4 border-blue-500 bg-blue-950/20 p-4 text-xs text-blue-300 flex items-start gap-3">
-              <Info className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+            <div className="rounded-[4px] border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950/20 p-4 text-xs text-blue-900 dark:text-blue-300 flex items-start gap-3">
+              <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
               <div>
                 <span className="font-bold tracking-wide uppercase text-[11px] block mb-1">
-                  NOTE
+                  OFFLINE FIRST
                 </span>
                 <span>
-                  When unauthenticated or offline, GPN operates as a standalone encrypted vault. Cloud features
-                  only activate when you intentionally connect your account.
+                  Without signing in, GPN works as a fast local notes app. Cloud sync connects only when you log in with your Google account.
                 </span>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
-              <div className="border border-zinc-800 rounded-[3px] p-3.5 bg-zinc-900/40">
-                <span className="font-mono text-xs font-bold text-zinc-100 flex items-center gap-1.5 mb-1.5">
-                  <Database className="w-3.5 h-3.5 text-zinc-400" /> Standalone Local Mode
+              <div className="border border-zinc-200 dark:border-zinc-800 rounded-[4px] p-3.5 bg-zinc-50/70 dark:bg-zinc-900/40">
+                <span className="font-mono text-xs font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5 mb-1.5">
+                  <Database className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" /> Local Storage
                 </span>
-                <p className="text-xs text-zinc-400 leading-normal">
-                  0ms latency, zero tracking, local SQLite database on disk. Completely functional offline.
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-normal">
+                  Instant response, zero tracking, notes stored directly on your computer. Fully usable offline.
                 </p>
               </div>
-              <div className="border border-zinc-800 rounded-[3px] p-3.5 bg-zinc-900/40">
-                <span className="font-mono text-xs font-bold text-zinc-100 flex items-center gap-1.5 mb-1.5">
-                  <Cloud className="w-3.5 h-3.5 text-zinc-400" /> Cloud Mirroring
+              <div className="border border-zinc-200 dark:border-zinc-800 rounded-[4px] p-3.5 bg-zinc-50/70 dark:bg-zinc-900/40">
+                <span className="font-mono text-xs font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5 mb-1.5">
+                  <Cloud className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" /> Cloud Sync
                 </span>
-                <p className="text-xs text-zinc-400 leading-normal">
-                  Real-time mirror with Firebase Firestore. Your local database serves as the fast cache and primary source.
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-normal">
+                  Connect your account to back up and sync notes across your devices automatically.
                 </p>
               </div>
             </div>
@@ -217,341 +268,239 @@ export default function DocsPage() {
 
           {/* Section 2: Sync Engine */}
           <section id="sync-engine" className="scroll-mt-20 flex flex-col gap-4">
-            <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
-              <Hash className="w-5 h-5 text-zinc-500" />
-              <h2 className="text-xl font-bold tracking-tight text-zinc-100">
+            <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-2">
+              <Hash className="w-5 h-5 text-zinc-400 dark:text-zinc-500" />
+              <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
                 Sync & Cloud Mirror Engine
               </h2>
             </div>
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              The sync engine runs as an event-driven background worker. It monitors local updates and synchronizes them
-              bidirectionally with Firestore using Last-Write-Wins (LWW) resolution and monotonic version clocks.
+            <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+              When connected to your account, changes sync automatically in the background so your notes are always up to date.
             </p>
 
-            {/* GitHub Tip Alert */}
-            <div className="rounded-[4px] border-l-4 border-emerald-500 bg-emerald-950/20 p-4 text-xs text-emerald-300 flex items-start gap-3">
-              <Lightbulb className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+            <div className="rounded-[4px] border-l-4 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 p-4 text-xs text-emerald-900 dark:text-emerald-300 flex items-start gap-3">
+              <Lightbulb className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <div>
                 <span className="font-bold tracking-wide uppercase text-[11px] block mb-1">
-                  TIP: PER-NOTE LOCAL ONLY PRIVACY
+                  KEEP NOTES LOCAL ONLY
                 </span>
                 <span>
-                  Need a confidential note that should never leave your machine? Click the <code>CLOUD SYNC</code> pill
-                  in the editor header to toggle it to <code>LOCAL ONLY</code>. Even when logged into a cloud account,
-                  that note is strictly barred from syncing.
+                  Want a confidential note to stay strictly on this device? Toggle the sync badge in the note header to keep it local only.
                 </span>
               </div>
-            </div>
-
-            {/* Code Snippet */}
-            <div className="flex flex-col gap-1.5">
-              <div className="flex items-center justify-between text-xs text-zinc-400 font-mono">
-                <span>Firestore Sync Model: users/&#123;uid&#125;/notes/&#123;noteId&#125;</span>
-                <button
-                  type="button"
-                  onClick={() =>
-                    copyCode(
-                      `// Cloud Firestore Mirror Schema\n{\n  "title": string,\n  "content": string,\n  "wordCount": number,\n  "isArchived": boolean,\n  "isDeleted": boolean,\n  "updatedAt": timestamp (ms),\n  "syncVersion": number\n}`,
-                      "schema-code"
-                    )
-                  }
-                  className="flex items-center gap-1 hover:text-zinc-100 transition-colors cursor-pointer"
-                >
-                  {copiedCodeId === "schema-code" ? (
-                    <>
-                      <Check className="w-3 h-3 text-emerald-500" /> Copied
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3 h-3" /> Copy
-                    </>
-                  )}
-                </button>
-              </div>
-              <pre className="p-3.5 rounded-[4px] bg-zinc-900 text-zinc-100 text-xs font-mono overflow-x-auto border border-zinc-800">
-                <code>{`// Cloud Firestore Mirror Schema
-{
-  "title": string,
-  "content": string,
-  "wordCount": number,
-  "isArchived": boolean,
-  "isDeleted": boolean,
-  "updatedAt": timestamp (ms),
-  "syncVersion": number
-}`}</code>
-              </pre>
             </div>
           </section>
 
           {/* Section 3: Account Lifecycle */}
           <section id="account-lifecycle" className="scroll-mt-20 flex flex-col gap-4">
-            <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
-              <Hash className="w-5 h-5 text-zinc-500" />
-              <h2 className="text-xl font-bold tracking-tight text-zinc-100">
-                Account & Multi-User Separation
+            <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-2">
+              <Hash className="w-5 h-5 text-zinc-400 dark:text-zinc-500" />
+              <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+                Account & Logout Options
               </h2>
             </div>
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              When sharing a PC across multiple accounts, privacy is strictly guaranteed. GPN implements a
-              <strong> Clean Logout Lifecycle</strong>.
+            <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+              When logging out from the desktop app, you have two clear choices:
             </p>
 
-            {/* GitHub Important Alert */}
-            <div className="rounded-[4px] border-l-4 border-purple-500 bg-purple-950/20 p-4 text-xs text-purple-300 flex items-start gap-3">
-              <Shield className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
-              <div>
-                <span className="font-bold tracking-wide uppercase text-[11px] block mb-1">
-                  IMPORTANT: ZERO LOCAL DATA LEAKAGE
-                </span>
-                <span>
-                  When an account logs out, all synced local cache rows and session keys are wiped cleanly.
-                  When another user logs in, they receive only their own cloud files with zero residual contamination.
-                </span>
+            <div className="border border-zinc-200 dark:border-zinc-800 rounded-[4px] p-4 bg-zinc-50/70 dark:bg-zinc-900/30 flex flex-col gap-3">
+              <div className="text-xs text-zinc-700 dark:text-zinc-300 space-y-2">
+                <div className="flex items-start gap-2">
+                  <span className="font-semibold text-zinc-900 dark:text-zinc-100 min-w-[200px]">1. Keep notes on this computer:</span>
+                  <span className="text-zinc-600 dark:text-zinc-400">Notes stay saved on your device so you can view and edit offline.</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="font-semibold text-zinc-900 dark:text-zinc-100 min-w-[200px]">2. Remove notes from this computer:</span>
+                  <span className="text-zinc-600 dark:text-zinc-400">Local notes are cleared from the device for security, staying safe in your account.</span>
+                </div>
               </div>
-            </div>
-
-            <div className="border border-zinc-800 rounded-[3px] p-4 bg-zinc-900/30 flex flex-col gap-2">
-              <h3 className="text-xs font-bold font-mono uppercase text-zinc-300">
-                Desktop OAuth Web Bridge
-              </h3>
-              <p className="text-xs text-zinc-400 leading-normal">
-                Desktop sign-in does not require entering Google credentials inside webviews. It launches your system browser to
+              <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800 flex items-center gap-3 text-xs">
                 <Link
-                  href="/desktop-auth"
-                  className="inline-flex items-center gap-0.5 text-blue-400 hover:underline mx-1 font-mono font-medium"
+                  href="/login"
+                  className="inline-flex items-center gap-1 text-zinc-900 dark:text-zinc-100 font-semibold hover:underline"
                 >
-                  /desktop-auth <ArrowUpRight className="w-2.5 h-2.5" />
+                  Sign in page <ArrowUpRight className="w-3 h-3" />
                 </Link>
-                and delivers the authentication token securely via a single-use loopback socket on <code>127.0.0.1</code>.
-              </p>
+                <span>&bull;</span>
+                <Link
+                  href="/logged-out"
+                  className="inline-flex items-center gap-1 text-zinc-900 dark:text-zinc-100 font-semibold hover:underline"
+                >
+                  Logout confirmation page <ArrowUpRight className="w-3 h-3" />
+                </Link>
+              </div>
             </div>
           </section>
 
-          {/* Section 4: Local SQLite */}
+          {/* Section 4: Local Storage */}
           <section id="database-sqlite" className="scroll-mt-20 flex flex-col gap-4">
-            <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
-              <Hash className="w-5 h-5 text-zinc-500" />
-              <h2 className="text-xl font-bold tracking-tight text-zinc-100">
-                Local SQLite & Zero-Stale Database
+            <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-2">
+              <Hash className="w-5 h-5 text-zinc-400 dark:text-zinc-500" />
+              <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+                Local Database & Storage
               </h2>
             </div>
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              The local database runs SQLite in <strong>WAL (Write-Ahead Logging)</strong> mode with auto-vacuuming and clean start lifecycles.
+            <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+              Your notes are stored in a fast local SQLite database file on your device.
             </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="border border-zinc-800 p-3 rounded-[3px] bg-zinc-900/30">
-                <span className="text-[10px] font-mono uppercase text-zinc-500 block mb-1">Journal Mode</span>
-                <span className="font-mono text-xs font-bold text-zinc-100">WAL (Concurrency)</span>
-              </div>
-              <div className="border border-zinc-800 p-3 rounded-[3px] bg-zinc-900/30">
-                <span className="text-[10px] font-mono uppercase text-zinc-500 block mb-1">Auto-Vacuum</span>
-                <span className="font-mono text-xs font-bold text-zinc-100">Incremental & Full</span>
-              </div>
-              <div className="border border-zinc-800 p-3 rounded-[3px] bg-zinc-900/30">
-                <span className="text-[10px] font-mono uppercase text-zinc-500 block mb-1">Clean State</span>
-                <span className="font-mono text-xs font-bold text-zinc-100">Zero Stale Records</span>
-              </div>
-            </div>
-
-            {/* GitHub Warning Alert */}
-            <div className="rounded-[4px] border-l-4 border-amber-500 bg-amber-950/20 p-4 text-xs text-amber-300 flex items-start gap-3">
-              <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-              <div>
-                <span className="font-bold tracking-wide uppercase text-[11px] block mb-1">
-                  WARNING: DATABASE PURGE
-                </span>
-                <span>
-                  Purging notes in the Database tab deletes all local rows and triggers vacuuming.
-                  If logged into Cloud Sync, notes are soft-deleted in Firestore unless local-only privacy is set.
-                </span>
-              </div>
-            </div>
           </section>
 
-          {/* Section 5: GPHost Media */}
+          {/* Section 5: Media */}
           <section id="gphost-media" className="scroll-mt-20 flex flex-col gap-4">
-            <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
-              <Hash className="w-5 h-5 text-zinc-500" />
-              <h2 className="text-xl font-bold tracking-tight text-zinc-100">
-                GPHost Image & Video Storage
+            <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-2">
+              <Hash className="w-5 h-5 text-zinc-400 dark:text-zinc-500" />
+              <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+                Image & Video Storage
               </h2>
             </div>
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              To eliminate Firebase Storage billing, GPN integrates directly with <strong>GPHost</strong> (
+            <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+              Media pasted or uploaded into notes is saved via GPHost media hosting (
               <a
                 href="https://gphost.eu.cc"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 hover:underline font-mono"
+                className="text-blue-600 dark:text-blue-400 hover:underline font-mono"
               >
                 https://gphost.eu.cc
               </a>
-              ). Uploads and pasted media are hosted via your GPHost API token.
-            </p>
-
-            {/* Code Snippet */}
-            <div className="flex flex-col gap-1.5">
-              <div className="flex items-center justify-between text-xs text-zinc-400 font-mono">
-                <span>Direct Upload Endpoint (cURL)</span>
-                <button
-                  type="button"
-                  onClick={() =>
-                    copyCode(
-                      `curl -H "Authorization: Bearer YOUR_GPHOST_API_KEY" \\\n  -F "file=@screenshot.png" \\\n  https://gphost.eu.cc/api/v1/upload`,
-                      "gphost-curl"
-                    )
-                  }
-                  className="flex items-center gap-1 hover:text-zinc-100 transition-colors cursor-pointer"
-                >
-                  {copiedCodeId === "gphost-curl" ? (
-                    <>
-                      <Check className="w-3 h-3 text-emerald-500" /> Copied
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3 h-3" /> Copy
-                    </>
-                  )}
-                </button>
-              </div>
-              <pre className="p-3.5 rounded-[4px] bg-zinc-900 text-zinc-100 text-xs font-mono overflow-x-auto border border-zinc-800">
-                <code>{`curl -H "Authorization: Bearer YOUR_GPHOST_API_KEY" \\
-  -F "file=@screenshot.png" \\
-  https://gphost.eu.cc/api/v1/upload`}</code>
-              </pre>
-            </div>
-
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              <strong>Automatic Deletion &amp; Zero Stale Files:</strong> When you click &quot;Remove&quot; on an image or video, or when a note / view-once burn note is deleted permanently, GPN automatically dispatches a GPHost delete request to ensure no stale or orphaned files linger on your CDN storage.
+              ).
             </p>
           </section>
 
-          {/* Section 6: Formatting & ChatGPT */}
+          {/* Section 6: Formatting */}
           <section id="formatting-chatgpt" className="scroll-mt-20 flex flex-col gap-4">
-            <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
-              <Hash className="w-5 h-5 text-zinc-500" />
-              <h2 className="text-xl font-bold tracking-tight text-zinc-100">
-                Rich Formatting & ChatGPT Engine
+            <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-2">
+              <Hash className="w-5 h-5 text-zinc-400 dark:text-zinc-500" />
+              <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+                Editor & Formatting
               </h2>
             </div>
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              When copying responses from ChatGPT, Claude, or Notion, traditional editors distort spacing and break lists.
-              GPN includes a specialized clipboard parser that preserves headings, code fences, task lists, markdown tables, bold/italics, and emojis seamlessly.
+            <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+              The editor automatically preserves headings, code blocks, bullet points, checklists, bold text, and markdown tables when pasting from other applications.
             </p>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs font-mono">
-              <div className="p-2.5 rounded-[2px] border border-zinc-800 bg-zinc-900/40">
-                ✅ Headings & Titles
-              </div>
-              <div className="p-2.5 rounded-[2px] border border-zinc-800 bg-zinc-900/40">
-                ✅ Fenced Code Blocks
-              </div>
-              <div className="p-2.5 rounded-[2px] border border-zinc-800 bg-zinc-900/40">
-                ✅ Bulleted & Task Lists
-              </div>
-              <div className="p-2.5 rounded-[2px] border border-zinc-800 bg-zinc-900/40">
-                ✅ Markdown Tables
-              </div>
-              <div className="p-2.5 rounded-[2px] border border-zinc-800 bg-zinc-900/40">
-                ✅ Bold, Italic, Code
-              </div>
-              <div className="p-2.5 rounded-[2px] border border-zinc-800 bg-zinc-900/40">
-                ✅ Emojis & Blockquotes
-              </div>
-            </div>
           </section>
 
           {/* Section 7: Desktop Shortcuts */}
           <section id="desktop-shortcuts" className="scroll-mt-20 flex flex-col gap-4">
-            <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
-              <Hash className="w-5 h-5 text-zinc-500" />
-              <h2 className="text-xl font-bold tracking-tight text-zinc-100">
-                System Tray & Desktop Hotkeys
+            <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-2">
+              <Hash className="w-5 h-5 text-zinc-400 dark:text-zinc-500" />
+              <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+                Desktop Hotkeys
               </h2>
             </div>
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              GPN desktop minimizes directly to the Win32 system tray with quick capture shortcuts.
-            </p>
-
-            {/* GitHub Table */}
-            <div className="border border-zinc-800 rounded-[3px] overflow-hidden text-xs">
+            <div className="border border-zinc-200 dark:border-zinc-800 rounded-[4px] overflow-hidden text-xs">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-zinc-900 border-b border-zinc-800 font-mono text-[11px] text-zinc-300">
+                  <tr className="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 font-mono text-[11px] text-zinc-700 dark:text-zinc-300">
                     <th className="py-2.5 px-4 font-semibold">Shortcut</th>
                     <th className="py-2.5 px-4 font-semibold">Action</th>
-                    <th className="py-2.5 px-4 font-semibold">Scope</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-800 font-mono text-[11px]">
-                  <tr className="hover:bg-zinc-900/40">
-                    <td className="py-2.5 px-4 font-bold text-zinc-100">Ctrl + Shift + N</td>
-                    <td className="py-2.5 px-4 text-zinc-300">Instant Quick Capture Modal</td>
-                    <td className="py-2.5 px-4 text-emerald-400">Global Windows</td>
+                <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 font-mono text-[11px]">
+                  <tr className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/40">
+                    <td className="py-2.5 px-4 font-bold text-zinc-900 dark:text-zinc-100">Ctrl + Shift + N</td>
+                    <td className="py-2.5 px-4 text-zinc-600 dark:text-zinc-300">Quick Note Capture</td>
                   </tr>
-                  <tr className="hover:bg-zinc-900/40">
-                    <td className="py-2.5 px-4 font-bold text-zinc-100">Ctrl + N</td>
-                    <td className="py-2.5 px-4 text-zinc-300">Create New Note</td>
-                    <td className="py-2.5 px-4 text-zinc-500">App Window</td>
+                  <tr className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/40">
+                    <td className="py-2.5 px-4 font-bold text-zinc-900 dark:text-zinc-100">Ctrl + N</td>
+                    <td className="py-2.5 px-4 text-zinc-600 dark:text-zinc-300">New Note</td>
                   </tr>
-                  <tr className="hover:bg-zinc-900/40">
-                    <td className="py-2.5 px-4 font-bold text-zinc-100">Ctrl + K</td>
-                    <td className="py-2.5 px-4 text-zinc-300">Search Notes Across Vault</td>
-                    <td className="py-2.5 px-4 text-zinc-500">App Window</td>
-                  </tr>
-                  <tr className="hover:bg-zinc-900/40">
-                    <td className="py-2.5 px-4 font-bold text-zinc-100">Ctrl + ,</td>
-                    <td className="py-2.5 px-4 text-zinc-300">Toggle Permissions / Settings</td>
-                    <td className="py-2.5 px-4 text-zinc-500">App Window</td>
-                  </tr>
-                  <tr className="hover:bg-zinc-900/40">
-                    <td className="py-2.5 px-4 font-bold text-zinc-100">Esc</td>
-                    <td className="py-2.5 px-4 text-zinc-300">Dismiss Open Modals & Search</td>
-                    <td className="py-2.5 px-4 text-zinc-500">App Window</td>
+                  <tr className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/40">
+                    <td className="py-2.5 px-4 font-bold text-zinc-900 dark:text-zinc-100">Ctrl + K</td>
+                    <td className="py-2.5 px-4 text-zinc-600 dark:text-zinc-300">Search Notes</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </section>
 
-          {/* Section 8: External Links */}
+          {/* Section 8: Official Links & Portals */}
           <section id="external-links" className="scroll-mt-20 flex flex-col gap-4">
-            <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
-              <Hash className="w-5 h-5 text-zinc-500" />
-              <h2 className="text-xl font-bold tracking-tight text-zinc-100">
-                Official Links & Web Portals
+            <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-2">
+              <Hash className="w-5 h-5 text-zinc-400 dark:text-zinc-500" />
+              <h2 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+                Official Links & Portals
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <a
-                href="https://gpnotes.eu.cc"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-3.5 rounded-[3px] border border-zinc-800 bg-zinc-900/50 hover:border-zinc-600 transition-colors group"
+              <Link
+                href="/"
+                className="flex items-center justify-between p-3.5 rounded-[4px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group"
               >
                 <div>
-                  <span className="text-xs font-bold font-mono text-zinc-100 group-hover:text-blue-400 transition-colors">
-                    GPN Web Application
+                  <span className="text-xs font-bold font-mono text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    Website Home
                   </span>
-                  <span className="text-[11px] text-zinc-500 block mt-0.5">gpnotes.eu.cc</span>
+                  <span className="text-[11px] text-zinc-500 block mt-0.5">/</span>
                 </div>
-                <ExternalLink className="w-4 h-4 text-zinc-500 group-hover:text-blue-400 transition-colors" />
-              </a>
+                <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              </Link>
+
+              <Link
+                href="/login"
+                className="flex items-center justify-between p-3.5 rounded-[4px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group"
+              >
+                <div>
+                  <span className="text-xs font-bold font-mono text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    Account Sign In
+                  </span>
+                  <span className="text-[11px] text-zinc-500 block mt-0.5">/login</span>
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              </Link>
+
+              <Link
+                href="/logged-out"
+                className="flex items-center justify-between p-3.5 rounded-[4px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group"
+              >
+                <div>
+                  <span className="text-xs font-bold font-mono text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    Logout Confirmation
+                  </span>
+                  <span className="text-[11px] text-zinc-500 block mt-0.5">/logged-out</span>
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              </Link>
+
+              <Link
+                href="/privacy"
+                className="flex items-center justify-between p-3.5 rounded-[4px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group"
+              >
+                <div>
+                  <span className="text-xs font-bold font-mono text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    Privacy Policy
+                  </span>
+                  <span className="text-[11px] text-zinc-500 block mt-0.5">/privacy</span>
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              </Link>
+
+              <Link
+                href="/terms"
+                className="flex items-center justify-between p-3.5 rounded-[4px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group"
+              >
+                <div>
+                  <span className="text-xs font-bold font-mono text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    Terms of Service
+                  </span>
+                  <span className="text-[11px] text-zinc-500 block mt-0.5">/terms</span>
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              </Link>
 
               <a
                 href="https://gphost.eu.cc/docs"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between p-3.5 rounded-[3px] border border-zinc-800 bg-zinc-900/50 hover:border-zinc-600 transition-colors group"
+                className="flex items-center justify-between p-3.5 rounded-[4px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/50 hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors group"
               >
                 <div>
-                  <span className="text-xs font-bold font-mono text-zinc-100 group-hover:text-blue-400 transition-colors">
-                    GPHost API Documentation
+                  <span className="text-xs font-bold font-mono text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    GPHost API
                   </span>
                   <span className="text-[11px] text-zinc-500 block mt-0.5">gphost.eu.cc/docs</span>
                 </div>
-                <ExternalLink className="w-4 h-4 text-zinc-500 group-hover:text-blue-400 transition-colors" />
+                <ExternalLink className="w-4 h-4 text-zinc-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
               </a>
             </div>
           </section>
@@ -560,28 +509,24 @@ export default function DocsPage() {
         {/* Right Sticky Table of Contents (Index) */}
         <aside className="w-64 hidden lg:block shrink-0 select-none">
           <div className="sticky top-20 flex flex-col gap-4">
-            {/* Filter input */}
             <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
+              <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Filter topics..."
-                className="w-full pl-8 pr-2.5 py-1 text-xs rounded-[2px] bg-zinc-900 border border-zinc-800 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-600 font-mono"
+                placeholder="Search topics..."
+                className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[4px] pl-8 pr-3 py-1.5 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-600 font-mono transition-colors"
               />
             </div>
 
-            <div className="flex items-center justify-between pb-1 border-b border-zinc-800">
-              <span className="text-[10px] font-mono font-bold tracking-wider uppercase text-zinc-500">
-                On this page
-              </span>
-              <span className="text-[10px] font-mono text-zinc-500">
+            <div className="flex items-center justify-between text-xs font-mono text-zinc-500">
+              <span className="font-semibold uppercase text-[10px] tracking-wider text-zinc-400 dark:text-zinc-500">Index</span>
+              <span className="text-[11px]">
                 {filteredSections.length} topics
               </span>
             </div>
 
-            {/* Navigation links */}
             <nav className="flex flex-col gap-1 max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
               {filteredSections.map((section) => {
                 const isSelected = activeSection === section.id;
@@ -590,13 +535,13 @@ export default function DocsPage() {
                     key={section.id}
                     type="button"
                     onClick={() => scrollToSection(section.id)}
-                    className={`w-full flex items-center gap-2 px-2.5 py-1.5 text-xs rounded-[2px] text-left transition-colors cursor-pointer ${
+                    className={`w-full flex items-center gap-2 px-2.5 py-1.5 text-xs rounded-[4px] text-left transition-colors cursor-pointer ${
                       isSelected
-                        ? "bg-zinc-800 text-zinc-100 font-semibold"
-                        : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 font-normal"
+                        ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold"
+                        : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900 font-normal"
                     }`}
                   >
-                    <span className={isSelected ? "text-zinc-100" : "text-zinc-500"}>
+                    <span className={isSelected ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-400 dark:text-zinc-500"}>
                       {section.icon}
                     </span>
                     <span className="truncate">{section.title}</span>
@@ -605,8 +550,8 @@ export default function DocsPage() {
               })}
             </nav>
 
-            <div className="pt-2 border-t border-zinc-800 flex items-center justify-between text-[10px] font-mono text-zinc-500">
-              <span>Scroll-spy active</span>
+            <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between text-[10px] font-mono text-zinc-400 dark:text-zinc-500">
+              <span>Documentation index</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             </div>
           </div>
