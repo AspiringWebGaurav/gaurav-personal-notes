@@ -47,6 +47,8 @@ export const GpnImage = Image.extend({
       mergeAttributes(this.options.HTMLAttributes, attrs, {
         class: 'gpn-image-attachment rounded-lg max-w-full max-h-[640px] object-contain my-3 border border-zinc-200 dark:border-zinc-800 shadow-sm block cursor-pointer transition',
         loading: 'eager',
+        referrerpolicy: 'no-referrer',
+        onerror: "if(!this.dataset.retry){this.dataset.retry='1';var s=this.src;this.src=s+(s.includes('?')?'&':'?')+'t='+Date.now();}else{this.classList.add('gpn-image-failed');}",
       }),
     ];
   },
