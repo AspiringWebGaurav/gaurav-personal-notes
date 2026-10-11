@@ -119,19 +119,23 @@ export class NotesRepository {
   async emptyTrash(): Promise<void> {
     const q = query(this.getCollectionRef(), where("isArchived", "==", true));
     const snapshot = await getDocs(q);
+    const allMedia: Array<{ fileId?: string; url?: string }> = [];
+    
     for (const docSnap of snapshot.docs) {
       try {
         const content = docSnap.data()?.content;
         if (content) {
-          const media = gphostService.extractGphostMedia(content);
-          if (media.length > 0) {
-            gphostService.deleteMediaBatch(media).catch(console.warn);
-          }
+          allMedia.push(...gphostService.extractGphostMedia(content));
         }
       } catch (err) {
-        console.warn('Failed to pre-clean GPHost media in emptyTrash:', err);
+        console.warn('Failed to extract GPHost media in emptyTrash:', err);
       }
     }
+    
+    if (allMedia.length > 0) {
+      gphostService.deleteMediaBatch(allMedia).catch(console.warn);
+    }
+
     const deletePromises = snapshot.docs.map(docSnap => deleteDoc(docSnap.ref));
     await Promise.all(deletePromises);
   }

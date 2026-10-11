@@ -77,6 +77,7 @@ export class CollabRepository {
       const THREE_HOURS = 3 * 60 * 60 * 1000;
       const activeRooms: ActiveRoom[] = [];
       const roomsToDelete: string[] = [];
+      const deletingSet = new Set<string>();
       
       currentDocs.forEach((docSnap) => {
         const data = docSnap.data();
@@ -84,13 +85,16 @@ export class CollabRepository {
         
         if (now - updatedAt <= THREE_HOURS) {
           activeRooms.push({ roomId: docSnap.id, updatedAt });
-        } else {
+        } else if (!deletingSet.has(docSnap.id)) {
+          deletingSet.add(docSnap.id);
           roomsToDelete.push(docSnap.id);
         }
       });
       
-      // Auto-clean expired rooms so they drop from the active count
-      Promise.all(roomsToDelete.map(id => this.deleteRoom(id))).catch(console.error);
+      // Auto-clean expired rooms only if any exist
+      if (roomsToDelete.length > 0) {
+        Promise.all(roomsToDelete.map((id) => this.deleteRoom(id))).catch(console.error);
+      }
       
       callback(activeRooms.sort((a, b) => b.updatedAt - a.updatedAt));
     };
@@ -100,11 +104,28 @@ export class CollabRepository {
       evaluate();
     });
 
-    // Re-evaluate every 60 seconds to catch rooms that expire while the dashboard is open
-    const intervalId = setInterval(evaluate, 60000);
+    // Check expiration when user returns to tab
+    const handleVisibilityChange = () => {
+      if (typeof document !== "undefined" && !document.hidden) {
+        evaluate();
+      }
+    };
+
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+    }
+
+    // Gentle re-evaluation (every 3 minutes), strictly skipped when tab is in background
+    const intervalId = setInterval(() => {
+      if (typeof document !== "undefined" && document.hidden) return;
+      evaluate();
+    }, 180000);
 
     return () => {
       clearInterval(intervalId);
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+      }
       unsub();
     };
   }

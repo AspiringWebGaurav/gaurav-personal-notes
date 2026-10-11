@@ -18,7 +18,7 @@ export default function TermsPage() {
             
             <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">2. Description of Service</h2>
             <p>
-              GPN Workspace provides users with access to a rich collection of resources, including enterprise knowledge management, collaboration tools, and personalized content formatting capabilities.
+              GPN Workspace provides users with access to a rich collection of resources, including note management, collaboration tools, and rich text formatting capabilities.
             </p>
 
             <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">3. Privacy Policy</h2>

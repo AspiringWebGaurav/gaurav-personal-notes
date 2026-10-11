@@ -59,7 +59,7 @@ export default function SettingsPage() {
         {/* Header */}
         <div>
           <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">Settings</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-2 text-lg">Manage your enterprise account preferences and security.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-2 text-lg">Manage your account preferences and settings.</p>
         </div>
 
         <div className="flex flex-col md:flex-row gap-8">
@@ -126,7 +126,7 @@ export default function SettingsPage() {
               {activeTab === "appearance" && (
                 <div className="space-y-6 animate-in fade-in duration-300">
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Appearance</h2>
-                  <p className="text-slate-500 dark:text-slate-400">Customize how GPN Enterprise looks on your device.</p>
+                  <p className="text-slate-500 dark:text-slate-400">Customize how your workspace looks on your device.</p>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
                     <button 

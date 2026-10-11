@@ -105,11 +105,14 @@ async function handleDeleteRequest(req: NextRequest) {
             },
           });
           attempts.push({ endpoint: `/api/files/${targetId}`, status: res1.status });
+          if ((res1.status >= 200 && res1.status < 300) || res1.status === 404) {
+            return { targetId, attempts, dispatched: true };
+          }
         } catch {
           attempts.push({ endpoint: `/api/files/${targetId}`, status: 500 });
         }
 
-        // 2. DELETE /api/v1/files/:id
+        // 2. DELETE /api/v1/files/:id (fallback if primary endpoint not matched)
         try {
           const res2 = await fetch(`https://gphost.eu.cc/api/v1/files/${targetId}`, {
             method: "DELETE",
@@ -118,11 +121,14 @@ async function handleDeleteRequest(req: NextRequest) {
             },
           });
           attempts.push({ endpoint: `/api/v1/files/${targetId}`, status: res2.status });
+          if ((res2.status >= 200 && res2.status < 300) || res2.status === 404) {
+            return { targetId, attempts, dispatched: true };
+          }
         } catch {
           attempts.push({ endpoint: `/api/v1/files/${targetId}`, status: 500 });
         }
 
-        // 3. DELETE /api/files/delete with JSON body
+        // 3. DELETE /api/files/delete with JSON body (final fallback)
         try {
           const res3 = await fetch(`https://gphost.eu.cc/api/files/delete`, {
             method: "DELETE",

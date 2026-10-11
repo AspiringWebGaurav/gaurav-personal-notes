@@ -37,12 +37,12 @@ export const metadata: Metadata = {
       : 'http://localhost:3000'
   ),
   title: "GPN | Gaurav Personal Notes",
-  description: "Enterprise-grade personal knowledge base and real-time collaboration workspace.",
-  keywords: ["knowledge base", "notes", "collaboration", "real-time", "workspace", "gpn", "enterprise", "productivity"],
+  description: "Fast, secure personal notes and shared workspace.",
+  keywords: ["notes", "collaboration", "workspace", "gpn", "productivity"],
   authors: [{ name: "Gaurav" }],
   openGraph: {
-    title: "GPN | Enterprise Knowledge Base",
-    description: "Enterprise-grade personal knowledge base and real-time collaboration workspace.",
+    title: "GPN | Personal Notes",
+    description: "Fast, secure personal notes and shared workspace.",
     siteName: "GPN",
     images: [
       {
@@ -57,8 +57,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "GPN | Enterprise Knowledge Base",
-    description: "Enterprise-grade personal knowledge base and real-time collaboration workspace.",
+    title: "GPN | Personal Notes",
+    description: "Fast, secure personal notes and shared workspace.",
     images: ["/apple-icon.png"],
   },
   icons: {
