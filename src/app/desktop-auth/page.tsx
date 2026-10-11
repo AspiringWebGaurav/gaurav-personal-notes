@@ -4,7 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/features/auth/useAuthStore";
 import { loginWithGoogle } from "@/features/auth/AuthProvider";
-import { Laptop, CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
+import { Laptop, CheckCircle2, ArrowRight, Loader2, LogOut } from "lucide-react";
 
 function DesktopAuthContent() {
   const searchParams = useSearchParams();
@@ -16,21 +16,21 @@ function DesktopAuthContent() {
   const [isConnecting, setIsConnecting] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
 
-  const handleConnect = async () => {
-    if (!user || !port) return;
+  const handleConnect = async (targetUser = user) => {
+    if (!targetUser || !port) return;
     setIsConnecting(true);
     setStatus("Generating secure desktop token...");
 
     try {
-      const idToken = await user.getIdToken(true);
+      const idToken = await targetUser.getIdToken(true);
       // @ts-expect-error stsTokenManager may contain refreshToken
-      const refreshToken = user.refreshToken || user.stsTokenManager?.refreshToken || "";
+      const refreshToken = targetUser.refreshToken || targetUser.stsTokenManager?.refreshToken || "";
 
       const targetUrl = new URL(`http://127.0.0.1:${port}/callback`);
-      targetUrl.searchParams.set("uid", user.uid);
-      targetUrl.searchParams.set("email", user.email || "");
-      if (user.displayName) targetUrl.searchParams.set("displayName", user.displayName);
-      if (user.photoURL) targetUrl.searchParams.set("photoUrl", user.photoURL);
+      targetUrl.searchParams.set("uid", targetUser.uid);
+      targetUrl.searchParams.set("email", targetUser.email || "");
+      if (targetUser.displayName) targetUrl.searchParams.set("displayName", targetUser.displayName);
+      if (targetUser.photoURL) targetUrl.searchParams.set("photoUrl", targetUser.photoURL);
       targetUrl.searchParams.set("idToken", idToken);
       if (refreshToken) targetUrl.searchParams.set("refreshToken", refreshToken);
       targetUrl.searchParams.set("theme", isLight ? "light" : "dark");
@@ -44,13 +44,7 @@ function DesktopAuthContent() {
     }
   };
 
-  useEffect(() => {
-    // If user is already authenticated and port is provided, auto-trigger connect ONLY if not asked to select account
-    if (!loading && user && port && !isConnecting && !status && promptParam !== "select_account") {
-      handleConnect();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, user, port, promptParam]);
+  // DO NOT auto-transfer on mount so user can freely switch accounts or choose which account to connect
 
   return (
     <div
@@ -140,7 +134,7 @@ function DesktopAuthContent() {
             )}
 
             <button
-              onClick={handleConnect}
+              onClick={() => handleConnect()}
               disabled={isConnecting}
               className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
             >
@@ -157,6 +151,9 @@ function DesktopAuthContent() {
                   const { auth } = await import("@/core/config/firebase");
                   await signOut(auth);
                   await loginWithGoogle();
+                  if (port && auth.currentUser) {
+                    await handleConnect(auth.currentUser);
+                  }
                 } catch (e) {
                   console.error("Switch account error:", e);
                 }
@@ -169,15 +166,43 @@ function DesktopAuthContent() {
             >
               <span>Sign in with another account</span>
             </button>
+
+            <button
+              type="button"
+              disabled={isConnecting}
+              onClick={async () => {
+                try {
+                  const { signOut } = await import("firebase/auth");
+                  const { auth } = await import("@/core/config/firebase");
+                  await signOut(auth);
+                } catch (e) {
+                  console.error("Logout error:", e);
+                }
+              }}
+              className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-xs font-medium text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 transition-colors cursor-pointer disabled:opacity-50"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Log out</span>
+            </button>
           </div>
-        ) : (
+          ) : (
           <div className="space-y-4">
             <p className={`text-xs leading-relaxed ${isLight ? "text-zinc-600" : "text-zinc-400"}`}>
               Sign in with your Google account to connect your cloud notes with your Windows desktop app.
             </p>
 
             <button
-              onClick={() => loginWithGoogle()}
+              onClick={async () => {
+                try {
+                  await loginWithGoogle();
+                  const { auth } = await import("@/core/config/firebase");
+                  if (port && auth.currentUser) {
+                    await handleConnect(auth.currentUser);
+                  }
+                } catch (e) {
+                  console.error("Login error:", e);
+                }
+              }}
               className={`w-full flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-lg text-xs font-semibold transition-colors cursor-pointer border ${
                 isLight
                   ? "bg-white hover:bg-zinc-50 text-zinc-900 border-zinc-300 shadow-sm"

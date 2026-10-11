@@ -199,7 +199,7 @@ export default function MobileSettingsPage() {
             onClick={handleLogout}
             className="w-full py-4 bg-red-50 dark:bg-red-500/10 active:bg-red-100 dark:active:bg-red-500/20 text-red-600 dark:text-red-400 font-bold rounded-2xl shadow-sm transition-transform active:scale-[0.98] flex items-center justify-center gap-2"
           >
-            <LogOut size={20} /> Logout
+            <LogOut size={20} /> Log out
           </button>
         </div>
 
