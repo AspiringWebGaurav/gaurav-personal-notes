@@ -8,3 +8,13 @@
 
 ## 2. Desktop App Isolation
 - Keep `pc-app` completely local. Never push `pc-app` to GitHub. Enforced in `.gitignore`.
+
+## 3. No Nested Card-Type Layouts (UI/UX Design Rule)
+- **Do not create nested card/box-in-card layouts**: Avoid wrapping statistics, items, or info blocks inside separate rounded bordered cards.
+- Use clean, spacious, open layouts with crisp typography, subtle hairline dividers, and generous width and height so content breathes naturally without unnecessary scrollbars.
+
+## 4. Simple Words Only (STRICT - Zero Buzzwords / Jargon)
+- **Use simple, plain, everyday words**: Never use tech buzzwords, internal architecture jargon, or complex marketing fluff in the UI, modals, toasts, tooltips, or copy.
+- **Prohibited buzzwords / jargon examples**: Avoid terms like "Live Cloud Mirror", "bi-directionally", "local SQLite", "deltas", "real time engine", "(0ms)", "architecture", "cryptographic", etc.
+- **Use plain language**: Use straightforward, clean words like "Sync", "Synced", "Account", "Up to date", "Saved", "Notes are synced to your account", "0 pending", etc.
+

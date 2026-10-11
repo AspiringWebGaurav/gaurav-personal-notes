@@ -22,10 +22,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export const loginWithGoogle = async () => {
   try {
+    googleProvider.setCustomParameters({ prompt: 'select_account' });
     await signInWithPopup(auth, googleProvider);
   } catch (error) {
     const err = error as { code?: string };
     if (err.code === 'auth/popup-blocked' || err.code === 'auth/cross-origin-opener-policy-failed') {
+      googleProvider.setCustomParameters({ prompt: 'select_account' });
       await signInWithRedirect(auth, googleProvider);
     } else {
       // Don't trigger the Next.js dev overlay for intentional user cancellations
