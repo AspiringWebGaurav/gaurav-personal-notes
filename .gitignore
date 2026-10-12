@@ -170,7 +170,7 @@ minidumps/
 !.vscode/settings.json
 .idea/
 *.iml
-.agents/
+.agents/\n!.agents/rules/
 *.sublime-project
 *.sublime-workspace
 *.suo
