@@ -56,6 +56,64 @@ npm run start
 
 ---
 
+
+---
+
+## ⚡ Direct CI/CD & OTA Pipeline (Zero-GitHub Dependency)
+
+Gaurav Personal Notes runs an independent, high-performance desktop release and Over-The-Air (OTA) update pipeline directly powered by **GPHost** (`https://gphost.eu.cc`), completely bypassing GitHub Actions and GitHub Releases.
+
+### 🛡️ Core Pipeline Architecture
+1. **Isolated Base Installer (`v0.0.0`)**:
+   - The production base installer is permanently anchored to:
+     ```text
+     https://gphost.eu.cc/raw/gpn-app
+     ```
+   - **Strict Isolation**: It is never overwritten, modified, or deleted by subsequent OTA updates. All website download links (`gpnotes.eu.cc/download`) reference this URL directly.
+2. **Automated OTA Distribution (`v0.0.1+`)**:
+   - All code updates are pushed directly as OTA binaries to:
+     ```text
+     https://gphost.eu.cc/api/v1/releases/gpn/latest
+     ```
+3. **Cryptographic Minisign Signatures**:
+   - Every binary payload is signed with Ed25519 Minisign keys (`.sig` formatted in Base64 for Tauri v2). The desktop application cryptographically verifies the signature before applying updates.
+4. **Strict 2-File Storage Policy**:
+   - When new OTA binaries are pushed, older superseded OTA payloads are automatically purged from Cloudflare R2 and database records. GPHost maintains **strictly 2 files at all times** (~8.5 MB total):
+     - **File 1**: Base `0.0.0` Installer (Permanently Isolated)
+     - **File 2**: Active Latest OTA Binary
+5. **Seamless User-Driven In-Place Updates**:
+   - **Persistent Sidebar Badge**: `↻ Update available [v0.0.1]` appears in the sidebar and persists until updated.
+   - **Top-Center Pill**: Non-intrusive title bar pill displays `v0.0.1 Available [Install]` with live percentage download progress and `[Restart]` upon completion.
+   - **Zero Data Loss**: In-place silent replacement replaces `gpn.exe` while keeping all local SQLite notes (`gpn_notes.db`) and auth tokens 100% intact.
+
+---
+
+## 📦 Developer Release Commands (`npm run ship`)
+
+Navigate to `pc-app/` to manage desktop releases:
+
+```bash
+# 1. Interactive Release Wizard (Prompts for patch, refresh, custom, or seed)
+npm run ship
+
+# 2. Ship an Auto-Incremented Patch Update (e.g. 0.0.1 -> 0.0.2)
+npm run ship -m "v0.0.2: Feature release changelog"
+
+# 3. Ship a Specific Version Target
+npm run ship 0.1.0 -m "v0.1.0: Major feature update"
+
+# 4. Same-Version Refresh (Keep version number, replace binaries in-place)
+npm run ship -- --refresh -m "Refresh binary payload in-place"
+# Or:
+npm run ship -- --force -m "Force binary refresh"
+
+# 5. Fast Publish (Skip cargo/rust compilation, use existing binary)
+npm run ship 0.0.1 --skip-build -m "Re-publish existing binary"
+
+# 6. Seed / Re-anchor Base Production Installer (0.0.0)
+npm run ship -- --seed -m "v0.0.0: Base production installer for website"
+```
+
 ## 📋 System Requirements (Windows Desktop)
 
 | Requirement | Specification |

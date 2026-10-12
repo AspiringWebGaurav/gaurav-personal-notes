@@ -90,6 +90,7 @@ dist/
 target/
 **/target/
 *.exe
+*.sig
 *.dll
 *.so
 *.dylib
@@ -170,7 +171,8 @@ minidumps/
 !.vscode/settings.json
 .idea/
 *.iml
-.agents/\n!.agents/rules/
+.agents/
+!.agents/rules/
 *.sublime-project
 *.sublime-workspace
 *.suo
