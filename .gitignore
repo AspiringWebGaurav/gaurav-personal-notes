@@ -3,20 +3,10 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# 1. Desktop Application Build Artifacts (Keep pc-app clean - No junk/binaries)
+# 1. Desktop Application (Private local-only source code - Never committed to GitHub)
 # ------------------------------------------------------------------------------
-pc-app/node_modules/
-pc-app/dist/
-pc-app/dist-ssr/
-pc-app/build/
-pc-app/out/
-pc-app/.vite/
-pc-app/.vite-temp/
-pc-app/*.tsbuildinfo
-pc-app/src-tauri/target/
-pc-app/src-tauri/Wix*
-pc-app/src-tauri/icons/uninstall.ico
-pc-app/.tauri/
+pc-app/
+/pc-app/
 .tauri/
 **/target/
 target/
