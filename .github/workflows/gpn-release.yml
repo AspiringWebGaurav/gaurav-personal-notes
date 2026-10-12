@@ -1,0 +1,80 @@
+name: GPN Desktop Production Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag to release (e.g. v1.0.1)'
+        required: false
+        type: string
+
+# Ensure only one release runs at a time to prevent race conditions or partial state
+concurrency:
+  group: gpn-production-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build, Sign & Publish Windows Release
+    runs-on: windows-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js (v20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'pc-app/package-lock.json'
+
+      - name: Setup Rust Stable (MSVC)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Rust Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            pc-app/src-tauri/target/
+          key: ${{ runner.os }}-cargo-tauri-${{ hashFiles('pc-app/src-tauri/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-tauri-
+
+      - name: Install Frontend Dependencies
+        working-directory: pc-app
+        run: npm ci
+
+      - name: Validate Version Consistency
+        working-directory: pc-app
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          $tag = if ($env:INPUT_VERSION) { $env:INPUT_VERSION } else { "${{ github.ref_name }}" }
+          node scripts/check-versions.mjs $tag
+
+      - name: Frontend Typecheck & Build
+        working-directory: pc-app
+        run: npm run build:frontend
+
+      - name: Build, Sign & Publish Release to GPHost
+        working-directory: pc-app
+        env:
+          GPHOST_API_KEY: ${{ secrets.GPHOST_API_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          RELEASE_TAG: ${{ github.event.inputs.version || github.ref_name }}
+        run: npm run release:gphost

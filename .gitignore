@@ -14,9 +14,10 @@ pc-app/.vite/
 pc-app/.vite-temp/
 pc-app/*.tsbuildinfo
 pc-app/src-tauri/target/
-pc-app/src-tauri/gen/
 pc-app/src-tauri/Wix*
 pc-app/src-tauri/icons/uninstall.ico
+pc-app/.tauri/
+.tauri/
 **/target/
 target/
 
