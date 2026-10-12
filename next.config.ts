@@ -24,6 +24,24 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        source: "/:path*\\.(ico|png|jpg|jpeg|svg|webp|woff|woff2|ttf|eot|css|js)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/(download|docs|terms|privacy)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
+          },
+        ],
+      },
+      {
         source: "/icons/:path*",
         headers: [
           {
