@@ -99,19 +99,31 @@ pub fn setup_system_tray(app: &AppHandle) -> Result<TrayIcon, Box<dyn std::error
                 }
             }
             "quick_capture" => {
-                if let Some(window) = app.get_webview_window("main") {
-                    let _was_hidden = !window.is_visible().unwrap_or(true);
-                    let _ = window.show();
-                    let _ = window.unminimize();
-                    let _ = window.set_always_on_top(true);
-                    let _ = window.emit("open-quick-capture", true);
+                let main_win = app.get_webview_window("main");
+                let is_main_visible = main_win
+                    .as_ref()
+                    .and_then(|w| w.is_visible().ok())
+                    .unwrap_or(false);
 
-                    let win = window.clone();
-                    std::thread::spawn(move || {
-                        std::thread::sleep(std::time::Duration::from_millis(250));
-                        let _ = win.set_always_on_top(false);
-                        let _ = win.set_focus();
-                    });
+                if is_main_visible {
+                    if let Some(w) = main_win {
+                        let _ = w.set_focus();
+                        let _ = w.emit("open-quick-capture", false);
+                    }
+                } else {
+                    if let Some(cap_win) = app.get_webview_window("capture") {
+                        let _ = cap_win.show();
+                        let _ = cap_win.unminimize();
+                        let _ = cap_win.set_always_on_top(true);
+                        let _ = cap_win.set_focus();
+                        let _ = cap_win.emit("open-quick-capture", true);
+                    } else if let Some(w) = main_win {
+                        let _ = w.show();
+                        let _ = w.unminimize();
+                        let _ = w.set_always_on_top(true);
+                        let _ = w.set_focus();
+                        let _ = w.emit("open-quick-capture", true);
+                    }
                 }
             }
             "smart_burn" => {

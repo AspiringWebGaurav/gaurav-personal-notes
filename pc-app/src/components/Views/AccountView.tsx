@@ -3,6 +3,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { useSyncStore } from '../../stores/syncStore';
 import { useNotesStore } from '../../stores/notesStore';
 import { Shield, Cloud, LogIn, LogOut, RefreshCw, Check } from 'lucide-react';
+import { updateService } from '../../services/updateService';
 
 interface AccountViewProps {
   onOpenAuthModal: (mode?: 'default' | 'logout') => void;
@@ -270,6 +271,101 @@ export const AccountView: React.FC<AccountViewProps> = ({ onOpenAuthModal }) => 
               <div className="h-full rounded-full bg-zinc-900 dark:bg-zinc-100 w-full animate-pulse transition-all duration-300" />
             </div>
           </div>
+        )}
+      </div>
+
+      {/* App Updates Section (GPHost Auto-Updater) */}
+      <AppUpdateSection />
+    </div>
+  );
+};
+
+const AppUpdateSection: React.FC = () => {
+  const [updateStatus, setUpdateStatus] = React.useState(updateService.getStatus());
+  const [isChecking, setIsChecking] = React.useState(false);
+
+  React.useEffect(() => {
+    return updateService.subscribe((s) => setUpdateStatus(s));
+  }, []);
+
+  const handleManualCheck = async () => {
+    setIsChecking(true);
+    try {
+      await updateService.checkForUpdates();
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
+  const handleDownload = async () => {
+    try {
+      await updateService.downloadUpdate();
+    } catch {}
+  };
+
+  const handleRestart = async () => {
+    try {
+      await updateService.installAndRestart();
+    } catch {}
+  };
+
+  return (
+    <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30 flex items-center justify-between gap-4">
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center shrink-0 text-zinc-600 dark:text-zinc-300">
+          <RefreshCw className={`w-4 h-4 ${isChecking || updateStatus.state === 'checking' ? 'animate-spin' : ''}`} />
+        </div>
+        <div>
+          <div className="flex items-center gap-2">
+            <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+              Desktop App
+            </h4>
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-zinc-200/60 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+              v1.0.0
+            </span>
+          </div>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            {updateStatus.state === 'available'
+              ? `New version ${updateStatus.version} is available on GPHost.`
+              : updateStatus.state === 'downloading'
+              ? `Downloading update (${updateStatus.percentage || 0}%)...`
+              : updateStatus.state === 'ready'
+              ? 'Update downloaded and ready to install.'
+              : updateStatus.state === 'error'
+              ? (updateStatus.error || 'Check failed. Try again.')
+              : isChecking || updateStatus.state === 'checking'
+              ? 'Checking GPHost for updates...'
+              : 'Your app is on the latest version.'}
+          </p>
+        </div>
+      </div>
+
+      <div className="shrink-0 flex items-center gap-2">
+        {updateStatus.state === 'available' ? (
+          <button
+            type="button"
+            onClick={handleDownload}
+            className="px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-medium transition-colors shadow-2xs"
+          >
+            Download update
+          </button>
+        ) : updateStatus.state === 'ready' ? (
+          <button
+            type="button"
+            onClick={handleRestart}
+            className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium transition-colors shadow-2xs"
+          >
+            Restart to apply
+          </button>
+        ) : (
+          <button
+            type="button"
+            disabled={isChecking || updateStatus.state === 'checking'}
+            onClick={handleManualCheck}
+            className="px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 text-xs font-medium transition-colors disabled:opacity-50"
+          >
+            {isChecking || updateStatus.state === 'checking' ? 'Checking...' : 'Check for updates'}
+          </button>
         )}
       </div>
     </div>

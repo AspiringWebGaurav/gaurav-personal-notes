@@ -41,6 +41,7 @@ interface AttachedImage {
 
 interface QuickCaptureModalProps {
   isOpen: boolean;
+  isStandalone?: boolean;
   onOpen?: () => void;
   onClose: () => void;
 }
@@ -100,6 +101,7 @@ function splitTextIntoPages(text: string, maxCharsPerPage = 1200): string[] {
 
 export const QuickCaptureModal: React.FC<QuickCaptureModalProps> = ({
   isOpen,
+  isStandalone = false,
   onClose,
 }) => {
   const [title, setTitle] = useState('');
@@ -531,6 +533,13 @@ export const QuickCaptureModal: React.FC<QuickCaptureModalProps> = ({
       }
 
       await createNote(finalTitle, finalHtml);
+      try {
+        const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
+        if (isTauri) {
+          const { emit } = await import('@tauri-apps/api/event');
+          await emit('notes-updated');
+        }
+      } catch {}
       onClose();
     } catch (err: any) {
       console.error('Quick capture failed to save:', err);
@@ -620,17 +629,28 @@ export const QuickCaptureModal: React.FC<QuickCaptureModalProps> = ({
 
   return (
     <div
-      onClick={handleCancelAndCleanup}
+      onClick={isStandalone ? undefined : handleCancelAndCleanup}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className="fixed inset-0 bg-black/75 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-6 select-none animate-in fade-in duration-150"
+      className={
+        isStandalone
+          ? "w-screen h-screen bg-transparent select-none p-1 flex flex-col overflow-hidden"
+          : "fixed inset-0 bg-black/75 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-6 select-none animate-in fade-in duration-150"
+      }
     >
       <div
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
         onPaste={handlePasteEvent}
-        className={`relative w-full max-w-4xl max-h-[90vh] bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col text-zinc-900 dark:text-zinc-100 transition-all ${
+        className={
+          isStandalone
+            ? `relative w-full h-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xl overflow-hidden flex flex-col text-zinc-900 dark:text-zinc-100 transition-all ${
+                isDraggingOver
+                  ? 'ring-2 ring-black dark:ring-white border-transparent'
+                  : ''
+              }`
+            : `relative w-full max-w-4xl max-h-[90vh] bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col text-zinc-900 dark:text-zinc-100 transition-all ${
           isDraggingOver
             ? 'ring-2 ring-black dark:ring-white border-transparent'
             : ''

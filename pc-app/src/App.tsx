@@ -16,6 +16,7 @@ import { QuickCaptureModal } from './components/QuickCaptureModal';
 import { SmartBurnModal } from './components/SmartBurnModal';
 import { ShortcutsModal } from './components/GpnLayout/ShortcutsModal';
 import { ConfirmModal } from './components/ConfirmModal';
+import { UpdateNotification } from './components/GpnLayout/UpdateNotification';
 import { useAuthStore } from './stores/authStore';
 import { useNotesStore } from './stores/notesStore';
 import { useSyncStore } from './stores/syncStore';
@@ -46,6 +47,7 @@ export function App() {
   const handleCloseAuthModal = useCallback(() => {
     setIsAuthOpen(false);
   }, []);
+  const [isCaptureWindow, setIsCaptureWindow] = useState(false);
   const [isQuickCaptureOpen, setIsQuickCaptureOpen] = useState(false);
   const [isQuickCaptureFromBackground, setIsQuickCaptureFromBackground] = useState(false);
 
@@ -125,6 +127,12 @@ export function App() {
   useEffect(() => {
     const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
     if (isTauri) {
+      try {
+        const win = getCurrentWindow();
+        if (win.label === 'capture') {
+          setIsCaptureWindow(true);
+        }
+      } catch {}
       invoke('cmd_set_tray_status', { isLive: isAuthenticated, isOnline }).catch(() => {});
 
       let title = 'Gaurav Personal Notes — ○ Local';
@@ -375,6 +383,14 @@ export function App() {
     }
   };
 
+  if (isCaptureWindow) {
+    return (
+      <div className={`w-screen h-screen bg-transparent select-none overflow-hidden font-sans ${isDarkMode ? 'dark' : ''}`}>
+        <QuickCaptureModal isOpen={true} isStandalone={true} onClose={async () => { try { await getCurrentWindow().hide(); } catch {} }} />
+      </div>
+    );
+  }
+
   // When summoned from background via global capture key, ONLY render the floating capture UI
   if (isQuickCaptureFromBackground && isQuickCaptureOpen) {
     return (
@@ -514,6 +530,7 @@ export function App() {
       />
 
       <ConfirmModal />
+      <UpdateNotification />
     </div>
   );
 }
