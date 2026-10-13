@@ -17,11 +17,48 @@ export interface ReleasePatchNote {
 
 export const PATCH_NOTES: ReleasePatchNote[] = [
   {
+    version: "0.0.7",
+    releaseDate: "October 13, 2026",
+    title: "Streamlined Single-Progress Installation, Developer Branding & Auto-Permissions",
+    summary: "Modernized single-progress-bar installer and uninstaller bypassing retro multi-step wizard screens, embedded developer and project verification, automatic pre-granted system permissions, and instant auto-finish and auto-launch execution.",
+    isLatest: true,
+    categories: [
+      {
+        type: "feature",
+        title: "Streamlined Single-Screen Installation & Auto-Launch",
+        items: [
+          "Bypassed legacy multi-step wizard dialogs and destination folder selectors in favor of a modern, focused single progress screen",
+          "Automatic auto-finish execution that instantly closes the setup window and surfaces Gaurav Personal Notes upon 100% extraction",
+          "Mirrored single clean progress teardown for uninstallation that exits automatically without hanging on close buttons"
+        ]
+      },
+      {
+        type: "feature",
+        title: "Embedded Developer & Portfolio Verification",
+        items: [
+          "Integrated official developer branding for Gaurav Patil across installer diagnostics and dedicated in-app Settings",
+          "Direct shortcuts to official website (https://gpnotes.eu.cc) and GitHub developer portfolio",
+          "Dedicated 'About the Developer & System Integrity' card in Settings with live permission status chips"
+        ]
+      },
+      {
+        type: "security",
+        title: "Pre-Granted System Permissions Verification",
+        items: [
+          "Pre-verified local SQLite database access in %LOCALAPPDATA% with zero setup friction",
+          "Windows DPAPI machine-level hardware key encryption bound to user profile",
+          "Persistent HKCU startup autostart enabled by default with automatic registry auto-healing"
+        ]
+      }
+    ],
+    rawNotes: "v0.0.7: Streamlined single-progress installation and uninstallation with developer info and auto-granted permissions"
+  },
+  {
     version: "0.0.6",
     releaseDate: "October 13, 2026",
     title: "Dynamic Background Updates, Dedicated Settings & Stealth Execution",
     summary: "Automated background update polling with pinging status indicator, dedicated Settings view with instant app folder and Windows settings shortcuts, zero terminal window flashes via native Win32 execution, launch at startup enabled by default, and streamlined one-click quit.",
-    isLatest: true,
+    isLatest: false,
     categories: [
       {
         type: "feature",
