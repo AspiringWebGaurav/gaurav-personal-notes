@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export const DESKTOP_DOWNLOAD_URL =
   process.env.NEXT_PUBLIC_DESKTOP_DOWNLOAD_URL ||
-  "https://gphost.eu.cc/raw/gpn-app";
+  "https://gphost.eu.cc/raw/gpn-app?v=0.0.0";
 
 export const DESKTOP_SHARE_URL = "https://gphost.eu.cc/f/gpn-app";
 export const DESKTOP_EMBED_URL = "https://gphost.eu.cc/f/gpn-app/preview";
@@ -152,6 +152,10 @@ export default function DownloadPage() {
             <div className="text-zinc-300 dark:text-zinc-700">•</div>
             <div>
               <span className="font-semibold text-zinc-700 dark:text-zinc-300">File:</span> 64-bit installer (.exe)
+            </div>
+            <div className="text-zinc-300 dark:text-zinc-700">•</div>
+            <div>
+              <span className="font-semibold text-zinc-700 dark:text-zinc-300">Size:</span> 4.29 MB
             </div>
           </div>
         </div>

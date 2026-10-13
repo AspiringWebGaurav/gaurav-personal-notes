@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 export const DESKTOP_DOWNLOAD_URL =
   process.env.NEXT_PUBLIC_DESKTOP_DOWNLOAD_URL ||
-  "https://gphost.eu.cc/raw/gpn-app";
+  "https://gphost.eu.cc/raw/gpn-app?v=0.0.0";
 
 export default function PatchNotesPage() {
   return (

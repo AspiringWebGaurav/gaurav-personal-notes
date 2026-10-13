@@ -384,7 +384,7 @@ function PatchNotesContent() {
                 </Link>
               ) : activeNote.version === "0.0.0" ? (
                 <a
-                  href="https://gphost.eu.cc/raw/gpn-app"
+                  href="https://gphost.eu.cc/raw/gpn-app?v=0.0.0"
                   className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all"
                   title="Official permanent Base v0.0.0 installer for desktop setup"
                 >
@@ -395,15 +395,15 @@ function PatchNotesContent() {
                 <div className="flex items-center gap-2">
                   <div
                     className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#f1f3f4] dark:bg-[#303134] text-[#5f6368] dark:text-[#9aa0a6] text-[11px] font-medium border border-[#dadce0] dark:border-[#3c4043]"
-                    title="Past standalone binaries are not archived. GPN utilizes mandatory continuous Over-The-Air (OTA) updates."
+                    title="Past standalone binaries are not archived. GPN utilizes continuous Over-The-Air (OTA) updates."
                   >
                     <RefreshCw className="w-3 h-3 text-[#1a73e8]" />
                     <span>OTA Update Only</span>
                   </div>
                   <a
-                    href="https://gphost.eu.cc/raw/gpn-app"
+                    href="https://gphost.eu.cc/raw/gpn-app?v=0.0.0"
                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all"
-                    title="Download permanent Base v0.0.0 installer. Upon install, GPN silently auto-updates to the latest release."
+                    title="Download permanent Base v0.0.0 installer. You can use your app normally and update to the latest release at any time."
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Get Base v0.0.0</span>
