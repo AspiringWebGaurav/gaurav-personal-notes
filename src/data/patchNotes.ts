@@ -17,11 +17,49 @@ export interface ReleasePatchNote {
 
 export const PATCH_NOTES: ReleasePatchNote[] = [
   {
+    version: "0.0.8",
+    releaseDate: "October 13, 2026",
+    title: "Chrome-Style Zero-Wizard Auto-Launch Installer & 2-Choice Data Retention Uninstaller",
+    summary: "Complete overhaul of the desktop installation and uninstallation experience mirroring Google Chrome: single progress card with instant auto-launch, removal of legacy multi-step wizard screens, clean 2-choice data retention uninstaller, and a dynamic single-view zero-scroll post-uninstall page.",
+    isLatest: true,
+    categories: [
+      {
+        type: "feature",
+        title: "Chrome-Style Zero-Wizard Installation",
+        items: [
+          "Eliminated all retro wizard pages, license agreements, destination prompts, and legacy upgrade radio buttons",
+          "One-click execution displays a compact single progress bar and silently unpacks into local user application storage",
+          "Instant auto-launch: immediately executes Gaurav Personal Notes upon 100% extraction and dismisses the installer window with zero clicks"
+        ]
+      },
+      {
+        type: "feature",
+        title: "Chrome-Style 2-Choice Data Lifecycle Uninstaller",
+        items: [
+          "Modern teardown modal with clean prompt and explicit 'Also delete your notes and local app data?' checkbox",
+          "Safe Default: keeps notes and SQLite database in %APPDATA% untouched so users never lose work upon reinstalling",
+          "Full Teardown: completely wipes notes, database, cache, and registry keys when explicitly checked",
+          "Silent uninstaller dismissal without hanging on close buttons"
+        ]
+      },
+      {
+        type: "improvement",
+        title: "Dynamic Single-View Post-Uninstall Experience",
+        items: [
+          "Dedicated /uninstalled web landing page engineered strictly for one screen with zero vertical scrolling",
+          "No feedback forms, rating stars, or survey interruptions for maximum user respect",
+          "Dynamically indicates whether local notes were preserved or wiped, with an instant one-click download shortcut"
+        ]
+      }
+    ],
+    rawNotes: "v0.0.8: Chrome-style zero-wizard auto-launch installer and 2-choice data retention uninstaller"
+  },
+  {
     version: "0.0.7",
     releaseDate: "October 13, 2026",
     title: "Streamlined Single-Progress Installation, Developer Branding & Auto-Permissions",
     summary: "Modernized single-progress-bar installer and uninstaller bypassing retro multi-step wizard screens, embedded developer and project verification, automatic pre-granted system permissions, and instant auto-finish and auto-launch execution.",
-    isLatest: true,
+    isLatest: false,
     categories: [
       {
         type: "feature",
