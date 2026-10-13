@@ -9,9 +9,12 @@ export const metadata: Metadata = {
   description: "Download Gaurav Personal Notes for Windows 10 and 11. Simple, clean offline notes app.",
 };
 
-export const DESKTOP_DOWNLOAD_URL =
+const baseDownloadUrl = (
   process.env.NEXT_PUBLIC_DESKTOP_DOWNLOAD_URL ||
-  "https://gphost.eu.cc/raw/gpn-app?v=0.0.0";
+  "https://gphost.eu.cc/raw/gpn-app"
+).split("?")[0];
+
+export const DESKTOP_DOWNLOAD_URL = `${baseDownloadUrl}?v=0.0.0-latest`;
 
 export const DESKTOP_SHARE_URL = "https://gphost.eu.cc/f/gpn-app";
 export const DESKTOP_EMBED_URL = "https://gphost.eu.cc/f/gpn-app/preview";
