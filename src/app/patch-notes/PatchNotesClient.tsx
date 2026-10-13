@@ -393,7 +393,7 @@ function PatchNotesContent() {
                 </div>
               ) : activeNote.version === "0.0.0" ? (
                 <a
-                  href="https://gphost.eu.cc/raw/gpn-app?v=0.0.0-latest"
+                  href="https://gphost.eu.cc/raw/gpn-app?v=0.0.0-clean"
                   className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all"
                   title="Official permanent Base v0.0.0 installer for desktop setup"
                 >
@@ -410,7 +410,7 @@ function PatchNotesContent() {
                     <span>OTA Update Only</span>
                   </div>
                   <a
-                    href="https://gphost.eu.cc/raw/gpn-app?v=0.0.0-latest"
+                    href="https://gphost.eu.cc/raw/gpn-app?v=0.0.0-clean"
                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all"
                     title="Download permanent Base v0.0.0 installer. You can use your app normally and update to the latest release at any time."
                   >

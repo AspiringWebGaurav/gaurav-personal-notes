@@ -349,6 +349,6 @@ export const PATCH_NOTES: ReleasePatchNote[] = [
       }
     ],
     rawNotes: "Base Release v0.0.0 for website download.",
-    downloadUrl: "https://gphost.eu.cc/raw/gpn-app?v=0.0.0-latest"
+    downloadUrl: "https://gphost.eu.cc/raw/gpn-app?v=0.0.0-clean"
   }
 ];

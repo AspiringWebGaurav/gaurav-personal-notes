@@ -14,7 +14,7 @@ const baseDownloadUrl = (
   "https://gphost.eu.cc/raw/gpn-app"
 ).split("?")[0];
 
-export const DESKTOP_DOWNLOAD_URL = `${baseDownloadUrl}?v=0.0.0-latest`;
+export const DESKTOP_DOWNLOAD_URL = `${baseDownloadUrl}?v=0.0.0-clean`;
 
 export const DESKTOP_SHARE_URL = "https://gphost.eu.cc/f/gpn-app";
 export const DESKTOP_EMBED_URL = "https://gphost.eu.cc/f/gpn-app/preview";
