@@ -17,11 +17,28 @@ export interface ReleasePatchNote {
 
 export const PATCH_NOTES: ReleasePatchNote[] = [
   {
+    version: "0.0.9",
+    releaseDate: "October 13, 2026",
+    title: "Release v0.0.9",
+    summary: "v0.0.9: Smooth uninstaller focus and auto-scroll lifecycle improvements",
+    isLatest: true,
+    categories: [
+      {
+        type: "improvement",
+        title: "Release Highlights",
+        items: [
+          "v0.0.9: Smooth uninstaller focus and auto-scroll lifecycle improvements"
+        ]
+      }
+    ],
+    rawNotes: "v0.0.9: Smooth uninstaller focus and auto-scroll lifecycle improvements"
+  },
+  {
     version: "0.0.8",
     releaseDate: "October 13, 2026",
     title: "Chrome-Style Zero-Wizard Auto-Launch Installer & 2-Choice Data Retention Uninstaller",
     summary: "Complete overhaul of the desktop installation and uninstallation experience mirroring Google Chrome: single progress card with instant auto-launch, removal of legacy multi-step wizard screens, clean 2-choice data retention uninstaller, and a dynamic single-view zero-scroll post-uninstall page.",
-    isLatest: true,
+    isLatest: false,
     categories: [
       {
         type: "feature",
