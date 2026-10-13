@@ -17,11 +17,30 @@ export interface ReleasePatchNote {
 
 export const PATCH_NOTES: ReleasePatchNote[] = [
   {
+    version: "0.0.13",
+    releaseDate: "October 13, 2026",
+    title: "Release v0.0.13",
+    summary: "v0.0.13: Fix capture window focus activation, native typing input, and seamless clipboard paste",
+    isLatest: true,
+    categories: [
+      {
+        type: "fix",
+        title: "Release Highlights",
+        items: [
+          "Fixed capture window OS activation by removing WS_EX_NOACTIVATE restriction in Tauri configuration",
+          "Enabled smooth keyboard typing and caret positioning across title and note body",
+          "Added window-level clipboard paste listener for instant paste from any focus state"
+        ]
+      }
+    ],
+    rawNotes: "v0.0.13: Fix capture window focus activation, native typing input, and seamless clipboard paste"
+  },
+  {
     version: "0.0.12",
     releaseDate: "October 13, 2026",
     title: "Release v0.0.12",
     summary: "v0.0.12: Native Windows clipboard paste engine, harmonized capture action buttons, and silent update detection",
-    isLatest: true,
+    isLatest: false,
     categories: [
       {
         type: "improvement",
