@@ -98,8 +98,7 @@ export const PATCH_NOTES: ReleasePatchNote[] = [
         ]
       }
     ],
-    rawNotes: "v0.0.4: Silent background updates with elevated restart, kernel binary dispatcher for Windows Installed Apps fix, persistent background tray process on window close, and Google-style patch notes integration.",
-    downloadUrl: "https://gphost.eu.cc/api/v1/releases/gpn/download/0.0.4"
+    rawNotes: "v0.0.4: Silent background updates with elevated restart, kernel binary dispatcher for Windows Installed Apps fix, persistent background tray process on window close, and Google-style patch notes integration."
   },
   {
     version: "0.0.3",
@@ -137,8 +136,7 @@ export const PATCH_NOTES: ReleasePatchNote[] = [
         ]
       }
     ],
-    rawNotes: "v0.0.3: Dynamic update pill, foreground elevation, persistent autostart, kernel binary handoff, and single-line minisign verification.",
-    downloadUrl: "https://gphost.eu.cc/api/v1/releases/gpn/download/0.0.3"
+    rawNotes: "v0.0.3: Dynamic update pill, foreground elevation, persistent autostart, kernel binary handoff, and single-line minisign verification."
   },
   {
     version: "0.0.2",
@@ -165,8 +163,7 @@ export const PATCH_NOTES: ReleasePatchNote[] = [
         ]
       }
     ],
-    rawNotes: "v0.0.2: Cloudflare R2 direct release streaming and strict 2-file maximum storage enforcement.",
-    downloadUrl: "https://gphost.eu.cc/api/v1/releases/gpn/download/0.0.2"
+    rawNotes: "v0.0.2: Cloudflare R2 direct release streaming and strict 2-file maximum storage enforcement."
   },
   {
     version: "0.0.1",
@@ -194,8 +191,7 @@ export const PATCH_NOTES: ReleasePatchNote[] = [
         ]
       }
     ],
-    rawNotes: "v0.0.1: Tauri v2 desktop foundations with SQLite storage and background synchronization.",
-    downloadUrl: "https://gphost.eu.cc/api/v1/releases/gpn/download/0.0.1"
+    rawNotes: "v0.0.1: Tauri v2 desktop foundations with SQLite storage and background synchronization."
   },
   {
     version: "0.0.0",

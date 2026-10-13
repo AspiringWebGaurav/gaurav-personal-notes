@@ -17,6 +17,8 @@ import {
   ChevronRight,
   Filter,
   ExternalLink,
+  Info,
+  RefreshCw,
 } from "lucide-react";
 import { PATCH_NOTES, ReleasePatchNote, PatchNoteCategory } from "@/data/patchNotes";
 
@@ -370,17 +372,61 @@ function PatchNotesContent() {
                 )}
               </button>
 
-              {activeNote.downloadUrl && (
-                <a
-                  href={activeNote.downloadUrl}
+              {/* Action Buttons: Download Latest / Download Base v0.0.0 / OTA Indicator */}
+              {activeNote.isLatest ? (
+                <Link
+                  href="/download"
                   className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all"
+                  title={`Download active release v${activeNote.version}`}
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Download v{activeNote.version}</span>
+                  <span>Download Latest (v{activeNote.version})</span>
+                </Link>
+              ) : activeNote.version === "0.0.0" ? (
+                <a
+                  href="https://gphost.eu.cc/raw/gpn-app"
+                  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all"
+                  title="Official permanent Base v0.0.0 installer for desktop setup"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download Base v0.0.0</span>
                 </a>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <div
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#f1f3f4] dark:bg-[#303134] text-[#5f6368] dark:text-[#9aa0a6] text-[11px] font-medium border border-[#dadce0] dark:border-[#3c4043]"
+                    title="Past standalone binaries are not archived. GPN utilizes mandatory continuous Over-The-Air (OTA) updates."
+                  >
+                    <RefreshCw className="w-3 h-3 text-[#1a73e8]" />
+                    <span>OTA Update Only</span>
+                  </div>
+                  <a
+                    href="https://gphost.eu.cc/raw/gpn-app"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all"
+                    title="Download permanent Base v0.0.0 installer. Upon install, GPN silently auto-updates to the latest release."
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Get Base v0.0.0</span>
+                  </a>
+                </div>
               )}
             </div>
           </div>
+
+          {/* Mandatory Silent OTA Architecture Notice for Historical Releases */}
+          {!activeNote.isLatest && activeNote.version !== "0.0.0" && (
+            <div className="mx-4 sm:mx-6 mt-3 p-3 rounded-xl bg-[#e8f0fe] dark:bg-[#1a3a60]/30 border border-[#d2e3fc] dark:border-[#1e4976] flex items-start gap-2.5 text-xs text-[#1967d2] dark:text-[#8ab4f8]">
+              <Info className="w-4 h-4 shrink-0 mt-0.5 text-[#1a73e8]" />
+              <div className="space-y-0.5 leading-relaxed">
+                <p className="font-semibold text-[#174ea6] dark:text-[#aecbfa]">
+                  Mandatory Silent OTA Architecture
+                </p>
+                <p className="text-[11px] text-[#3c4043] dark:text-[#bdc1c6]">
+                  Historical standalone binaries are not stored or archived on edge storage. GPN is intentionally architected with mandatory Over-The-Air (OTA) continuous updates. Install <strong>Base v0.0.0</strong> and your desktop application will automatically and silently update to the latest release upon startup.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Categorized Changes List (Internal smooth scroll strictly inside card) */}
           <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-4 scrollbar-thin">
