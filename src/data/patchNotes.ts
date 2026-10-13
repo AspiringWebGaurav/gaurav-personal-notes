@@ -17,11 +17,49 @@ export interface ReleasePatchNote {
 
 export const PATCH_NOTES: ReleasePatchNote[] = [
   {
+    version: "0.0.5",
+    releaseDate: "October 13, 2026",
+    title: "Intentionally Throttled Download Engine & Resilient Update Lifecycle",
+    summary: "Adaptive download pacing with smooth 1% to 100% progress tracking, cryptographic package verification stage, monotonic version persistence across reboots, and failsafe recovery from interrupted updates.",
+    isLatest: true,
+    categories: [
+      {
+        type: "feature",
+        title: "Adaptive Throttled Download & Paced Progression",
+        items: [
+          "Controlled download pacing engine with smooth 50ms progression ticks, eliminating erratic percentage jumps and network saturation",
+          "Accurate byte-level tracking from 1% to 100% with real-time transfer speed indicator and progress bar synchronization",
+          "Dedicated package verification phase validating Ed25519 cryptographic signatures prior to installation handoff"
+        ]
+      },
+      {
+        type: "improvement",
+        title: "Automated Restart & Window Foreground Elevation",
+        items: [
+          "Gentle 2.5-second pre-restart visual indicator on silent background updates to prevent abrupt window closures",
+          "Automatic database flush prior to installer launch ensuring zero unpersisted note modifications",
+          "Native cmd_bring_main_to_front window elevation bringing GPN back into active focus upon restart without taskbar orange-flashing"
+        ]
+      },
+      {
+        type: "fix",
+        title: "Failsafe Recovery from Interrupted Downloads & Crashes",
+        items: [
+          "Automatic boot-time recovery detecting interrupted installations and restoring normal operation on existing working build",
+          "Safe error boundaries preventing blank-screen states or stuck download percentages across application restarts and Windows reboots",
+          "Eliminated artificial progress bar minimums for true 1-to-1 visual representation of downloaded packages"
+        ]
+      }
+    ],
+    rawNotes: "v0.0.5: Intentionally throttled download pacing (1-100%), package verification stage, failsafe recovery from interrupted updates, and seamless elevated restart.",
+    downloadUrl: "https://gphost.eu.cc/api/v1/releases/gpn/download/0.0.5"
+  },
+  {
     version: "0.0.4",
     releaseDate: "October 13, 2026",
     title: "Silent Background Updates, Kernel Dispatcher & Persistent Tray",
     summary: "Autonomous background update engine with elevated restart, kernel-level binary dispatcher resolving Windows Installed Apps duplicates, persistent background tray process on window close, and Google Material 3 patch notes integration.",
-    isLatest: true,
+    isLatest: false,
     categories: [
       {
         type: "feature",
