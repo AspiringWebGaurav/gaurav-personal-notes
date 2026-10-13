@@ -372,16 +372,25 @@ function PatchNotesContent() {
                 )}
               </button>
 
-              {/* Action Buttons: Download Latest / Download Base v0.0.0 / OTA Indicator */}
-              {activeNote.isLatest ? (
-                <Link
-                  href="/download"
-                  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all"
-                  title={`Download active release v${activeNote.version}`}
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Download Latest (v{activeNote.version})</span>
-                </Link>
+              {/* Action Buttons: In-App Update Only (for latest/OTA) / Download Base v0.0.0 */}
+              {activeNote.isLatest && activeNote.version !== "0.0.0" ? (
+                <div className="flex items-center gap-2">
+                  <div
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800 text-xs font-semibold"
+                    title="Available exclusively through the desktop application's built-in Check for Updates mechanism."
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" />
+                    <span>In-App Update Only</span>
+                  </div>
+                  <Link
+                    href="/download"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#f1f3f4] hover:bg-[#e8eaed] dark:bg-[#303134] dark:hover:bg-[#3c4043] text-[#3c4043] dark:text-[#e8eaed] text-xs font-medium border border-[#dadce0] dark:border-[#5f6368] transition-colors"
+                    title="New users can download the Base v0.0.0 desktop installer to get started"
+                  >
+                    <Download className="w-3.5 h-3.5 text-[#5f6368] dark:text-[#9aa0a6]" />
+                    <span>Get Base v0.0.0</span>
+                  </Link>
+                </div>
               ) : activeNote.version === "0.0.0" ? (
                 <a
                   href="https://gphost.eu.cc/raw/gpn-app?v=0.0.0"
@@ -412,6 +421,21 @@ function PatchNotesContent() {
               )}
             </div>
           </div>
+
+          {/* User-Friendly Opt-In Notice: Latest In-App Release */}
+          {activeNote.isLatest && activeNote.version !== "0.0.0" && (
+            <div className="mx-4 sm:mx-6 mt-3 p-3 rounded-xl bg-violet-50 dark:bg-violet-950/30 border border-violet-200 dark:border-violet-800/60 flex items-start gap-2.5 text-xs text-violet-800 dark:text-violet-300">
+              <Sparkles className="w-4 h-4 shrink-0 mt-0.5 text-violet-600 dark:text-violet-400" />
+              <div className="space-y-0.5 leading-relaxed">
+                <p className="font-semibold text-violet-900 dark:text-violet-200">
+                  Built-In In-App Update Delivery
+                </p>
+                <p className="text-[11px] text-zinc-600 dark:text-zinc-400">
+                  Version v{activeNote.version} is distributed exclusively through the desktop application&apos;s built-in <strong>Check for Updates</strong> mechanism. Binaries are never published through public download links. Existing users can check and apply this update inside the app under <strong>Settings &rarr; Software Updates</strong>. New users can install <strong>Base v0.0.0</strong> to get started.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* User-Friendly Opt-In Architecture Notice for Historical Releases */}
           {!activeNote.isLatest && activeNote.version !== "0.0.0" && (
