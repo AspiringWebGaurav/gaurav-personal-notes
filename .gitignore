@@ -138,6 +138,7 @@ coverage/
 *.sqlite-*
 storage/
 data/
+!src/data/
 user_data/
 indexeddb/
 localstorage/

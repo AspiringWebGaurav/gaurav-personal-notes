@@ -33,7 +33,7 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/(download|docs|terms|privacy)",
+        source: "/(download|docs|terms|privacy|patch-notes)",
         headers: [
           {
             key: "Cache-Control",
