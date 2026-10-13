@@ -17,11 +17,64 @@ export interface ReleasePatchNote {
 
 export const PATCH_NOTES: ReleasePatchNote[] = [
   {
+    version: "0.0.12",
+    releaseDate: "October 13, 2026",
+    title: "Release v0.0.12",
+    summary: "v0.0.12: Native Windows clipboard paste engine, harmonized capture action buttons, and silent update detection",
+    isLatest: true,
+    categories: [
+      {
+        type: "improvement",
+        title: "Release Highlights",
+        items: [
+          "Native Windows OS Win32 clipboard reader for instant 100% reliable paste in Quick Capture",
+          "Harmonized Cancel and SAVE NOTE buttons with identical height, balanced width, and unified hover states",
+          "Silent background startup version check with clean window header when up to date"
+        ]
+      }
+    ],
+    rawNotes: "v0.0.12: Native clipboard paste, harmonized capture buttons, and silent update check"
+  },
+  {
+    version: "0.0.11",
+    releaseDate: "October 13, 2026",
+    title: "Release v0.0.11",
+    summary: "v0.0.11: Capture modal formatting suite, scrollbar fix, and instant update check",
+    isLatest: false,
+    categories: [
+      {
+        type: "improvement",
+        title: "Release Highlights",
+        items: [
+          "v0.0.11: Capture modal formatting suite, scrollbar fix, and instant update check"
+        ]
+      }
+    ],
+    rawNotes: "v0.0.11: Capture modal formatting suite, scrollbar fix, and instant update check"
+  },
+  {
+    version: "0.0.10",
+    releaseDate: "October 13, 2026",
+    title: "Release v0.0.10",
+    summary: "v0.0.10: Capture background fix, flash fix, update UI and auth redirect",
+    isLatest: false,
+    categories: [
+      {
+        type: "improvement",
+        title: "Release Highlights",
+        items: [
+          "v0.0.10: Capture background fix, flash fix, update UI and auth redirect"
+        ]
+      }
+    ],
+    rawNotes: "v0.0.10: Capture background fix, flash fix, update UI and auth redirect"
+  },
+  {
     version: "0.0.9",
     releaseDate: "October 13, 2026",
     title: "Release v0.0.9",
     summary: "v0.0.9: Smooth uninstaller focus and auto-scroll lifecycle improvements",
-    isLatest: true,
+    isLatest: false,
     categories: [
       {
         type: "improvement",

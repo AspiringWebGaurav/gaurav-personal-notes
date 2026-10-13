@@ -3,14 +3,17 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# 1. Desktop Application (Private local-only source code - Never committed to GitHub)
+# 1. Desktop Application (STRICTLY PRIVATE LOCAL-ONLY CODEBASE - ZERO GITHUB TRACKING)
 # ------------------------------------------------------------------------------
 pc-app/
 /pc-app/
 pc-app
 **/pc-app/**
+**/pc-app
 .tauri/
 **/.tauri/**
+**/src-tauri/target/**
+src-tauri/target/
 **/target/
 target/
 
@@ -23,6 +26,10 @@ target/
 *.env
 *.env.*
 *.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Certificates, private keys & keystores
 *.key
@@ -36,6 +43,7 @@ target/
 *.jks
 private.key
 signing.key
+minisign.key
 
 # Cloud tokens, credentials & service account keys
 token.json
@@ -80,26 +88,33 @@ out/
 build/
 /dist/
 dist/
-target/
-**/target/
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+next-env.d.ts
+
+# ------------------------------------------------------------------------------
+# 5. Compiled Binaries, Executables & Debug Symbols
+# ------------------------------------------------------------------------------
 *.exe
 *.sig
 *.dll
 *.so
 *.dylib
 *.msi
+*.msix
 *.app
 *.dmg
 *.deb
 *.rpm
 *.AppImage
-
-# ------------------------------------------------------------------------------
-# 5. TypeScript & Type Generation
-# ------------------------------------------------------------------------------
-*.tsbuildinfo
-tsconfig.tsbuildinfo
-next-env.d.ts
+*.nsis
+*.zip
+*.tar.gz
+*.7z
+*.pdb
+*.exp
+*.ilk
+*.map
 
 # ------------------------------------------------------------------------------
 # 6. Vercel & Deployment
@@ -129,7 +144,7 @@ coverage/
 .nyc_output/
 
 # ------------------------------------------------------------------------------
-# 9. Local Databases & Storage
+# 9. Local Databases & Storage (Never commit local user data)
 # ------------------------------------------------------------------------------
 *.db
 *.db-*
@@ -204,7 +219,8 @@ $RECYCLE.BIN/
 .fuse_hidden*
 .directory
 
-# Binaries & Executables
-*.exe
-*.msi
-*.dll
+# Temporary & Scratch Files
+scratch/
+tmp/
+temp/
+*.tmp
