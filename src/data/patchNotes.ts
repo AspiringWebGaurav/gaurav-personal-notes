@@ -17,11 +17,58 @@ export interface ReleasePatchNote {
 
 export const PATCH_NOTES: ReleasePatchNote[] = [
   {
+    version: "0.0.4",
+    releaseDate: "October 13, 2026",
+    title: "Silent Background Updates, Kernel Dispatcher & Persistent Tray",
+    summary: "Autonomous background update engine with elevated restart, kernel-level binary dispatcher resolving Windows Installed Apps duplicates, persistent background tray process on window close, and Google Material 3 patch notes integration.",
+    isLatest: true,
+    categories: [
+      {
+        type: "feature",
+        title: "Autonomous Silent Auto-Update Engine",
+        items: [
+          "Background update polling on 30-minute intervals and network reconnection that downloads and applies updates completely silently without modal interruptions",
+          "Automatic app restart upon installation with native foreground window elevation (cmd_bring_main_to_front), eliminating taskbar flashing",
+          "Dedicated Google Material 3 Patch Notes view (/patch-notes) with category filters, pill search, and direct desktop header navigation"
+        ]
+      },
+      {
+        type: "improvement",
+        title: "Background Tray Process & Quick Capture",
+        items: [
+          "Quitting or closing the GPN window now preserves the background tray process, ensuring hotkey note capture (Ctrl+Shift+N / Alt+Shift+N) remains instantaneous",
+          "Explicit 'Quit GPN completely' option in tray context menu with seamless inline confirmation dialog",
+          "Optimized Edge CDN 24-hour caching for website patch notes and documentation routes on Vercel Hobby quota"
+        ]
+      },
+      {
+        type: "fix",
+        title: "Dual-Registry Collision Resolution & Windows App List Fix",
+        items: [
+          "Kernel-level binary dispatcher (check_and_handoff_to_canonical_binary) detects legacy C:\\Program Files shortcuts and transparently hands execution off to canonical %LOCALAPPDATA% installation",
+          "Active reconciliation of Windows Uninstall registry keys (HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall) and shell shortcuts on every boot to guarantee Windows Settings displays the exact running version",
+          "Built-in 1-click 'Fix Windows Registry' repair utility in Settings view and Clean-Old-System-Installation script for removing orphaned machine-wide keys"
+        ]
+      },
+      {
+        type: "security",
+        title: "Monotonic SemVer & Cryptographic Ed25519 Signatures",
+        items: [
+          "Monotonic SQLite version barrier preventing version rollbacks across reboots and fresh launches",
+          "Single-line Base64 cryptographic Ed25519 Minisign signatures verified against GPHost release manifests",
+          "Cloudflare R2 permanent retention and automated atomic purge of superseded 0.0.3 OTA binary enforcing strict 2-file storage rule"
+        ]
+      }
+    ],
+    rawNotes: "v0.0.4: Silent background updates with elevated restart, kernel binary dispatcher for Windows Installed Apps fix, persistent background tray process on window close, and Google-style patch notes integration.",
+    downloadUrl: "https://gphost.eu.cc/api/v1/releases/gpn/download/0.0.4"
+  },
+  {
     version: "0.0.3",
     releaseDate: "October 12, 2026",
     title: "Dynamic Update Status & Elevated Window Control",
     summary: "Real-time update states in top header, tray elevation enhancements, kernel binary dispatcher, and persistent autostart Windows registry key.",
-    isLatest: true,
+    isLatest: false,
     categories: [
       {
         type: "feature",
