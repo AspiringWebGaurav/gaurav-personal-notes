@@ -17,11 +17,58 @@ export interface ReleasePatchNote {
 
 export const PATCH_NOTES: ReleasePatchNote[] = [
   {
+    version: "0.0.6",
+    releaseDate: "October 13, 2026",
+    title: "Dynamic Background Updates, Dedicated Settings & Stealth Execution",
+    summary: "Automated background update polling with pinging status indicator, dedicated Settings view with instant app folder and Windows settings shortcuts, zero terminal window flashes via native Win32 execution, launch at startup enabled by default, and streamlined one-click quit.",
+    isLatest: true,
+    categories: [
+      {
+        type: "feature",
+        title: "Dynamic Background Update Engine & Status Indicator",
+        items: [
+          "Automatic background update polling scheduled 1.2s after app launch to quietly detect newly published releases",
+          "Pulsing violet badge indicator on the update button that notifies you of pending updates without opening disruptive modal dialogues",
+          "One-click action to inspect, pace-download, verify Ed25519 signatures, and restart into the latest version"
+        ]
+      },
+      {
+        type: "feature",
+        title: "Dedicated Settings View & System Integration",
+        items: [
+          "Brand new dedicated Settings view accessible via sidebar gear icon, fully isolated from Permissions & Security",
+          "Direct 'Open App Folder' shortcut revealing canonical %LOCALAPPDATA% installation directory in Windows Explorer",
+          "Instant 'Windows App Settings' button jumping directly to Windows Installed Apps system settings",
+          "Launch at Startup enabled by default out of the box with persistent HKCU registry auto-healing"
+        ]
+      },
+      {
+        type: "improvement",
+        title: "Zero Terminal Window Popups & Stealth Execution",
+        items: [
+          "Full elimination of transient PowerShell or cmd terminal window flashes when checking updates or inspecting system state",
+          "Native Win32 CREATE_NO_WINDOW execution flags applied across all background tasks and registry queries",
+          "Direct one-click 'Quit GPN' navigation closing the desktop window instantly while retaining background quick-capture tray availability"
+        ]
+      },
+      {
+        type: "security",
+        title: "Permissions Architecture & Signature Verification",
+        items: [
+          "Maintained dedicated Permissions view preserving complete visibility into hardware, storage, and network isolation",
+          "Single-line Base64 Ed25519 Minisign cryptographic verification ensuring only authentic releases are executed",
+          "Monotonic SQLite version guarding preventing accidental version regression across application reboots"
+        ]
+      }
+    ],
+    rawNotes: "v0.0.6: Dynamic background update detection, dedicated Settings view, zero terminal window execution, and launch at startup enabled by default"
+  },
+  {
     version: "0.0.5",
     releaseDate: "October 13, 2026",
     title: "Intentionally Throttled Download Engine & Resilient Update Lifecycle",
     summary: "Adaptive download pacing with smooth 1% to 100% progress tracking, cryptographic package verification stage, monotonic version persistence across reboots, and failsafe recovery from interrupted updates.",
-    isLatest: true,
+    isLatest: false,
     categories: [
       {
         type: "feature",
@@ -51,8 +98,7 @@ export const PATCH_NOTES: ReleasePatchNote[] = [
         ]
       }
     ],
-    rawNotes: "v0.0.5: Intentionally throttled download pacing (1-100%), package verification stage, failsafe recovery from interrupted updates, and seamless elevated restart.",
-    downloadUrl: "https://gphost.eu.cc/api/v1/releases/gpn/download/0.0.5"
+    rawNotes: "v0.0.5: Intentionally throttled download pacing (1-100%), package verification stage, failsafe recovery from interrupted updates, and seamless elevated restart."
   },
   {
     version: "0.0.4",

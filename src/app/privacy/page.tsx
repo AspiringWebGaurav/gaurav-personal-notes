@@ -89,7 +89,7 @@ export default function PrivacyPage() {
                 <ul className="list-circle pl-5 mt-1 space-y-0.5 text-zinc-500 dark:text-zinc-400 text-xs font-mono">
                   <li>target: &ldquo;windows-x86_64&rdquo;</li>
                   <li>arch: &ldquo;x86_64&rdquo;</li>
-                  <li>current_version: &ldquo;0.0.5&rdquo;</li>
+                  <li>current_version: &ldquo;0.0.6&rdquo;</li>
                 </ul>
               </li>
               <li>
