@@ -78,7 +78,7 @@ export default function PrivacyPage() {
               <span>2. Automated Over-The-Air (OTA) Updates & Anonymous Release Telemetry</span>
             </div>
             <p className="text-zinc-700 dark:text-zinc-300 font-medium">
-              Because GPN operates with mandatory Over-The-Air continuous updates, the desktop software
+              When GPN checks for available Over-The-Air releases, the desktop software
               communicates with our release infrastructure under strict privacy guarantees:
             </p>
             <ul className="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-400 text-xs sm:text-sm">

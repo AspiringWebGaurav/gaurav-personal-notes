@@ -68,40 +68,41 @@ export default function TermsPage() {
             </p>
           </section>
 
-          {/* Section 2 - Mandatory OTA Updates (CRITICAL) */}
+          {/* Section 2 - User-Friendly, Transparent OTA Updates */}
           <section className="space-y-3 p-5 rounded-2xl bg-violet-50/70 dark:bg-violet-950/20 border border-violet-200/80 dark:border-violet-800/50">
             <div className="flex items-center gap-2 text-violet-800 dark:text-violet-300 font-bold text-base">
               <RefreshCw className="w-4 h-4 text-violet-600 dark:text-violet-400" />
-              <span>2. Mandatory Continuous Over-The-Air (OTA) Updates & Versioning</span>
+              <span>2. Transparent, User-Controlled Over-The-Air (OTA) Updates</span>
             </div>
             <p className="text-zinc-700 dark:text-zinc-300 font-medium">
-              Gaurav Personal Notes is intentionally engineered as an offline-first system with <strong>mandatory,
-              continuous Over-The-Air (OTA) background updates</strong>. This architecture is fundamental to how
-              the software functions:
+              Gaurav Personal Notes is engineered with user autonomy, reliability, and trust at its core.
+              While continuous updates are encouraged to provide you with the latest features, security patches,
+              and performance improvements, updates are strictly <strong>user-controlled, transparent, and opt-in</strong>:
             </p>
             <ul className="list-disc pl-5 space-y-2 text-zinc-600 dark:text-zinc-400 text-xs sm:text-sm">
               <li>
-                <strong>Base Installer Anchor (v0.0.0):</strong> New installations are initialized using the
-                permanent Base v0.0.0 Windows setup executable. Upon initial launch, the application automatically
-                discovers, downloads, and silently installs the single active production release manifest.
+                <strong>Clean Base Foundation (v0.0.0):</strong> New desktop setups are initialized using the
+                official Base v0.0.0 setup installer. Users start with a clean, fully functional offline notes environment.
               </li>
               <li>
-                <strong>Mandatory Automatic Execution:</strong> The desktop software periodically performs automated
-                release manifest checks (on startup, on 30-minute intervals, and upon network reconnection). When a
-                new verified build is published, GPN downloads and applies the update in the background, elevating the
-                process upon restart. <strong>Users may not opt out of mandatory updates</strong>.
+                <strong>Uninterrupted Normal App Usage:</strong> You are always free to continue using your existing
+                version without interruption. GPN never locks your user interface, blocks your notes, or forces an
+                unwanted restart.
               </li>
               <li>
-                <strong>Zero Historical Binary Archival:</strong> To maintain strict Cloudflare edge storage integrity,
-                prevent cryptographic fragmentation, and eliminate protocol drift, superseded intermediate binaries
-                (e.g., past patches) are permanently purged upon release of subsequent builds. The ecosystem
-                strictly maintains exactly two files in Cloudflare R2 storage at all times: the Base v0.0.0 anchor
-                and the single active OTA release. Past standalone installers are not distributed or preserved.
+                <strong>Polite Notifications &amp; Explicit User Consent:</strong> When a newer release is published,
+                the application politely displays an update badge in the top header and Settings menu. Downloading and
+                installing updates requires your explicit confirmation (&ldquo;Download &amp; Install&rdquo;).
               </li>
               <li>
-                <strong>Integrity & Cryptographic Security:</strong> Mandatory updates are essential to verify
-                Ed25519 Minisign public key signatures, execute SQLite database migrations, maintain cloud sync
-                compatibility, and patch vulnerabilities. Running superseded versions is structurally unsupported.
+                <strong>Failsafe Recovery &amp; Data Integrity:</strong> If a network download is interrupted or canceled,
+                your current installation, local SQLite notes database, and personal data remain 100% safe, untouched,
+                and fully operational.
+              </li>
+              <li>
+                <strong>Strict 2-File Edge Storage Integrity:</strong> Cloudflare R2 storage maintains exactly two
+                files: the permanent Base v0.0.0 setup installer and the single active production OTA payload, preventing
+                storage bloat and eliminating outdated binary fragmentation.
               </li>
             </ul>
           </section>

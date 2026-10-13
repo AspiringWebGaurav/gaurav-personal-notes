@@ -413,16 +413,16 @@ function PatchNotesContent() {
             </div>
           </div>
 
-          {/* Mandatory Silent OTA Architecture Notice for Historical Releases */}
+          {/* User-Friendly Opt-In Architecture Notice for Historical Releases */}
           {!activeNote.isLatest && activeNote.version !== "0.0.0" && (
             <div className="mx-4 sm:mx-6 mt-3 p-3 rounded-xl bg-[#e8f0fe] dark:bg-[#1a3a60]/30 border border-[#d2e3fc] dark:border-[#1e4976] flex items-start gap-2.5 text-xs text-[#1967d2] dark:text-[#8ab4f8]">
               <Info className="w-4 h-4 shrink-0 mt-0.5 text-[#1a73e8]" />
               <div className="space-y-0.5 leading-relaxed">
                 <p className="font-semibold text-[#174ea6] dark:text-[#aecbfa]">
-                  Mandatory Silent OTA Architecture
+                  Continuous Over-The-Air (OTA) Release Architecture
                 </p>
                 <p className="text-[11px] text-[#3c4043] dark:text-[#bdc1c6]">
-                  Historical standalone binaries are not stored or archived on edge storage. GPN is intentionally architected with mandatory Over-The-Air (OTA) continuous updates. Install <strong>Base v0.0.0</strong> and your desktop application will automatically and silently update to the latest release upon startup.
+                  Historical standalone binaries are not archived on edge storage to maintain strict 2-file storage integrity. Install <strong>Base v0.0.0</strong> to get started. You can use your application normally at all times, and opt in to download and apply the latest release whenever you choose.
                 </p>
               </div>
             </div>
