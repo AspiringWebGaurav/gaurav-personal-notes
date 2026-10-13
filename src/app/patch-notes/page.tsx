@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Download } from "lucide-react";
 import { PatchNotesClient } from "./PatchNotesClient";
 
@@ -31,15 +32,15 @@ export default function PatchNotesPage() {
             className="flex items-center gap-2.5 group"
             title="Gaurav Personal Notes Home"
           >
-            {/* Google 4-Color Dots Grid */}
-            <div className="w-7 h-7 rounded-lg bg-zinc-50 dark:bg-zinc-800/80 border border-[#dadce0] dark:border-[#3c4043] flex items-center justify-center p-1 shadow-2xs group-hover:scale-105 transition-transform">
-              <div className="grid grid-cols-2 gap-1 w-full h-full">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#4285F4]" />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#EA4335]" />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#FBBC05]" />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#34A853]" />
-              </div>
-            </div>
+            {/* Official GPN Brand Logo */}
+            <Image
+              src="/icon.svg"
+              alt="Gaurav Personal Notes"
+              width={32}
+              height={32}
+              className="w-8 h-8 rounded-lg shadow-xs group-hover:scale-105 transition-transform shrink-0"
+              priority
+            />
             <span className="font-semibold text-base tracking-tight text-[#202124] dark:text-[#e8eaed]">
               Gaurav Personal Notes
             </span>
