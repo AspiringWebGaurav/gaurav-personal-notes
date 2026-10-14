@@ -18,6 +18,35 @@ src-tauri/target/
 target/
 
 # ------------------------------------------------------------------------------
+# 1b. GPHost Hosting Service Source Code (STRICTLY PRIVATE LOCAL-ONLY - ZERO GITHUB TRACKING)
+# ------------------------------------------------------------------------------
+refrence-gphost-services/
+/refrence-gphost-services/
+refrence-gphost-services
+**/refrence-gphost-services/**
+**/refrence-gphost-services
+# Alias for standard spelling if renamed
+reference-gphost-services/
+/reference-gphost-services/
+reference-gphost-services
+**/reference-gphost-services/**
+**/reference-gphost-services
+
+# ------------------------------------------------------------------------------
+# 1c. AI Agent Instructions & Customizations (STRICTLY PRIVATE LOCAL-ONLY - ZERO GITHUB TRACKING)
+# ------------------------------------------------------------------------------
+AGENTS.md
+/AGENTS.md
+GEMINI.md
+/GEMINI.md
+.agents
+.agents/
+/.agents/
+**/.agents/**
+*.agent
+*.agents
+
+# ------------------------------------------------------------------------------
 # 2. Secrets, Environment Files & Credentials (CRITICAL - ZERO SECRETS)
 # ------------------------------------------------------------------------------
 .env
