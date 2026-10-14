@@ -56,14 +56,6 @@ export default function DownloadPage() {
           >
             Docs
           </Link>
-          <Link 
-            href="/patch-notes" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors hidden sm:inline"
-          >
-            Patch Notes
-          </Link>
           <a
             href={DESKTOP_DOWNLOAD_URL}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-semibold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all shadow-sm"
@@ -176,14 +168,6 @@ export default function DownloadPage() {
             className="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
           >
             Privacy
-          </Link>
-          <Link 
-            href="/patch-notes" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
-          >
-            Patch Notes
           </Link>
           <Link 
             href="/terms" 

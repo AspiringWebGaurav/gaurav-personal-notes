@@ -27,13 +27,6 @@ export default function TermsPage() {
             >
               Privacy Policy
             </Link>
-            <span className="text-zinc-300 dark:text-zinc-700">•</span>
-            <Link
-              href="/patch-notes"
-              className="text-violet-600 dark:text-violet-400 font-medium hover:underline"
-            >
-              Patch Notes
-            </Link>
           </div>
         </div>
 
@@ -203,9 +196,6 @@ export default function TermsPage() {
           <div className="flex items-center gap-4">
             <Link href="/privacy" className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">
               Privacy Policy
-            </Link>
-            <Link href="/patch-notes" className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">
-              Release Notes
             </Link>
             <Link href="/download" className="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">
               Download
