@@ -253,3 +253,5 @@ scratch/
 tmp/
 temp/
 *.tmp
+.vercel
+.env*

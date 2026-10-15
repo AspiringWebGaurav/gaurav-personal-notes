@@ -77,9 +77,13 @@ export async function POST(req: NextRequest) {
     const filename =
       formData.get("filename")?.toString() ||
       (file instanceof File ? file.name : `media_${Date.now()}`);
+    const folder = formData.get("folder")?.toString();
 
     const gphostFormData = new FormData();
     gphostFormData.append("file", file, filename);
+    if (folder) {
+      gphostFormData.append("folder", folder);
+    }
 
     const upstreamResponse = await fetch("https://gphost.eu.cc/api/v1/upload", {
       method: "POST",

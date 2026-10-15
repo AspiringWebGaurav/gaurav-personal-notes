@@ -2,6 +2,8 @@
   "name": "gaurav-personal-notes",
   "version": "0.0.1",
   "private": true,
+  "author": "Gaurav Patil <https://gauravpatil.site>",
+  "homepage": "https://gpnotes.eu.cc",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
