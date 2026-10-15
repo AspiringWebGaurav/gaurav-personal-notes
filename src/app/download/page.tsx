@@ -12,12 +12,12 @@ export const metadata: Metadata = {
 
 const baseDownloadUrl = (
   process.env.NEXT_PUBLIC_DESKTOP_DOWNLOAD_URL ||
-  "https://gphost.eu.cc/raw/gpn-desktop"
+  "https://gphost.eu.cc/raw/gpn-app"
 ).split("?")[0];
 
-export const DESKTOP_DOWNLOAD_URL = `${baseDownloadUrl}?v=0.0.0-fresh-1792079082484`;
-export const DESKTOP_SHARE_URL = "https://gphost.eu.cc/f/gpn-desktop?v=0.0.0-fresh-1792079082484";
-export const DESKTOP_EMBED_URL = "https://gphost.eu.cc/f/gpn-desktop/preview";
+export const DESKTOP_DOWNLOAD_URL = `${baseDownloadUrl}?v=0.0.0-fresh-${Date.now()}`;
+export const DESKTOP_SHARE_URL = `https://gphost.eu.cc/f/gpn-app?v=0.0.0-fresh-${Date.now()}`;
+export const DESKTOP_EMBED_URL = "https://gphost.eu.cc/f/gpn-app/preview";
 
 export default function DownloadPage() {
   return (
