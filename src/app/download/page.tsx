@@ -146,7 +146,7 @@ export default function DownloadPage() {
             </div>
             <div className="text-zinc-300 dark:text-zinc-700">•</div>
             <div>
-              <span className="font-semibold text-zinc-700 dark:text-zinc-300">Size:</span> ~4.3 MB
+              <span className="font-semibold text-zinc-700 dark:text-zinc-300">Size:</span> ~3.7 MB
             </div>
           </div>
         </div>
