@@ -21,11 +21,20 @@
       ]
     },
     {
-      "source": "/(download|docs|terms|privacy|patch-notes)",
+      "source": "/(docs|terms|privacy|patch-notes)",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/download",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
         }
       ]
     }
