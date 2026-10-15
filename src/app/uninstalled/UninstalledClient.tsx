@@ -30,28 +30,26 @@ export default function UninstalledClient() {
       </Link>
 
       {/* 2. Main Status Heading */}
-      <h1 className="text-2xl sm:text-[34px] font-normal tracking-tight text-zinc-900 dark:text-zinc-100 leading-snug mb-3 max-w-2xl">
-        {isWiped
-          ? "Gaurav Personal Notes has been completely wiped."
-          : "Gaurav Personal Notes has been uninstalled."}
+      <h1 className="text-2xl sm:text-3xl md:text-[34px] font-normal tracking-tight text-zinc-900 dark:text-zinc-100 leading-tight mb-3 max-w-4xl whitespace-nowrap">
+        Gaurav Personal Notes was uninstalled.
       </h1>
 
       {/* 3. Subtle Explanatory Subtitle with Action Link */}
-      <p className="text-sm sm:text-[15px] text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed mb-6 sm:mb-8 max-w-xl">
+      <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 font-normal leading-relaxed mb-6 sm:mb-8 max-w-xl">
         {isWiped ? (
           <>
-            All local application files, SQLite database, and shortcuts have been permanently removed.{" "}
+            All your notes and app data were removed.{" "}
             <Link
               href="/download"
               className="text-blue-600 dark:text-blue-400 hover:underline font-normal"
             >
               Click here
             </Link>{" "}
-            if you want to reinstall.
+            to reinstall anytime.
           </>
         ) : (
           <>
-            Your local notes and database remain safely preserved on this computer.{" "}
+            Your notes are safely saved on your computer.{" "}
             <Link
               href="/download"
               className="text-blue-600 dark:text-blue-400 hover:underline font-normal"
@@ -63,16 +61,20 @@ export default function UninstalledClient() {
         )}
       </p>
 
-      {/* 4. Minimalist Centered Navigation Links */}
-      <nav aria-label="Footer Navigation" className="flex items-center justify-center text-sm font-normal text-blue-600 dark:text-blue-400">
+      {/* 4. Minimalist Centered Navigation Links with Generous Spacing */}
+      <nav aria-label="Footer Navigation" className="flex items-center justify-center gap-5 sm:gap-6 text-sm font-normal text-blue-600 dark:text-blue-400">
         <Link href="/docs" className="hover:underline">
           Docs
         </Link>
-        <span className="text-zinc-300 dark:text-zinc-700 mx-3 select-none">|</span>
+        <span className="text-zinc-300 dark:text-zinc-700 select-none px-1" aria-hidden="true">
+          |
+        </span>
         <Link href="/dashboard" className="hover:underline">
           App
         </Link>
-        <span className="text-zinc-300 dark:text-zinc-700 mx-3 select-none">|</span>
+        <span className="text-zinc-300 dark:text-zinc-700 select-none px-1" aria-hidden="true">
+          |
+        </span>
         <a
           href="https://gauravpatil.site"
           target="_blank"

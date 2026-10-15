@@ -59,5 +59,11 @@ service cloud.firestore {
     match /notes/{noteId} {
       allow read, write: if request.auth != null;
     }
+
+    // 8. Public Release Patch Notes & Version History (Read-only public, authenticated write)
+    match /patch_notes/{version} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
   }
 }
