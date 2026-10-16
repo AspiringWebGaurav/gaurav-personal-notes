@@ -215,11 +215,11 @@ function LoginContent() {
           {/* Header Title & Subtext */}
           <div className="space-y-2">
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-              {port ? "Sign in to desktop app" : "Sign in to your account"}
+              {port ? "Connect to desktop app" : "Sign in to your account"}
             </h1>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-xs mx-auto">
               {port
-                ? "Sign in to sync your notes with the Windows app."
+                ? "Sign in with your Google account. We'll automatically connect your notes and sync them to your desktop app."
                 : "Sign in to view and edit your notes across your devices."}
             </p>
           </div>
@@ -333,6 +333,22 @@ function LoginContent() {
           ) : (
             /* Signed out state: clean Google button */
             <div className="space-y-3 pt-2">
+              {port && (
+                <div className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800 text-left text-[11px] text-zinc-600 dark:text-zinc-300 space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center text-[10px] font-bold shrink-0">1</span>
+                    <span>Sign in with Google below</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center text-[10px] font-bold shrink-0">2</span>
+                    <span>Notes connect automatically to your desktop app</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center text-[10px] font-bold shrink-0">3</span>
+                    <span>You can safely close this browser window when done</span>
+                  </div>
+                </div>
+              )}
               <button
                 type="button"
                 onClick={handleSignIn}
