@@ -9,10 +9,11 @@ import * as Y from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import { useEffect, useState, useRef, useCallback } from 'react';
+import Link from 'next/link';
 import { 
   Bold, Italic, Strikethrough, Heading1, Heading2, 
   List, ListOrdered, Quote, Code, Users, Wifi, WifiOff, Trash2,
-  Image as ImageIcon, Loader2, CloudUpload, ExternalLink
+  Image as ImageIcon, Loader2, CloudUpload, ExternalLink, ArrowLeft
 } from 'lucide-react';
 import { CollabRepository, uint8ArrayToBase64, base64ToUint8Array } from '@/features/notes/CollabRepository';
 import { GpnImage } from './extensions/GpnImageExtension';
@@ -57,7 +58,11 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
 
     const indexeddbProvider = new IndexeddbPersistence(`gpn-collab-room-${roomId}`, ydoc);
     const provider = new WebrtcProvider(`gpn-collab-room-${roomId}`, ydoc, {
-      signaling: ['wss://signaling.yjs.dev', 'wss://y-webrtc-signaling-eu.herokuapp.com']
+      signaling: [
+        'ws://127.0.0.1:4444',
+        'wss://signaling.yjs.dev',
+        'wss://y-webrtc-signaling-eu.herokuapp.com'
+      ]
     });
 
     setProviderDetails({ ydoc, provider });
@@ -82,8 +87,6 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
       if (roomData?.stateUpdate) {
         const update = base64ToUint8Array(roomData.stateUpdate);
         Y.applyUpdate(ydoc, update);
-      } else if (!roomData) {
-        setIsDeleted(true);
       }
     }).catch(console.error);
 
@@ -95,12 +98,25 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
       }, 2000);
     });
 
+    // P2P Real-time room closure sync
+    const roomMeta = ydoc.getMap('room_state');
+    const handleRoomMeta = () => {
+      if (roomMeta.get('deleted')) {
+        if (isMounted) setIsDeleted(true);
+      }
+    };
+    roomMeta.observe(handleRoomMeta);
+    if (roomMeta.get('deleted')) {
+      setIsDeleted(true);
+    }
+
     const unsubscribe = repo.listenToRoom(roomId, () => {
       if (isMounted) setIsDeleted(true);
     });
 
     return () => {
       isMounted = false;
+      roomMeta.unobserve(handleRoomMeta);
       unsubscribe();
       if (saveTimeout) clearTimeout(saveTimeout);
       provider.destroy();
@@ -111,14 +127,23 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
 
   if (isDeleted) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 text-center">
-        <div className="w-16 h-16 bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 rounded-2xl flex items-center justify-center mb-4">
-          <Trash2 size={32} />
+      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-zinc-50 dark:bg-zinc-950 text-center select-none animate-in fade-in duration-200">
+        <div className="w-16 h-16 bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 rounded-2xl flex items-center justify-center mb-4 shadow-sm">
+          <Trash2 size={28} />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Room Not Found</h2>
-        <p className="text-gray-600 dark:text-gray-400 max-w-md">
-          This collaborative session does not exist, or it has been permanently closed and deleted.
+        <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-1.5">
+          Session Closed
+        </h2>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mb-6 leading-relaxed">
+          This collaborative session has ended, or was closed by a participant.
         </p>
+        <Link
+          href="/dashboard/collab"
+          className="px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-sm active:scale-95 inline-flex"
+        >
+          <ArrowLeft size={14} />
+          <span>Return to Co-op Lobby</span>
+        </Link>
       </div>
     );
   }
@@ -143,11 +168,15 @@ function InnerEditor({ roomId, userName, ydoc, provider }: { roomId: string; use
   const confirmDeleteRoom = async () => {
     try {
       setIsDeleting(true);
+      const roomMeta = ydoc.getMap('room_state');
+      roomMeta.set('deleted', true);
       const repo = new CollabRepository();
-      await repo.deleteRoom(roomId);
+      await repo.deleteRoom(roomId).catch(console.warn);
     } catch (err) {
       console.error(err);
+    } finally {
       setIsDeleting(false);
+      setShowDeleteModal(false);
     }
   };
 

@@ -16,11 +16,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [activeNotesCount, setActiveNotesCount] = useState<number>(0);
   const [trashNotesCount, setTrashNotesCount] = useState<number>(0);
 
+  const isCollabRoute = pathname?.startsWith("/dashboard/collab") || pathname?.startsWith("/dashboard/burn");
+
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && !isCollabRoute) {
       router.push("/");
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, isCollabRoute]);
 
   useEffect(() => {
     if (user?.uid) {
@@ -34,7 +36,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [user]);
 
-  if (loading || !user) {
+  if ((loading || !user) && !isCollabRoute) {
     return (
       <div className="h-screen w-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-950">
         <Logo animate size={80} />

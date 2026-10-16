@@ -36,13 +36,17 @@ export default function MobileCollabLobbyPage() {
   const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
     setJoinError("");
-    const id = roomId.trim();
+    const id = roomId.trim().toUpperCase();
     if (id.length > 3) {
-      const repo = new CollabRepository();
-      const room = await repo.getRoom(id);
-      if (!room) {
-        setJoinError("Room does not exist.");
-        return;
+      try {
+        const repo = new CollabRepository();
+        const room = await repo.getRoom(id);
+        if (room && room.deleted) {
+          setJoinError("Room does not exist or has been deleted.");
+          return;
+        }
+      } catch (err) {
+        console.warn("Firestore room check bypassed for P2P join:", err);
       }
       router.push(`/mobile/collab/${id}`);
     }
@@ -50,10 +54,14 @@ export default function MobileCollabLobbyPage() {
 
   const handleCreate = async () => {
     const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const repo = new CollabRepository();
-    const ydoc = new Y.Doc();
-    const encoded = uint8ArrayToBase64(Y.encodeStateAsUpdate(ydoc));
-    await repo.saveRoom(newRoomId, encoded);
+    try {
+      const repo = new CollabRepository();
+      const ydoc = new Y.Doc();
+      const encoded = uint8ArrayToBase64(Y.encodeStateAsUpdate(ydoc));
+      await repo.saveRoom(newRoomId, encoded);
+    } catch (err) {
+      console.warn("Firestore room backup bypassed for P2P create:", err);
+    }
     router.push(`/mobile/collab/${newRoomId}`);
   };
 

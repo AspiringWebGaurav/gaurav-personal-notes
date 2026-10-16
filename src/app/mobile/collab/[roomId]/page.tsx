@@ -8,11 +8,11 @@ import { useRouter } from "next/navigation";
 
 export default function MobileCollaborativeRoomPage({ params }: { params: Promise<{ roomId: string }> }) {
   const { roomId } = use(params);
-  const { user } = useAuthStore();
+  const { user, loading } = useAuthStore();
   const router = useRouter();
 
-  if (!user) {
-    return <div className="flex h-full items-center justify-center text-zinc-500">Loading...</div>;
+  if (loading) {
+    return <div className="flex h-full items-center justify-center text-zinc-500">Loading session...</div>;
   }
 
   return (
@@ -34,7 +34,7 @@ export default function MobileCollaborativeRoomPage({ params }: { params: Promis
       <div className="flex-1 overflow-hidden relative">
         <CollabEditor 
           roomId={roomId} 
-          userName={user.displayName || "Anonymous User"} 
+          userName={user?.displayName || user?.email?.split('@')[0] || "Mobile Collaborator"} 
         />
       </div>
     </div>

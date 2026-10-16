@@ -8,10 +8,10 @@ import Link from "next/link";
 
 export default function CollaborativeRoomPage({ params }: { params: Promise<{ roomId: string }> }) {
   const { roomId } = use(params);
-  const { user } = useAuthStore();
+  const { user, loading } = useAuthStore();
 
-  if (!user) {
-    return <div className="p-8">Loading...</div>;
+  if (loading) {
+    return <div className="p-8 text-zinc-500">Loading session...</div>;
   }
 
   return (
@@ -32,7 +32,7 @@ export default function CollaborativeRoomPage({ params }: { params: Promise<{ ro
         <div className="max-w-5xl mx-auto h-full">
           <CollabEditor 
             roomId={roomId} 
-            userName={user.displayName || "Anonymous User"} 
+            userName={user?.displayName || user?.email?.split('@')[0] || "Web Collaborator"} 
           />
         </div>
       </div>
