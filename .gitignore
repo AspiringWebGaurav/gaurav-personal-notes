@@ -3,12 +3,12 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# 1. Desktop Application Build Caches & Target Outputs (Never track target/ or node_modules)
+# 1. Desktop Application Codebase (STRICTLY PRIVATE LOCAL-ONLY - ZERO GITHUB TRACKING)
 # ------------------------------------------------------------------------------
-pc-app/node_modules/
-pc-app/dist/
-pc-app/src-tauri/target/
-pc-app/test-results/
+pc-app/
+/pc-app/
+pc-app
+**/pc-app/**
 .tauri/
 **/.tauri/**
 **/src-tauri/target/**
