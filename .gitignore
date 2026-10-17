@@ -3,13 +3,12 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# 1. Desktop Application (STRICTLY PRIVATE LOCAL-ONLY CODEBASE - ZERO GITHUB TRACKING)
+# 1. Desktop Application Build Caches & Target Outputs (Never track target/ or node_modules)
 # ------------------------------------------------------------------------------
-pc-app/
-/pc-app/
-pc-app
-**/pc-app/**
-**/pc-app
+pc-app/node_modules/
+pc-app/dist/
+pc-app/src-tauri/target/
+pc-app/test-results/
 .tauri/
 **/.tauri/**
 **/src-tauri/target/**
@@ -255,3 +254,6 @@ temp/
 *.tmp
 .vercel
 .env*
+PROJECT_MAP.json
+project-map*.json
+.vault_attempts

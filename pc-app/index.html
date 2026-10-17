@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gaurav Personal Notes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        try {
+          const isCapture = (window.__TAURI_INTERNALS__ && window.__TAURI_INTERNALS__.metadata && window.__TAURI_INTERNALS__.metadata.currentWindow && window.__TAURI_INTERNALS__.metadata.currentWindow.label === 'capture');
+          if (isCapture) {
+            document.documentElement.classList.add('capture-window');
+            document.documentElement.style.background = 'transparent';
+            document.documentElement.style.backgroundColor = 'transparent';
+            window.addEventListener('DOMContentLoaded', function() {
+              if (document.body) {
+                document.body.classList.add('capture-window');
+                document.body.style.background = 'transparent';
+                document.body.style.backgroundColor = 'transparent';
+              }
+            });
+          }
+          const theme = localStorage.getItem('gpn_theme');
+          if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased selection:bg-zinc-200 dark:selection:bg-zinc-800 overflow-hidden">
+    <div id="root" class="w-screen h-screen"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

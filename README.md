@@ -27,6 +27,37 @@ Access your notes from any modern web browser or mobile device:
 - **Web Workspace**: [https://gpnotes.eu.cc](https://gpnotes.eu.cc) *(or install as a Progressive Web App)*
 - **Mobile Friendly**: Responsive mobile interface with offline caching.
 
+## 🔐 Encrypted Workspace Vault & Developer Setup
+
+> [!IMPORTANT]
+> This repository uses an encrypted workspace vault (`gpn-vault.enc`) to protect private agent behavioral rules, developer protocols, and local environment secrets (`.env.local`).
+> 
+> When you clone this repository, you **MUST first decrypt the vault** to restore all required environment variables and workspace rules. Without unpacking the vault, private API services, desktop releases, and agent rules will not be active.
+
+### How to Restore the Full Workspace (Required on Clone):
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/AspiringWebGaurav/gaurav-personal-notes.git
+   cd gaurav-personal-notes
+   ```
+
+2. **Unpack the vault** (enter your private passphrase when prompted):
+   ```bash
+   npm run vault:unpack
+   ```
+
+3. **Install dependencies**:
+   ```bash
+   npm install
+   cd pc-app && npm install
+   ```
+
+4. **Run or build**:
+   - **Web App**: `npm run dev`
+   - **Desktop App**: `cd pc-app && npm run dev:frontend`
+   - **Ship Desktop OTA Binary**: `cd pc-app` and run `push <version>` (e.g. `push 0.0.14`)
+
 ---
 
 ## 🚀 Development Setup (Website)
