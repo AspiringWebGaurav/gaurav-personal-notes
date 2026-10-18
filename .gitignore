@@ -15,6 +15,17 @@ pc-app
 src-tauri/target/
 **/target/
 target/
+scripts
+# ------------------------------------------------------------------------------
+# 1a. Mobile Application Codebase (STRICTLY PRIVATE LOCAL-ONLY - ZERO GITHUB TRACKING)
+# ------------------------------------------------------------------------------
+mobile-app/
+/mobile-app/
+mobile-app
+**/mobile-app/**
+android/
+**/android/**
+
 
 # ------------------------------------------------------------------------------
 # 1b. GPHost Hosting Service Source Code (STRICTLY PRIVATE LOCAL-ONLY - ZERO GITHUB TRACKING)

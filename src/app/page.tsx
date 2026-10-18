@@ -244,8 +244,8 @@ export default function LoginPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors"
             >
-              <span>Download for Windows 10 &amp; 11</span>
-              <span className="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-[10px] font-mono text-zinc-600 dark:text-zinc-300">.exe</span>
+              <span>Download for Windows &amp; Android</span>
+              <span className="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-[10px] font-mono text-zinc-600 dark:text-zinc-300">.exe / .apk</span>
             </Link>
           </div>
 
