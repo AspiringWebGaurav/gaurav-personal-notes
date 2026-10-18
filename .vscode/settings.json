@@ -3,5 +3,7 @@
   "css.validate": false,
   "files.associations": {
     "*.css": "tailwindcss"
-  }
+  },
+  "terminal.integrated.cwd": "${workspaceFolder}/mobile-app",
+  "java.configuration.updateBuildConfiguration": "interactive"
 }
