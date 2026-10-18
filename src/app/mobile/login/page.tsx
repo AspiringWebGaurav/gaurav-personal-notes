@@ -65,15 +65,22 @@ export default function MobileLoginPage() {
     try {
       setErrorMsg(null);
       setIsAuthenticating(true);
-      await loginWithGoogle();
-      setLoginSuccess(true);
+      const res = await loginWithGoogle();
+      if (res !== null) {
+        setLoginSuccess(true);
+      } else {
+        setIsAuthenticating(false);
+      }
     } catch (error: unknown) {
       setIsAuthenticating(false);
       setLoginSuccess(false);
-      if ((error as { code?: string })?.code === 'auth/popup-closed-by-user') {
+      const err = error as { code?: string; message?: string };
+      if (err?.code === 'auth/popup-closed-by-user' || err?.code === 'auth/cancelled-popup-request') {
         setErrorMsg("Sign-in cancelled. Please try again.");
+      } else if (err?.code === 'auth/popup-blocked') {
+        setErrorMsg("Pop-up was blocked. Please tap 'Continue with Google' again or allow pop-ups for this site.");
       } else {
-        setErrorMsg("Connection failed. Please try again.");
+        setErrorMsg(err?.message || "Connection failed. Please try again.");
       }
     }
   };

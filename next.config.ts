@@ -21,6 +21,14 @@ const nextConfig: NextConfig = {
     ],
   },
   turbopack: {},
+  async rewrites() {
+    return [
+      {
+        source: "/__/auth/:path*",
+        destination: `https://${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "gaurav-personal-notes.firebaseapp.com"}/__/auth/:path*`,
+      },
+    ];
+  },
   async headers() {
     return [
       {

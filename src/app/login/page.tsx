@@ -119,8 +119,8 @@ function LoginContent() {
   const handleSignIn = async () => {
     setErrorMessage(null);
     try {
-      await loginWithGoogle();
-      if (port) {
+      const res = await loginWithGoogle();
+      if (port && res) {
         const { auth } = await import("@/core/config/firebase");
         if (auth.currentUser) {
           await handleConnectToDesktop(auth.currentUser);
@@ -128,9 +128,14 @@ function LoginContent() {
       }
     } catch (err: unknown) {
       const authErr = err as { code?: string; message?: string };
-      if (authErr?.code !== "auth/popup-closed-by-user" && authErr?.code !== "auth/cancelled-popup-request") {
-        setErrorMessage(authErr?.message || "Sign in failed. Please try again.");
+      if (authErr?.code === "auth/popup-closed-by-user" || authErr?.code === "auth/cancelled-popup-request") {
+        return;
       }
+      if (authErr?.code === "auth/popup-blocked") {
+        setErrorMessage("Pop-up was blocked. Please tap 'Continue with Google' again or allow pop-ups for this site.");
+        return;
+      }
+      setErrorMessage(authErr?.message || "Sign in failed. Please try again.");
     }
   };
 
