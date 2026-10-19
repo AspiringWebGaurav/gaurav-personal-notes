@@ -20,9 +20,9 @@ let activeRelease: MobileReleaseManifest = {
   packageId: 'com.gpn.mobile',
   pubDate: '2026-10-18T17:00:00.000Z',
   notes: 'Native Android 15 governor, dynamic centered navbar update pill, real-time push updater, and haptic double-tap exit guard.',
-  apkUrl: 'https://gphost.eu.cc/raw/zDHkN1V8jPfp',
-  size: 4321170,
-  sha256: '49747fc15541c64ffebe16a7fcf1ddc3',
+  apkUrl: 'https://gphost.eu.cc/raw/Nm9f2um52LzZ',
+  size: 431191,
+  sha256: '9d75c259b753ce8ac2cfed476faccc02d61a109e04e0e67a7b9fafc4f1c09c02',
   minSdkVersion: 26,
   targetSdkVersion: 35,
 };
