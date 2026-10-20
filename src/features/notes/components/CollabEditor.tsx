@@ -90,12 +90,29 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
       }
     }).catch(console.error);
 
+    let isDirty = false;
+    let lastSavedTime = 0;
+    const THROTTLE_INTERVAL_MS = 8000;
+    const DEBOUNCE_DELAY_MS = 3500;
+
+    const persistSnapshot = () => {
+      if (!isDirty) return;
+      isDirty = false;
+      lastSavedTime = Date.now();
+      const encoded = uint8ArrayToBase64(Y.encodeStateAsUpdate(ydoc));
+      repo.saveRoom(roomId, encoded).catch(console.warn);
+    };
+
     ydoc.on('update', () => {
+      isDirty = true;
       if (saveTimeout) clearTimeout(saveTimeout);
-      saveTimeout = setTimeout(() => {
-        const encoded = uint8ArrayToBase64(Y.encodeStateAsUpdate(ydoc));
-        repo.saveRoom(roomId, encoded).catch(console.error);
-      }, 2000);
+
+      const timeSinceLastSave = Date.now() - lastSavedTime;
+      if (timeSinceLastSave >= THROTTLE_INTERVAL_MS) {
+        persistSnapshot();
+      } else {
+        saveTimeout = setTimeout(persistSnapshot, DEBOUNCE_DELAY_MS);
+      }
     });
 
     // P2P Real-time room closure sync
@@ -119,6 +136,10 @@ export function CollabEditor({ roomId, userName }: CollabEditorProps) {
       roomMeta.unobserve(handleRoomMeta);
       unsubscribe();
       if (saveTimeout) clearTimeout(saveTimeout);
+      if (isDirty) {
+        const encoded = uint8ArrayToBase64(Y.encodeStateAsUpdate(ydoc));
+        repo.saveRoom(roomId, encoded).catch(console.warn);
+      }
       provider.destroy();
       indexeddbProvider.destroy();
       ydoc.destroy();

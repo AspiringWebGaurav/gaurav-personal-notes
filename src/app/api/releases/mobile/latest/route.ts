@@ -16,14 +16,14 @@ export interface MobileReleaseManifest {
 
 // In-memory / fallback active release manifest
 let activeRelease: MobileReleaseManifest = {
-  version: '0.0.6',
-  versionCode: 7,
+  version: '0.0.7',
+  versionCode: 8,
   packageId: 'com.gpn.mobile',
-  pubDate: '2026-10-20T07:35:01.975Z',
-  notes: "v0.0.6: Perfectly center dynamic update pill between left title and right profile controls",
-  apkUrl: 'https://gphost.eu.cc/raw/y6s_8E48M4-s',
-  size: 439022,
-  sha256: 'ff6b7a23487510c6b5d794c71f32fc7ab3dc168292f4cad1d8413bc86f3bf147',
+  pubDate: '2026-10-20T09:37:39.840Z',
+  notes: "v0.0.7: Real-time Co-op collaborative editing with WebRTC P2P sync and zero-polling push engine",
+  apkUrl: 'https://gphost.eu.cc/raw/SVr4GduLR5uC',
+  size: 520243,
+  sha256: 'f09ae3ec3260e2ca8a0b4160ab5e2121e4568fa8df2ce78ddbeafcf1893395e5',
   isBigUpdate: false,
   minSdkVersion: 26,
   targetSdkVersion: 35,

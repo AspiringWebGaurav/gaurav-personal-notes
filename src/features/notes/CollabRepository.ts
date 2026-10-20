@@ -53,16 +53,10 @@ export class CollabRepository {
       const data = docSnap.data();
       const updatedAt = data.updatedAt || 0;
       
-      if (now - updatedAt > THREE_HOURS) {
-        // Queue for deletion
-        roomsToDelete.push(docSnap.id);
-      } else {
+      if (now - updatedAt <= THREE_HOURS) {
         activeRooms.push({ roomId: docSnap.id, updatedAt });
       }
     });
-    
-    // Clean up expired rooms asynchronously
-    Promise.all(roomsToDelete.map(id => this.deleteRoom(id))).catch(console.error);
     
     // Sort by most recently updated
     return activeRooms.sort((a, b) => b.updatedAt - a.updatedAt);
@@ -76,35 +70,31 @@ export class CollabRepository {
       const now = Date.now();
       const THREE_HOURS = 3 * 60 * 60 * 1000;
       const activeRooms: ActiveRoom[] = [];
-      const roomsToDelete: string[] = [];
-      const deletingSet = new Set<string>();
       
       currentDocs.forEach((docSnap) => {
         const data = docSnap.data();
-        const updatedAt = data.updatedAt || 0;
+        const updatedAt = data?.updatedAt || 0;
         
         if (now - updatedAt <= THREE_HOURS) {
           activeRooms.push({ roomId: docSnap.id, updatedAt });
-        } else if (!deletingSet.has(docSnap.id)) {
-          deletingSet.add(docSnap.id);
-          roomsToDelete.push(docSnap.id);
         }
       });
-      
-      // Auto-clean expired rooms only if any exist
-      if (roomsToDelete.length > 0) {
-        Promise.all(roomsToDelete.map((id) => this.deleteRoom(id))).catch(console.error);
-      }
       
       callback(activeRooms.sort((a, b) => b.updatedAt - a.updatedAt));
     };
 
-    const unsub = onSnapshot(q, (querySnapshot) => {
-      currentDocs = querySnapshot.docs;
-      evaluate();
-    });
+    const unsub = onSnapshot(
+      q,
+      (querySnapshot) => {
+        currentDocs = querySnapshot.docs;
+        evaluate();
+      },
+      (error) => {
+        console.warn("[CollabRepository] Real-time snapshot listener error:", error);
+      }
+    );
 
-    // Check expiration when user returns to tab
+    // Check expiration when user returns to tab without network polling
     const handleVisibilityChange = () => {
       if (typeof document !== "undefined" && !document.hidden) {
         evaluate();
@@ -115,14 +105,7 @@ export class CollabRepository {
       document.addEventListener("visibilitychange", handleVisibilityChange);
     }
 
-    // Gentle re-evaluation (every 3 minutes), strictly skipped when tab is in background
-    const intervalId = setInterval(() => {
-      if (typeof document !== "undefined" && document.hidden) return;
-      evaluate();
-    }, 180000);
-
     return () => {
-      clearInterval(intervalId);
       if (typeof document !== "undefined") {
         document.removeEventListener("visibilitychange", handleVisibilityChange);
       }
