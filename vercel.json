@@ -21,7 +21,7 @@
       ]
     },
     {
-      "source": "/(docs|terms|privacy|patch-notes)",
+      "source": "/(docs|terms|privacy|patch-notes|how-it-works|developers)",
       "headers": [
         {
           "key": "Cache-Control",
