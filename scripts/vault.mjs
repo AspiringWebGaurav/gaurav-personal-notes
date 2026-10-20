@@ -50,6 +50,8 @@ const EXCLUDE_DIR_NAMES = new Set([
   '.cache',
   'test-results',
   '.tauri',
+  '.gradle',
+  'build',
 ]);
 
 const EXCLUDE_FILE_EXTENSIONS = new Set([
@@ -151,6 +153,12 @@ async function packVault() {
   const pcAppDir = path.join(rootDir, 'pc-app');
   if (fs.existsSync(pcAppDir)) {
     filesToPack.push(...collectFiles(pcAppDir, 'pc-app'));
+  }
+
+  // Entire mobile-app directory (filtered)
+  const mobileAppDir = path.join(rootDir, 'mobile-app');
+  if (fs.existsSync(mobileAppDir)) {
+    filesToPack.push(...collectFiles(mobileAppDir, 'mobile-app'));
   }
 
   console.log(`  ✓ Found ${filesToPack.length} files to archive.`);

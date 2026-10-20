@@ -33,6 +33,56 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const clientVersion = searchParams.get('current_version') || '0.0.0';
 
+  try {
+    const res = await fetch(
+      `https://gphost.eu.cc/api/v1/releases/gpn-mobile/latest?target=android-arm64&current_version=${encodeURIComponent(
+        clientVersion
+      )}&_t=${Date.now()}`,
+      {
+        headers: { Accept: 'application/json' },
+        cache: 'no-store',
+      }
+    );
+
+    if (res.ok) {
+      const gphostData = await res.json();
+      const rawVer = (gphostData.version || '').replace(/^v/, '');
+      const downloadUrl =
+        gphostData.apkUrl ||
+        gphostData.downloadUrl ||
+        gphostData.url ||
+        gphostData.platforms?.['android-arm64']?.url ||
+        gphostData.platforms?.['windows-x86_64']?.url ||
+        (gphostData.platforms ? (Object.values(gphostData.platforms)[0] as any)?.url : '') ||
+        'https://gphost.eu.cc/raw/oIbe0NglZiBC';
+
+      return NextResponse.json(
+        {
+          version: rawVer,
+          versionCode: 11,
+          packageId: 'com.gpn.mobile',
+          pubDate: gphostData.pub_date || new Date().toISOString(),
+          notes: gphostData.notes || 'Gaurav Personal Notes mobile release update',
+          apkUrl: downloadUrl,
+          downloadUrl,
+          url: downloadUrl,
+          clientVersion,
+        },
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          },
+        }
+      );
+    }
+  } catch (err) {
+    console.warn('[ReleaseAPI] GPHost forward notice:', err);
+  }
+
   return NextResponse.json(
     {
       ...activeRelease,
@@ -42,7 +92,7 @@ export async function GET(request: Request) {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=120',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       },
