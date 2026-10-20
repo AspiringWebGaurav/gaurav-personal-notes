@@ -15,14 +15,15 @@ export interface MobileReleaseManifest {
 
 // In-memory / fallback active release manifest
 let activeRelease: MobileReleaseManifest = {
-  version: '0.0.2',
-  versionCode: 3,
+  version: '0.0.3',
+  versionCode: 4,
   packageId: 'com.gpn.mobile',
-  pubDate: '2026-10-19T06:02:25.962Z',
-  notes: "v0.0.2: Smooth adaptive pacing download progress bar and pure light theme restarting overlay",
-  apkUrl: 'https://gphost.eu.cc/raw/Fibpy0Du5lWN',
-  size: 431637,
-  sha256: 'a766ff9f4ed607c02490260a5ef298f231f2415ee6198f60f70bfb3f38dd142f',
+  pubDate: '2026-10-20T05:50:37.067Z',
+  notes: "v0.0.3: Native service termination & process restart engine for big updates, dark mode polish, and storage UI enhancements",
+  apkUrl: 'https://gphost.eu.cc/raw/kd_UIcmOfD4m',
+  size: 434546,
+  sha256: 'bda708d48f84f11417f0e567ae89c38ace6d7823ad4fcef1a9c34b63e40b65a8',
+  isBigUpdate: true,
   minSdkVersion: 26,
   targetSdkVersion: 35,
 };
