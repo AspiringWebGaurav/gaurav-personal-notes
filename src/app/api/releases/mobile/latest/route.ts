@@ -16,14 +16,14 @@ export interface MobileReleaseManifest {
 
 // In-memory / fallback active release manifest
 let activeRelease: MobileReleaseManifest = {
-  version: '0.0.4',
-  versionCode: 5,
+  version: '0.0.5',
+  versionCode: 6,
   packageId: 'com.gpn.mobile',
-  pubDate: '2026-10-20T06:11:48.293Z',
-  notes: "v0.0.4: Multi-mobile asynchronous update rollout, Realtime Database push listener, and robust system tray notification delivery",
-  apkUrl: 'https://gphost.eu.cc/raw/XhhBRywMRzp_',
-  size: 438887,
-  sha256: '053370e71a86666d3de7cb0d5d22631e6294db05b0f6198dd8049bc6f7d8f984',
+  pubDate: '2026-10-20T06:20:12.232Z',
+  notes: "v0.0.5: Clean minimalistic system notification UI without patch notes",
+  apkUrl: 'https://gphost.eu.cc/raw/2KuX0uDopFSZ',
+  size: 438948,
+  sha256: 'bc7b1aa89a95324b0c17915490436c9f29a33c7e83d8fb93661be006b1de7fe5',
   isBigUpdate: false,
   minSdkVersion: 26,
   targetSdkVersion: 35,
