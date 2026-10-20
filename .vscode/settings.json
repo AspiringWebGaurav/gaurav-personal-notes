@@ -5,7 +5,7 @@
     "*.css": "tailwindcss"
   },
   "terminal.integrated.cwd": "${workspaceFolder}/mobile-app",
-  "java.configuration.updateBuildConfiguration": "interactive",
+  "java.configuration.updateBuildConfiguration": "automatic",
   "java.import.exclusions": [
     "**/node_modules/**",
     "**/.metadata/**",
@@ -14,15 +14,23 @@
     "**/pc-app/**",
     "**/dist/**",
     "**/target/**",
-    "**/.next/**"
+    "**/.next/**",
+    "**/mobile-app/android/.gradle/**",
+    "**/mobile-app/android/build/**",
+    "**/mobile-app/android/app/build/**",
+    "**/mobile-app/android/capacitor-cordova-android-plugins/build/**"
   ],
   "java.project.resourceFilters": [
     "node_modules",
-    ".git"
+    ".git",
+    "build",
+    ".gradle"
   ],
   "files.watcherExclude": {
     "**/node_modules/**": true,
     "**/pc-app/target/**": true,
+    "**/mobile-app/android/.gradle/**": true,
+    "**/mobile-app/android/app/build/**": true,
     "**/.git/objects/**": true
   }
 }
