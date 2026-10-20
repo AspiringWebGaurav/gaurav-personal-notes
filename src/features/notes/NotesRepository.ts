@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { db } from "@/core/config/firebase";
+import { db, rtdb } from "@/core/config/firebase";
 import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, query, where, onSnapshot } from "firebase/firestore";
+import { ref as rtdbRef, set as rtdbSet } from "firebase/database";
 import { gphostService } from "@/services/gphostService";
 
 const parseTimestamp = (val: unknown) => {
@@ -27,6 +28,15 @@ export class NotesRepository {
 
   constructor(uid: string) {
     this.uid = uid;
+  }
+
+  private emitSyncSignal() {
+    try {
+      if (this.uid && this.uid !== 'local-user') {
+        const signalRef = rtdbRef(rtdb, `gpn/sync_signals/${this.uid}`);
+        rtdbSet(signalRef, { t: Date.now(), from: 'web' }).catch(() => {});
+      }
+    } catch {}
   }
 
   private getCollectionRef() {
@@ -71,10 +81,12 @@ export class NotesRepository {
 
   async createNote(noteId: string, data: Omit<Note, "id">): Promise<void> {
     await setDoc(this.getDocRef(noteId), data);
+    this.emitSyncSignal();
   }
 
   async updateNote(noteId: string, data: Partial<Note>): Promise<void> {
     await updateDoc(this.getDocRef(noteId), { ...data, updatedAt: Date.now() });
+    this.emitSyncSignal();
   }
 
   async deleteNote(noteId: string): Promise<void> {
@@ -93,6 +105,7 @@ export class NotesRepository {
       console.warn('Failed to pre-clean GPHost media for deleted note:', err);
     }
     await deleteDoc(this.getDocRef(noteId));
+    this.emitSyncSignal();
   }
 
   async moveToTrash(noteId: string): Promise<void> {
@@ -138,5 +151,6 @@ export class NotesRepository {
 
     const deletePromises = snapshot.docs.map(docSnap => deleteDoc(docSnap.ref));
     await Promise.all(deletePromises);
+    this.emitSyncSignal();
   }
 }

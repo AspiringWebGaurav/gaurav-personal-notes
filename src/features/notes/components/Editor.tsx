@@ -370,7 +370,7 @@ export function Editor({ initialContent = "", onUpdate, editable = true }: Edito
   // Sync content if initialContent changes externally
   useEffect(() => {
     if (editor && !editor.isDestroyed && formattedContent) {
-      if (editor.getHTML() !== formattedContent && editor.isEmpty) {
+      if (editor.getHTML() !== formattedContent && !editor.isFocused) {
         editor.commands.setContent(formattedContent);
       }
     }
