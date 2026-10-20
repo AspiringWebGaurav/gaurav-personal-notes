@@ -9,6 +9,7 @@ export interface MobileReleaseManifest {
   apkUrl: string;
   size: number;
   sha256: string;
+  isBigUpdate?: boolean;
   minSdkVersion: number;
   targetSdkVersion: number;
 }
@@ -72,6 +73,7 @@ export async function POST(request: Request) {
       apkUrl: body.apkUrl,
       size: Number(body.size) || 0,
       sha256: body.sha256 || '',
+      isBigUpdate: Boolean(body.isBigUpdate),
       minSdkVersion: Number(body.minSdkVersion) || 26,
       targetSdkVersion: Number(body.targetSdkVersion) || 35,
     };
