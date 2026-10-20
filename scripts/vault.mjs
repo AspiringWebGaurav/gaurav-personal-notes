@@ -133,7 +133,7 @@ async function packVault() {
   const filesToPack = [];
 
   // Root Rules, Project Map, and Secrets (All Sensitive - Ignored by Git)
-  const rootExplicitFiles = ['AGENTS.md', 'GEMINI.md', '.env.local', 'PROJECT_MAP.json'];
+  const rootExplicitFiles = ['AGENTS.md', 'GEMINI.md', '.env.local', 'PROJECT_MAP.json', 'mobile-app/.env.local'];
   for (const f of rootExplicitFiles) {
     const full = path.join(rootDir, f);
     if (fs.existsSync(full)) {
