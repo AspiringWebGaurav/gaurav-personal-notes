@@ -21,7 +21,7 @@ export async function GET() {
       provider: "GPHost",
       directUploadUrl: "https://gphost.eu.cc/api/v1/upload",
       proxyUploadUrl: "/api/gphost/upload",
-      defaultApiKey: DEFAULT_GPHOST_API_KEY,
+      requiresAuth: true,
       maxDirectSizeMb: 100,
       supportedMediaTypes: [
         "image/png",
