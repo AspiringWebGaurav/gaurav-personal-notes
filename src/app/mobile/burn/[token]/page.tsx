@@ -73,18 +73,57 @@ export default function MobileViewBurnNotePage({ params }: { params: Promise<{ t
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, isRevealed, content]);
 
+function formatBurnContent(raw: string): string {
+  if (!raw) return "";
+  let formatted = raw;
+
+  // 1. Transform Markdown video attachments: [Video Attachment: name](url)
+  formatted = formatted.replace(
+    /\[(?:Video Attachment:)?\s*([^\]]+)\]\((https:\/\/gphost\.eu\.cc\/[^\s)]+)\)/gi,
+    '<div class="my-3"><video src="$2" controls class="max-w-full rounded-2xl shadow-md border border-zinc-200 dark:border-zinc-800"></video><div class="text-[10px] text-center text-zinc-400 mt-1 font-mono">$1</div></div>'
+  );
+
+  // 2. Transform Markdown image attachments: ![alt](url)
+  formatted = formatted.replace(
+    /!\[(.*?)\]\((https:\/\/gphost\.eu\.cc\/[^\s)]+)\)/gi,
+    '<div class="my-3"><img src="$2" alt="$1" class="max-w-full rounded-2xl shadow-md border border-zinc-200 dark:border-zinc-800 mx-auto" /><div class="text-[10px] text-center text-zinc-400 mt-1 font-mono">$1</div></div>'
+  );
+
+  // 3. If plain text without block tags, preserve newlines
+  const hasBlockTags = /<(?:p|div|h[1-6]|ul|ol|table|blockquote|pre)[^>]*>/i.test(formatted);
+  if (!hasBlockTags && formatted.includes('\n')) {
+    formatted = formatted.replace(/\n/g, '<br/>');
+  }
+
+  return formatted;
+}
+
   const handleDecrypt = async () => {
     if (!content) return;
     
     try {
       const hash = window.location.hash.slice(1);
-      if (!hash) {
-        setStatus("decrypt_error");
-        return;
+      let plaintext = content;
+
+      if (hash) {
+        try {
+          const keyObj = await importKey(hash);
+          plaintext = await decryptText(content, keyObj);
+        } catch (decryptErr) {
+          if (content.startsWith('<') || content.includes(' ') || !/^[A-Za-z0-9+/=]{30,}$/.test(content.trim())) {
+            plaintext = content;
+          } else {
+            throw decryptErr;
+          }
+        }
+      } else {
+        if (!/^[A-Za-z0-9+/=]{40,}$/.test(content.trim())) {
+          plaintext = content;
+        } else {
+          setStatus("decrypt_error");
+          return;
+        }
       }
-      
-      const keyObj = await importKey(hash);
-      const plaintext = await decryptText(content, keyObj);
       
       setContent(plaintext);
       setStatus("burned");
@@ -247,7 +286,7 @@ export default function MobileViewBurnNotePage({ params }: { params: Promise<{ t
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           <div 
             className="p-5 prose sm:prose-lg dark:prose-invert max-w-none break-words"
-            dangerouslySetInnerHTML={{ __html: content || "" }}
+            dangerouslySetInnerHTML={{ __html: formatBurnContent(content || "") }}
           />
         </div>
       </div>

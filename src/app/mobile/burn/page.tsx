@@ -24,7 +24,7 @@ export default function MobileCreateBurnNotePage() {
       const repo = new BurnRepository();
       await repo.createBurnNote(token, ciphertext);
       
-      const link = `${window.location.origin}/mobile/burn/${token}#${keyHex}`;
+      const link = `${window.location.origin}/burn/${token}#${keyHex}`;
       setBurnLink(link);
     } catch (err) {
       console.error("Failed to generate burn note:", err);

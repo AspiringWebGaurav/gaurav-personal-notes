@@ -24,7 +24,8 @@ export function ViewportRedirect() {
         } else if (isDashboardRoute) {
           router.replace(pathname.replace('/dashboard', '/mobile'));
         } else if (isBurnRoute && !pathname.startsWith('/mobile/burn')) {
-          router.replace(`/mobile${pathname}`);
+          const hash = window.location.hash || '';
+          router.replace(`/mobile${pathname}${hash}`);
         }
       } else {
         // Desktop viewport
@@ -34,7 +35,8 @@ export function ViewportRedirect() {
           } else if (pathname === '/mobile/login') {
             router.replace('/');
           } else if (pathname.startsWith('/mobile/burn')) {
-            router.replace(pathname.replace('/mobile/burn', '/burn'));
+            const hash = window.location.hash || '';
+            router.replace(pathname.replace('/mobile/burn', '/burn') + hash);
           } else {
             router.replace(pathname.replace('/mobile', '/dashboard'));
           }

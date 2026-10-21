@@ -78,18 +78,59 @@ export default function ViewBurnNotePage({ params }: { params: Promise<{ token: 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, isRevealed, content]);
 
+function formatBurnContent(raw: string): string {
+  if (!raw) return "";
+  let formatted = raw;
+
+  // 1. Transform Markdown video attachments: [Video Attachment: name](url)
+  formatted = formatted.replace(
+    /\[(?:Video Attachment:)?\s*([^\]]+)\]\((https:\/\/gphost\.eu\.cc\/[^\s)]+)\)/gi,
+    '<div class="my-4"><video src="$2" controls class="max-w-full rounded-2xl shadow-lg border border-zinc-200 dark:border-zinc-800"></video><div class="text-xs text-center text-zinc-400 mt-1 font-mono">$1</div></div>'
+  );
+
+  // 2. Transform Markdown image attachments: ![alt](url)
+  formatted = formatted.replace(
+    /!\[(.*?)\]\((https:\/\/gphost\.eu\.cc\/[^\s)]+)\)/gi,
+    '<div class="my-4"><img src="$2" alt="$1" class="max-w-full rounded-2xl shadow-lg border border-zinc-200 dark:border-zinc-800 mx-auto" /><div class="text-xs text-center text-zinc-400 mt-1 font-mono">$1</div></div>'
+  );
+
+  // 3. If plain text without block tags, preserve newlines
+  const hasBlockTags = /<(?:p|div|h[1-6]|ul|ol|table|blockquote|pre)[^>]*>/i.test(formatted);
+  if (!hasBlockTags && formatted.includes('\n')) {
+    formatted = formatted.replace(/\n/g, '<br/>');
+  }
+
+  return formatted;
+}
+
   const handleDecrypt = async () => {
     if (!content) return;
     
     try {
       const hash = window.location.hash.slice(1);
-      if (!hash) {
-        setStatus("decrypt_error");
-        return;
+      let plaintext = content;
+
+      if (hash) {
+        try {
+          const keyObj = await importKey(hash);
+          plaintext = await decryptText(content, keyObj);
+        } catch (decryptErr) {
+          // If hash failed or content wasn't ciphertext, verify if raw content is readable text
+          if (content.startsWith('<') || content.includes(' ') || !/^[A-Za-z0-9+/=]{30,}$/.test(content.trim())) {
+            plaintext = content;
+          } else {
+            throw decryptErr;
+          }
+        }
+      } else {
+        // No hash: if content looks like base64 ciphertext, report error; otherwise treat as plaintext
+        if (!/^[A-Za-z0-9+/=]{40,}$/.test(content.trim())) {
+          plaintext = content;
+        } else {
+          setStatus("decrypt_error");
+          return;
+        }
       }
-      
-      const keyObj = await importKey(hash);
-      const plaintext = await decryptText(content, keyObj);
       
       setContent(plaintext);
       setStatus("burned");
@@ -285,7 +326,7 @@ export default function ViewBurnNotePage({ params }: { params: Promise<{ token: 
           
           <div 
             className="p-6 sm:p-10 lg:p-16 prose sm:prose-lg lg:prose-xl dark:prose-invert max-w-none w-full min-h-[50vh] relative z-10"
-            dangerouslySetInnerHTML={{ __html: content || "" }}
+            dangerouslySetInnerHTML={{ __html: formatBurnContent(content || "") }}
           />
         </div>
         
