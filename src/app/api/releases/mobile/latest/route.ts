@@ -14,16 +14,15 @@ export interface MobileReleaseManifest {
   targetSdkVersion: number;
 }
 
-// In-memory / fallback active release manifest
 let activeRelease: MobileReleaseManifest = {
-  version: '0.0.9',
-  versionCode: 10,
+  version: '0.0.0',
+  versionCode: 1,
   packageId: 'com.gpn.mobile',
-  pubDate: '2026-10-20T11:25:37.302Z',
-  notes: "v0.0.9: Resilient centralized update engine with direct verified binary stream and smart sync",
-  apkUrl: 'https://gphost.eu.cc/raw/rMM0_10DlplE',
-  size: 521020,
-  sha256: '7227667d0b78e1896c04511b75c0fed304e0891c7bb8dc6f7001702f6d4a8ca6',
+  pubDate: '2026-10-21T04:45:00.000Z',
+  notes: "v0.0.0: Initial immutable base APK baseline",
+  apkUrl: 'https://gphost.eu.cc/raw/1qdLUo3BRtg1',
+  size: 4425593,
+  sha256: '41d4df4be68a023765bf70e50ad9c2b156c7ae57482278b660f238efc9a1458c',
   isBigUpdate: false,
   minSdkVersion: 26,
   targetSdkVersion: 35,
@@ -54,7 +53,7 @@ export async function GET(request: Request) {
         gphostData.platforms?.['android-arm64']?.url ||
         gphostData.platforms?.['windows-x86_64']?.url ||
         (gphostData.platforms ? (Object.values(gphostData.platforms)[0] as any)?.url : '') ||
-        'https://gphost.eu.cc/raw/oIbe0NglZiBC';
+        'https://gphost.eu.cc/raw/1qdLUo3BRtg1';
 
       return NextResponse.json(
         {
