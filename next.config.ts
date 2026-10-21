@@ -41,7 +41,7 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/(download|docs|terms|privacy|patch-notes|how-it-works|developers)",
+        source: "/(download|docs|terms|privacy|patch-notes|how-it-works|developers|uninstalled|logged-out)",
         headers: [
           {
             key: "Cache-Control",
