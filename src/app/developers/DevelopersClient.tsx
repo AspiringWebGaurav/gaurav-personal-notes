@@ -723,7 +723,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                   </span>
                 </div>
                 <p className="text-xs text-zinc-500">
-                  Global Cloudflare R2 Edge mirror for base packages (e.g. <code className="text-zinc-700 dark:text-zinc-300 font-mono">slug: &apos;gpn-app&apos;</code> desktop and <code className="text-zinc-700 dark:text-zinc-300 font-mono">slug: &apos;2aC1shTDISVG&apos;</code> mobile APK).
+                  Global Cloudflare R2 Edge mirror for base packages (e.g. <code className="text-zinc-700 dark:text-zinc-300 font-mono">slug: &apos;gpn-app&apos;</code> desktop and <code className="text-zinc-700 dark:text-zinc-300 font-mono">slug: &apos;1qdLUo3BRtg1&apos;</code> mobile APK).
                 </p>
               </div>
 
