@@ -858,7 +858,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
           </p>
 
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-900 text-zinc-100 p-4 font-mono text-xs overflow-x-auto space-y-2">
-            <div className="text-cyan-400 font-bold">// AES-256-GCM Binary Container Layout:</div>
+            <div className="text-cyan-400 font-bold">{"// AES-256-GCM Binary Container Layout:"}</div>
             <div className="space-y-1 text-zinc-300">
               <div>[00..07] 8 Bytes  : Magic Identifier &quot;GPN_OTA\0&quot;</div>
               <div>[08..23] 16 Bytes : Target Version (UTF-8, null-padded)</div>

@@ -17,7 +17,8 @@ test-results/
 .agents/
 AGENTS.md
 GEMINI.md
-*.mjs
+!postcss.config.mjs
+!eslint.config.mjs
 scripts/test*
 scripts/vault*
 

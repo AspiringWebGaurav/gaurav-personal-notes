@@ -18,6 +18,9 @@ const eslintConfig = [
       "public/**",
       "next-env.d.ts",
       "pc-app/**",
+      "mobile-app/**",
+      "refrence-gphost-services/**",
+      "reference-gphost-services/**",
     ],
   },
 ];

@@ -154,7 +154,7 @@ function LoggedOutContent() {
           {/* Heading and Clean Simple Explanation */}
           <div className="space-y-2">
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-              You're logged out
+              You&apos;re logged out
             </h1>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-xs mx-auto">
               {isPurge

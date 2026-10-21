@@ -5,7 +5,7 @@
   "author": "Gaurav Patil <https://gauravpatil.site>",
   "homepage": "https://gpnotes.eu.cc",
   "scripts": {
-    "dev": "npm --prefix mobile-app run dev",
+    "dev": "next dev --turbopack",
     "dev:mobile": "npm --prefix mobile-app run dev",
     "dev:web": "next dev --turbopack",
     "build": "next build",
