@@ -1,0 +1,25 @@
+# Desktop and Mobile standalone apps
+pc-app/
+mobile-app/
+refrence-gphost-services/
+reference-gphost-services/
+
+# Rust / Gradle build targets
+target/
+**/target/
+android/
+**/android/
+
+# Docs, scratch and tests
+tests/
+playwright-report/
+test-results/
+.agents/
+AGENTS.md
+GEMINI.md
+*.mjs
+scripts/test*
+scripts/vault*
+
+# Environments & secrets
+.env*.local
