@@ -20,7 +20,7 @@ let activeRelease: MobileReleaseManifest = {
   packageId: 'com.gpn.mobile',
   pubDate: '2026-10-21T04:45:00.000Z',
   notes: "v0.0.0: Initial immutable base APK baseline",
-  apkUrl: 'https://gphost.eu.cc/raw/1qdLUo3BRtg1',
+  apkUrl: 'https://gphost.eu.cc/raw/gpn-android',
   size: 4425593,
   sha256: '41d4df4be68a023765bf70e50ad9c2b156c7ae57482278b660f238efc9a1458c',
   isBigUpdate: false,
@@ -53,7 +53,7 @@ export async function GET(request: Request) {
         gphostData.platforms?.['android-arm64']?.url ||
         gphostData.platforms?.['windows-x86_64']?.url ||
         (gphostData.platforms ? (Object.values(gphostData.platforms)[0] as any)?.url : '') ||
-        'https://gphost.eu.cc/raw/1qdLUo3BRtg1';
+        'https://gphost.eu.cc/raw/gpn-android';
 
       return NextResponse.json(
         {

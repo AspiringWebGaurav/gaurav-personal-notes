@@ -20,12 +20,12 @@ export const DESKTOP_EMBED_URL = "https://gphost.eu.cc/f/gpn-app/preview";
 
 const baseMobileDownloadUrl = (
   process.env.NEXT_PUBLIC_MOBILE_DOWNLOAD_URL ||
-  "https://gphost.eu.cc/raw/1qdLUo3BRtg1"
+  "https://gphost.eu.cc/raw/gpn-android"
 ).split("?")[0];
 
 export const MOBILE_DOWNLOAD_URL = `${baseMobileDownloadUrl}?v=0.0.0-fresh-${Date.now()}`;
-export const MOBILE_SHARE_URL = `https://gphost.eu.cc/f/1qdLUo3BRtg1?v=0.0.0-fresh-${Date.now()}`;
-export const MOBILE_EMBED_URL = "https://gphost.eu.cc/f/1qdLUo3BRtg1/preview";
+export const MOBILE_SHARE_URL = `https://gphost.eu.cc/f/gpn-android?v=0.0.0-fresh-${Date.now()}`;
+export const MOBILE_EMBED_URL = "https://gphost.eu.cc/f/gpn-android/preview";
 
 export default function DownloadPage() {
   return (
