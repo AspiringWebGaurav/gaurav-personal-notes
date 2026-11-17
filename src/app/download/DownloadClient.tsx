@@ -17,6 +17,7 @@ import {
   Zap,
   Lock,
   Database,
+  Wrench,
 } from "lucide-react";
 
 export type DetectedPlatform = "android" | "windows" | "ios" | "mac" | "linux" | "other";
@@ -196,8 +197,8 @@ export function DownloadClient({
                       </p>
                     </div>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100/80 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900">
-                    v0.0.0 APK
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30">
+                    Maintenance
                   </span>
                 </div>
 
@@ -237,23 +238,20 @@ export function DownloadClient({
               {/* Actions + Switcher */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <a
-                    href={mobileDownloadUrl}
-                    className="flex-1 inline-flex items-center justify-center gap-2 h-10 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white text-xs font-bold shadow-md shadow-emerald-600/25 transition-all"
+                  <div
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 h-10 px-3 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-bold cursor-not-allowed select-none"
+                    title="Under Maintenance • Downloads Paused"
                   >
-                    <Download className="w-4 h-4" />
-                    <span>Download APK (~4.1 MB)</span>
-                  </a>
-                  <a
-                    href={mobileShareUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1 h-10 px-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-semibold active:scale-[0.98] transition-all shrink-0"
-                    title="Download Mirror"
+                    <Wrench className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                    <span>Under Maintenance</span>
+                  </div>
+                  <div
+                    className="inline-flex items-center justify-center gap-1 h-10 px-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 text-xs font-semibold cursor-not-allowed select-none shrink-0"
+                    title="Mirror Locked"
                   >
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                    <span>Mirror</span>
-                  </a>
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>Locked</span>
+                  </div>
                 </div>
 
                 <button
@@ -298,8 +296,8 @@ export function DownloadClient({
                       </p>
                     </div>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-violet-100/80 dark:bg-violet-950/80 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-900">
-                    v0.0.0 EXE
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/30">
+                    Maintenance
                   </span>
                 </div>
 
@@ -339,23 +337,20 @@ export function DownloadClient({
               {/* Actions + Switcher */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <a
-                    href={desktopDownloadUrl}
-                    className="flex-1 inline-flex items-center justify-center gap-2 h-10 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-950 text-xs font-bold shadow-md active:scale-[0.98] transition-all"
+                  <div
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 h-10 px-3 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-bold cursor-not-allowed select-none"
+                    title="Under Maintenance • Downloads Paused"
                   >
-                    <Download className="w-4 h-4" />
-                    <span>Download .exe (~3.7 MB)</span>
-                  </a>
-                  <a
-                    href={desktopShareUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1 h-10 px-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-semibold active:scale-[0.98] transition-all shrink-0"
-                    title="Download Mirror"
+                    <Wrench className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                    <span>Under Maintenance</span>
+                  </div>
+                  <div
+                    className="inline-flex items-center justify-center gap-1 h-10 px-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 text-xs font-semibold cursor-not-allowed select-none shrink-0"
+                    title="Mirror Locked"
                   >
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                    <span>Mirror</span>
-                  </a>
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>Locked</span>
+                  </div>
                 </div>
 
                 <button
@@ -421,23 +416,20 @@ export function DownloadClient({
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <a
-                    href={mobileDownloadUrl}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 h-8 px-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white text-[11px] font-bold shadow-xs transition-all"
+                  <div
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 h-8 px-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-[10px] font-bold cursor-not-allowed select-none"
+                    title="Under Maintenance • Downloads Paused"
                   >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download APK (~4.1 MB)</span>
-                  </a>
-                  <a
-                    href={mobileShareUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1 h-8 px-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-[10px] font-semibold active:scale-[0.98] transition-all shrink-0"
-                    title="Download Mirror"
+                    <Wrench className="w-3 h-3 text-amber-500 shrink-0" />
+                    <span>Under Maintenance</span>
+                  </div>
+                  <div
+                    className="inline-flex items-center justify-center gap-1 h-8 px-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 text-[9px] font-semibold cursor-not-allowed select-none shrink-0"
+                    title="Mirror Locked"
                   >
-                    <ShieldCheck className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                    <span>Mirror</span>
-                  </a>
+                    <Lock className="w-3 h-3" />
+                    <span>Locked</span>
+                  </div>
                 </div>
               </div>
 
@@ -484,23 +476,20 @@ export function DownloadClient({
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                  <a
-                    href={desktopDownloadUrl}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 h-8 px-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-950 text-[11px] font-bold shadow-xs active:scale-[0.98] transition-all"
+                  <div
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 h-8 px-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-[10px] font-bold cursor-not-allowed select-none"
+                    title="Under Maintenance • Downloads Paused"
                   >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download .exe (~3.7 MB)</span>
-                  </a>
-                  <a
-                    href={desktopShareUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1 h-8 px-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 text-[10px] font-semibold active:scale-[0.98] transition-all shrink-0"
-                    title="Download Mirror"
+                    <Wrench className="w-3 h-3 text-amber-500 shrink-0" />
+                    <span>Under Maintenance</span>
+                  </div>
+                  <div
+                    className="inline-flex items-center justify-center gap-1 h-8 px-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 text-[9px] font-semibold cursor-not-allowed select-none shrink-0"
+                    title="Mirror Locked"
                   >
-                    <ShieldCheck className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                    <span>Mirror</span>
-                  </a>
+                    <Lock className="w-3 h-3" />
+                    <span>Locked</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -612,6 +601,12 @@ export function DownloadClient({
             <p className="text-zinc-500 dark:text-zinc-400 text-xs lg:text-sm mt-1 font-normal max-w-2xl">
               Offline-first architecture with instant full-text search, encrypted local vaults, and optional account sync across all your devices.
             </p>
+
+            {/* Maintenance Mode Notice Banner */}
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs font-medium mt-2.5 shadow-2xs">
+              <Wrench className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+              <span><strong>Maintenance Mode:</strong> All installers are temporarily locked while undergoing active polishing and performance updates.</span>
+            </div>
           </div>
 
           {/* Dual Platform Cards Grid */}
@@ -647,8 +642,9 @@ export function DownloadClient({
                       <p className="text-xs text-zinc-500 dark:text-zinc-400">Windows 10 &amp; 11 (64-bit)</p>
                     </div>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-violet-50 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300 border border-violet-200/80 dark:border-violet-900/60">
-                    v0.0.0
+                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-900/60 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                    <span>Under Maintenance</span>
                   </span>
                 </div>
 
@@ -661,25 +657,21 @@ export function DownloadClient({
               {/* Actions & Specs */}
               <div>
                 <div className="flex items-center gap-2.5 mb-3.5">
-                  <a
-                    href={desktopDownloadUrl}
-                    className="flex-1 inline-flex items-center justify-center gap-2 h-10 lg:h-11 rounded-xl bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-950 text-xs lg:text-sm font-semibold shadow-xs active:scale-[0.99] transition-all"
+                  <div
+                    className="flex-1 inline-flex items-center justify-center gap-2 h-10 lg:h-11 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs lg:text-sm font-semibold select-none cursor-not-allowed"
+                    title="Maintenance Mode: Windows downloads paused for polishing & updates"
                   >
-                    <Download className="w-4 h-4" />
-                    <span>Download for Windows (.exe)</span>
-                  </a>
+                    <Wrench className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span>Under Maintenance • Downloads Paused</span>
+                  </div>
 
-                  <a
-                    href={desktopShareUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1.5 px-3 h-10 lg:h-11 rounded-xl bg-white hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700/80 text-zinc-700 dark:text-zinc-300 text-xs font-semibold transition-all border border-zinc-200/90 dark:border-zinc-700/90 shrink-0"
-                    title="Download Mirror"
+                  <div
+                    className="inline-flex items-center justify-center gap-1.5 px-3 h-10 lg:h-11 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-400 dark:text-zinc-500 text-xs font-semibold border border-zinc-200/90 dark:border-zinc-700/90 shrink-0 select-none cursor-not-allowed"
+                    title="Mirror locked during maintenance"
                   >
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                    <span>Mirror</span>
-                    <ExternalLink className="w-3 h-3 text-zinc-400" />
-                  </a>
+                    <Lock className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
+                    <span>Mirror Locked</span>
+                  </div>
                 </div>
 
                 <div className="pt-2.5 border-t border-zinc-200/80 dark:border-zinc-800/80 flex items-center gap-x-3 text-[11px] text-zinc-500 dark:text-zinc-400">
@@ -722,8 +714,9 @@ export function DownloadClient({
                       <p className="text-xs text-zinc-500 dark:text-zinc-400">Android 10+ (API 29–35)</p>
                     </div>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-900/60">
-                    v0.0.0 APK
+                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-900/60 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                    <span>Under Maintenance</span>
                   </span>
                 </div>
 
@@ -736,25 +729,21 @@ export function DownloadClient({
               {/* Actions & Specs */}
               <div>
                 <div className="flex items-center gap-2.5 mb-3.5">
-                  <a
-                    href={mobileDownloadUrl}
-                    className="flex-1 inline-flex items-center justify-center gap-2 h-10 lg:h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs lg:text-sm font-semibold shadow-xs active:scale-[0.99] transition-all"
+                  <div
+                    className="flex-1 inline-flex items-center justify-center gap-2 h-10 lg:h-11 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs lg:text-sm font-semibold select-none cursor-not-allowed"
+                    title="Maintenance Mode: Android APK downloads paused for polishing & updates"
                   >
-                    <Download className="w-4 h-4" />
-                    <span>Download for Android (.apk)</span>
-                  </a>
+                    <Wrench className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span>Under Maintenance • Downloads Paused</span>
+                  </div>
 
-                  <a
-                    href={mobileShareUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1.5 px-3 h-10 lg:h-11 rounded-xl bg-white hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700/80 text-zinc-700 dark:text-zinc-300 text-xs font-semibold transition-all border border-zinc-200/90 dark:border-zinc-700/90 shrink-0"
-                    title="Download Mirror"
+                  <div
+                    className="inline-flex items-center justify-center gap-1.5 px-3 h-10 lg:h-11 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-400 dark:text-zinc-500 text-xs font-semibold border border-zinc-200/90 dark:border-zinc-700/90 shrink-0 select-none cursor-not-allowed"
+                    title="Mirror locked during maintenance"
                   >
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                    <span>Mirror</span>
-                    <ExternalLink className="w-3 h-3 text-zinc-400" />
-                  </a>
+                    <Lock className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500" />
+                    <span>Mirror Locked</span>
+                  </div>
                 </div>
 
                 <div className="pt-2.5 border-t border-zinc-200/80 dark:border-zinc-800/80 flex items-center gap-x-3 text-[11px] text-zinc-500 dark:text-zinc-400">

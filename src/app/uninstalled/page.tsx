@@ -7,6 +7,10 @@ export const dynamic = "force-static";
 export const metadata: Metadata = {
   title: "Uninstalled | Gaurav Personal Notes",
   description: "Gaurav Personal Notes was uninstalled. You can reinstall anytime.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function UninstalledPage() {
@@ -15,6 +19,9 @@ export default function UninstalledPage() {
       {/* 1. Brand Logo + Title */}
       <Link
         href="/"
+        target="_blank"
+        rel="noopener noreferrer"
+        prefetch={true}
         className="inline-flex items-center gap-3 mb-6 group cursor-pointer"
       >
         <Image
@@ -22,8 +29,10 @@ export default function UninstalledPage() {
           alt="Gaurav Personal Notes"
           width={32}
           height={32}
-          className="w-8 h-8 rounded-lg shadow-sm group-hover:scale-105 transition-transform"
           priority
+          loading="eager"
+          decoding="async"
+          className="w-8 h-8 rounded-lg shadow-sm group-hover:scale-105 transition-transform"
         />
         <span className="text-2xl sm:text-[26px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100">
           Gaurav Personal Notes
@@ -40,6 +49,9 @@ export default function UninstalledPage() {
         The app has been removed from your computer.{" "}
         <Link
           href="/download"
+          target="_blank"
+          rel="noopener noreferrer"
+          prefetch={true}
           className="text-blue-600 dark:text-blue-400 hover:underline font-normal"
         >
           Click here
@@ -52,13 +64,25 @@ export default function UninstalledPage() {
         aria-label="Footer Navigation"
         className="flex items-center justify-center gap-5 sm:gap-6 text-sm font-normal text-blue-600 dark:text-blue-400"
       >
-        <Link href="/docs" className="hover:underline">
+        <Link
+          href="/docs"
+          target="_blank"
+          rel="noopener noreferrer"
+          prefetch={true}
+          className="hover:underline"
+        >
           Docs
         </Link>
         <span className="text-zinc-300 dark:text-zinc-700 select-none px-1" aria-hidden="true">
           |
         </span>
-        <Link href="/dashboard" className="hover:underline">
+        <Link
+          href="/dashboard"
+          target="_blank"
+          rel="noopener noreferrer"
+          prefetch={true}
+          className="hover:underline"
+        >
           App
         </Link>
         <span className="text-zinc-300 dark:text-zinc-700 select-none px-1" aria-hidden="true">
