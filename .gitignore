@@ -259,6 +259,7 @@ $RECYCLE.BIN/
 .directory
 
 # Temporary & Scratch Files
+all-base-app/
 scratch/
 tmp/
 temp/
